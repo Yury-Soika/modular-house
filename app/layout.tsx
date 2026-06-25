@@ -10,13 +10,13 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://modular-house.by"),
-  title: "Modular Timber Homes in Belarus",
+  title: "Modul S — Modular Timber Houses & Baths in Belarus",
   description:
-    "Turnkey modular timber-frame houses from consultation and design to manufacturing, delivery, and installation across Belarus.",
+    "Turnkey modular timber-frame houses and baths from consultation and design to manufacturing, delivery, and installation across Belarus.",
   openGraph: {
-    title: "Modern Modular Houses Turnkey",
+    title: "Modul S — Modular Timber Houses & Baths",
     description:
-      "Design, manufacturing, delivery, and installation of modular homes from Brest, Belarus.",
+      "Design, manufacturing, delivery, and installation of modular houses and baths from Brest, Belarus.",
     images: ["/house-photos/IMG_0640.JPG"]
   }
 };

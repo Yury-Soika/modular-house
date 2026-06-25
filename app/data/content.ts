@@ -1,5 +1,25 @@
 export type Lang = "en" | "ru";
 
+export type SpecRow = { label: string; warm: string; turnkey: string };
+
+export type Project = {
+  id: string;
+  kind: "house" | "bath";
+  title: string;
+  projectNo: string;
+  area: string;
+  size: string;
+  terrace?: string;
+  priceWarm?: string;
+  priceTurnkey: string;
+  priceNote?: string;
+  summary: string;
+  image?: string;
+  plan?: string;
+  singleColumn?: boolean;
+  specs: SpecRow[];
+};
+
 export type Content = {
   meta: {
     htmlLang: string;
@@ -20,10 +40,21 @@ export type Content = {
     getCatalog: string;
     requestConsultation: string;
     plan: string;
+    render: string;
+    noPhoto: string;
     scaledPreview: string;
     googleMapsArea: string;
     telegram: string;
     viber: string;
+    priceWarm: string;
+    priceTurnkey: string;
+    priceFinished: string;
+    dimensions: string;
+    terrace: string;
+    specsTitle: string;
+    close: string;
+    prev: string;
+    next: string;
   };
   hero: {
     eyebrow: string;
@@ -45,21 +76,24 @@ export type Content = {
     text: string;
     steps: { title: string; text: string }[];
   };
+  packagesSection: {
+    eyebrow: string;
+    title: string;
+    text: string;
+  };
+  packages: {
+    name: string;
+    tagline: string;
+    features: string[];
+    extrasLabel?: string;
+    extras?: string[];
+  }[];
   projectsSection: {
     eyebrow: string;
     title: string;
     text: string;
   };
-  projects: {
-    title: string;
-    area: string;
-    rooms: string;
-    price: string;
-    time: string;
-    image: string;
-    description: string;
-    plan: "studio" | "family" | "forest";
-  }[];
+  projects: Project[];
   completed: {
     eyebrow: string;
     title: string;
@@ -79,12 +113,6 @@ export type Content = {
     description: string;
     advantages: string[];
   }[];
-  process: {
-    eyebrow: string;
-    title: string;
-    text: string;
-    steps: string[];
-  };
   trust: {
     eyebrow: string;
     title: string;
@@ -95,6 +123,7 @@ export type Content = {
     eyebrow: string;
     title: string;
     text: string;
+    cardText: string;
     perks: string[];
   };
   consultation: {
@@ -126,6 +155,191 @@ export type Content = {
   };
 };
 
+/* ---------------------------------------------------------------------------
+ * Project catalog — generated from the June 2026 catalog.
+ * Each entry is one house/bath. Real render + plan images will be added later;
+ * for now the cards show "no photo" placeholders (image/plan left undefined).
+ * ------------------------------------------------------------------------ */
+
+type Terrace = { w: number; l: number; m2: number; roofed: boolean; fence?: boolean };
+
+type Seed = {
+  no: string;
+  kind: "house" | "bath";
+  area: number;
+  dims: [number, number, number];
+  heightLow?: number;
+  terrace?: Terrace;
+  warm?: number;
+  turnkey: number;
+  noTerrace?: number;
+};
+
+const seeds: Seed[] = [
+  { no: "6920353", kind: "house", area: 22, dims: [5000, 6000, 2700], terrace: { w: 3350, l: 2500, m2: 8, roofed: true, fence: true }, warm: 37700, turnkey: 46500 },
+  { no: "6970893", kind: "house", area: 24, dims: [3000, 8000, 2700], warm: 32400, turnkey: 42000 },
+  { no: "6971406", kind: "house", area: 25, dims: [5000, 6000, 2700], terrace: { w: 2100, l: 2350, m2: 5, roofed: true }, warm: 38770, turnkey: 48800 },
+  { no: "7004381", kind: "house", area: 28, dims: [5200, 7000, 2700], terrace: { w: 2500, l: 3500, m2: 8.75, roofed: false }, warm: 40390, turnkey: 51450 },
+  { no: "6920434", kind: "house", area: 36, dims: [5200, 7000, 2700], warm: 53600, turnkey: 66700 },
+  { no: "6892350", kind: "house", area: 36, dims: [5200, 7000, 2700], warm: 53600, turnkey: 66700 },
+  { no: "6972660", kind: "house", area: 39, dims: [6000, 6500, 2700], terrace: { w: 3000, l: 6000, m2: 18, roofed: true, fence: true }, warm: 70650, turnkey: 86250 },
+  { no: "6971491", kind: "house", area: 39, dims: [6000, 6500, 2700], terrace: { w: 2000, l: 6000, m2: 12, roofed: true }, warm: 64650, turnkey: 80250 },
+  { no: "6972735", kind: "house", area: 39, dims: [5200, 7000, 2700], terrace: { w: 2000, l: 6450, m2: 13, roofed: true, fence: true }, warm: 65650, turnkey: 81250 },
+  { no: "7066580", kind: "house", area: 47, dims: [6000, 7800, 2800], warm: 63180, turnkey: 81900 },
+  { no: "6966147", kind: "house", area: 60, dims: [8000, 9000, 2800], terrace: { w: 6000, l: 2000, m2: 12, roofed: true }, warm: 93000, turnkey: 117000 },
+  { no: "7055054", kind: "house", area: 60, dims: [6000, 10000, 2800], warm: 81000, turnkey: 105000 },
+  { no: "7068240", kind: "house", area: 63, dims: [7000, 9000, 2800], warm: 85050, turnkey: 110250 },
+  { no: "6964526", kind: "house", area: 63, dims: [7000, 9000, 2800], warm: 85050, turnkey: 110250 },
+  { no: "6985270", kind: "house", area: 63, dims: [9000, 7000, 2800], terrace: { w: 7000, l: 2000, m2: 14, roofed: true }, warm: 99050, turnkey: 124500 },
+  { no: "7042179", kind: "house", area: 72, dims: [8000, 9000, 2800], warm: 97200, turnkey: 126000 },
+  { no: "6915271", kind: "house", area: 72, dims: [6000, 12000, 2800], warm: 97200, turnkey: 126000 },
+  { no: "6964606", kind: "house", area: 84, dims: [12000, 7000, 2800], warm: 113400, turnkey: 147000 },
+  { no: "7068511", kind: "bath", area: 15.6, dims: [2600, 6000, 2600], heightLow: 2300, terrace: { w: 0, l: 0, m2: 0, roofed: true }, turnkey: 42500, noTerrace: 30500 },
+  { no: "6909223", kind: "bath", area: 21, dims: [3000, 7000, 2600], heightLow: 2300, terrace: { w: 0, l: 0, m2: 0, roofed: true }, turnkey: 49000, noTerrace: 42000 },
+  { no: "6909183", kind: "bath", area: 21, dims: [3000, 7000, 2600], heightLow: 2300, terrace: { w: 0, l: 0, m2: 0, roofed: true }, turnkey: 49000, noTerrace: 42000 }
+];
+
+const decimal = (n: number, lang: Lang) => {
+  const s = Number.isInteger(n) ? String(n) : String(n);
+  return lang === "ru" ? s.replace(".", ",") : s;
+};
+
+const meters = (mm: number, lang: Lang) => decimal(Math.round(mm / 10) / 100, lang);
+
+const group = (n: number, sep: string) => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, sep);
+const price = (n: number, lang: Lang) => `${group(n, lang === "ru" ? " " : ",")} BYN`;
+
+const areaStr = (a: number, lang: Lang) => `${decimal(a, lang)} ${lang === "ru" ? "м²" : "m²"}`;
+
+const sizeStr = (s: Seed, lang: Lang) => {
+  const [w, l, h] = s.dims;
+  const u = lang === "ru" ? "м" : "m";
+  const height =
+    s.heightLow !== undefined
+      ? `${meters(s.heightLow, lang)}–${meters(h, lang)}`
+      : meters(h, lang);
+  const hLabel = lang === "ru" ? "высота" : "height";
+  return `${meters(w, lang)} × ${meters(l, lang)} ${u}, ${hLabel} ${height} ${u}`;
+};
+
+const terraceStr = (t: Terrace, lang: Lang) => {
+  if (!t.m2) {
+    return lang === "ru" ? "Терраса с кровлей" : "Roofed terrace";
+  }
+  const u = lang === "ru" ? "м" : "m";
+  const head = lang === "ru" ? (t.roofed ? "Терраса с кровлей" : "Терраса без кровли") : t.roofed ? "Roofed terrace" : "Open terrace";
+  return `${head} ${meters(t.w, lang)} × ${meters(t.l, lang)} ${u} — ${decimal(t.m2, lang)} ${lang === "ru" ? "м²" : "m²"}`;
+};
+
+const terraceFinish = (t: Terrace, lang: Lang) => {
+  const base = lang === "ru" ? "Доска палубная, антисептированная" : "Anti-septic deck boards";
+  if (t.fence) {
+    return base + (lang === "ru" ? ". Ограждение по периметру" : ". Perimeter railing");
+  }
+  return base;
+};
+
+const same = (label: string, value: string): SpecRow => ({ label, warm: value, turnkey: value });
+
+const houseSpecs = (lang: Lang, t?: Terrace): SpecRow[] => {
+  const r = lang === "ru";
+  const rows: SpecRow[] = [
+    same(r ? "Силовой каркас" : "Structural frame", r ? "Стены, лаги пола и стропила — сухая доска 45×145" : "Walls, floor joists and rafters — dry timber 45×145"),
+    same(r ? "Отделка кровли" : "Roof finish", r ? "Металлопрофиль (цвет на выбор)" : "Metal profile (color of choice)"),
+    same(r ? "Утепление" : "Insulation", r ? "Пол, кровля и стены — минеральная вата 150 мм" : "Floor, roof and walls — 150 mm mineral wool"),
+    same(r ? "Мембраны" : "Membranes", r ? "Ветро-влагозащитная мембрана снаружи и пароизоляция внутри (вент. зазор 25 мм)" : "Wind/moisture membrane outside and vapor barrier inside (25 mm vent gap)"),
+    same(r ? "Наружная отделка" : "Exterior finish", r ? "Имитация бруса, сорт АВ, окрашенная (цвет на выбор)" : "Painted timber-look cladding, grade AB (color of choice)"),
+    {
+      label: r ? "Внутренняя отделка" : "Interior finish",
+      warm: r ? "—" : "—",
+      turnkey: r ? "Имитация бруса, сорт АВ, окрашенная (цвет на выбор)" : "Painted timber-look cladding, grade AB (color of choice)"
+    },
+    {
+      label: r ? "Пол" : "Floor",
+      warm: r ? "Обрешётка под влагостойкие плиты ДСП" : "Battens for moisture-resistant chipboard",
+      turnkey: r ? "Ламинат 33 класс (цвет на выбор)" : "Class 33 laminate (color of choice)"
+    },
+    {
+      label: r ? "Двери" : "Doors",
+      warm: r ? "Входная пластиковая дверь" : "Plastic entrance door",
+      turnkey: r ? "Входная пластиковая + межкомнатные двери МДФ" : "Plastic entrance + MDF interior doors"
+    },
+    same(r ? "Окна" : "Windows", r ? "ПВХ в ламинации, двухкамерные стеклопакеты (цвет на выбор)" : "Laminated PVC, double-glazed (color of choice)"),
+    {
+      label: r ? "Коммуникации" : "Utilities",
+      warm: r ? "Проход в полу для ввода и вывода коммуникаций" : "Floor pass-through for utility inlet/outlet",
+      turnkey: r
+        ? "Электропроводка (скрытый/открытый монтаж), розетки, выключатели, светильники, щит; 5 водо-точек; водонагреватель 50 л, душевая кабина со смесителем"
+        : "Wiring (concealed/surface), sockets, switches, lights, panel; 5 water points; 50 L water heater, shower cabin with mixer"
+    }
+  ];
+  if (t) {
+    rows.push(same(r ? "Терраса" : "Terrace", terraceFinish(t, lang)));
+  }
+  return rows;
+};
+
+const bathSpecs = (lang: Lang): SpecRow[] => {
+  const r = lang === "ru";
+  const val = (v: string): SpecRow => ({ label: "", warm: "", turnkey: v });
+  return [
+    { label: r ? "Силовой каркас" : "Structural frame", warm: "", turnkey: r ? "Стены, лаги пола и стропила — сухая доска 45×145" : "Walls, floor joists and rafters — dry timber 45×145" },
+    { label: r ? "Отделка кровли" : "Roof finish", warm: "", turnkey: r ? "Металлопрофиль (цвет на выбор)" : "Metal profile (color of choice)" },
+    { label: r ? "Утепление" : "Insulation", warm: "", turnkey: r ? "Пол, кровля и стены — минеральная вата 150 мм" : "Floor, roof and walls — 150 mm mineral wool" },
+    { label: r ? "Мембраны" : "Membranes", warm: "", turnkey: r ? "Ветро-влагозащитная мембрана снаружи и пароизоляция внутри (зазор 25 мм)" : "Wind/moisture membrane outside and vapor barrier inside (25 mm gap)" },
+    { label: r ? "Наружная отделка" : "Exterior finish", warm: "", turnkey: r ? "Имитация бруса, сорт АВ, окрашенная (цвет на выбор)" : "Painted timber-look cladding, grade AB" },
+    { label: r ? "Внутренняя отделка" : "Interior finish", warm: "", turnkey: r ? "Имитация бруса, сорт АВ, окрашенная (цвет на выбор)" : "Painted timber-look cladding, grade AB" },
+    { label: r ? "Пол" : "Floor", warm: "", turnkey: r ? "Ламинат 33 класс (цвет на выбор), плитка" : "Class 33 laminate (color of choice), tiles" },
+    { label: r ? "Двери" : "Doors", warm: "", turnkey: r ? "Входная пластиковая, межкомнатные МДФ, стеклянная дверь в парную" : "Plastic entrance, MDF interior doors, glass steam-room door" },
+    { label: r ? "Окна" : "Windows", warm: "", turnkey: r ? "ПВХ в ламинации, двухкамерные стеклопакеты (цвет на выбор)" : "Laminated PVC, double-glazed (color of choice)" },
+    { label: r ? "Парная" : "Steam room", warm: "", turnkey: r ? "Внутренняя отделка вагонкой из ольхи, полки из ольхи, дровяная печь с выносом топки" : "Alder lining, alder benches, wood-fired stove with remote firebox" },
+    val("")
+  ].filter((row) => row.turnkey !== "");
+};
+
+const summaryFor = (s: Seed, lang: Lang): string => {
+  const r = lang === "ru";
+  if (s.kind === "bath") {
+    return r ? "Баня под ключ с парной из ольхи и дровяной печью." : "A turnkey bath with an alder steam room and a wood-fired stove.";
+  }
+  if (s.area <= 28) {
+    return r ? "Компактный дом для круглогодичного проживания с продуманной планировкой." : "A compact year-round house with a smart, efficient layout.";
+  }
+  if (s.area <= 47) {
+    return r ? "Просторный дом для комфортной жизни всей семьёй." : "A spacious house for comfortable family living.";
+  }
+  return r ? "Большой дом для постоянного проживания с несколькими спальнями." : "A large house for permanent living with several bedrooms.";
+};
+
+const buildProjects = (lang: Lang): Project[] =>
+  seeds.map((s) => {
+    const r = lang === "ru";
+    const kindWord = s.kind === "bath" ? (r ? "Баня" : "Bath") : r ? "Дом" : "House";
+    const isBath = s.kind === "bath";
+    return {
+      id: s.no,
+      kind: s.kind,
+      title: `${kindWord} ${areaStr(s.area, lang)}`,
+      projectNo: r ? `Проект №${s.no}` : `Project No. ${s.no}`,
+      area: areaStr(s.area, lang),
+      size: sizeStr(s, lang),
+      terrace: s.terrace ? terraceStr(s.terrace, lang) : undefined,
+      priceWarm: isBath ? undefined : s.warm !== undefined ? price(s.warm, lang) : undefined,
+      priceTurnkey: price(s.turnkey, lang),
+      priceNote:
+        isBath && s.noTerrace !== undefined
+          ? r
+            ? `${price(s.noTerrace, lang)} без террасы`
+            : `${price(s.noTerrace, lang)} without terrace`
+          : undefined,
+      summary: summaryFor(s, lang),
+      image: `/projects/${s.no}-render.jpeg`,
+      plan: `/projects/${s.no}-plan.jpeg`,
+      singleColumn: isBath,
+      specs: isBath ? bathSpecs(lang) : houseSpecs(lang, s.terrace)
+    };
+  });
+
 export const content: Record<Lang, Content> = {
   en: {
     meta: {
@@ -134,40 +348,50 @@ export const content: Record<Lang, Content> = {
       switchTo: "RU"
     },
     nav: [
+      { label: "Catalog", href: "#projects" },
       { label: "Home", href: "#home" },
-      { label: "About Us", href: "#about" },
-      { label: "Projects", href: "#projects" },
-      { label: "Construction Process", href: "#process" },
+      { label: "Packages", href: "#packages" },
       { label: "Contacts", href: "#contacts" }
     ],
     brand: {
-      name: "Modul House",
+      name: "Modul S",
       location: "Brest, Belarus",
-      tagline: "Modern modular timber-frame houses turnkey from Brest, Belarus."
+      tagline: "Modern modular timber-frame houses and baths turnkey from Brest, Belarus."
     },
     common: {
-      phone: "+375 44 570 27 87",
+      phone: "+375 44 570 27 27",
       consultation: "Get a Consultation",
       browseProjects: "Browse Projects",
       viewProject: "View Project",
-      getCatalog: "Get Catalog",
+      getCatalog: "Catalog",
       requestConsultation: "Request Consultation",
       plan: "Plan",
+      render: "Render",
+      noPhoto: "Photo coming soon",
       scaledPreview: "Scaled preview",
       googleMapsArea: "Google Maps area",
       telegram: "Telegram",
-      viber: "Viber"
+      viber: "Viber",
+      priceWarm: "Warm shell",
+      priceTurnkey: "Turnkey",
+      priceFinished: "Finished",
+      dimensions: "Dimensions",
+      terrace: "Terrace",
+      specsTitle: "Configuration & specifications",
+      close: "Close",
+      prev: "Previous",
+      next: "Next"
     },
     hero: {
-      eyebrow: "Modern modular houses turnkey",
-      title: "Modern Modular Houses Turnkey",
-      lead: "Design, manufacturing, delivery, and installation of high-quality modular homes for families, cottages, land owners, and investors across Belarus."
+      eyebrow: "Modular timber houses and baths",
+      title: "Modular Timber-Frame Houses & Baths",
+      lead: "Design, manufacturing, delivery, and installation of high-quality modular houses and baths across Belarus."
     },
     benefits: ["Own Manufacturing Facility", "Delivery Across Belarus", "Turnkey Construction", "Custom House Designs"],
     about: {
       eyebrow: "About company",
-      title: "Timber-frame homes built with factory precision",
-      text: "We create modular homes and baths where comfort, aesthetics, and harmony with nature come together. Every project starts with a practical consultation and moves through controlled manufacturing, delivery, installation, and handover.",
+      title: "",
+      text: "We create modular homes and baths where comfort, aesthetics, and harmony with nature come together. Every project starts with a consultation and moves through manufacturing, delivery, installation, and handover of the finished house kit.",
       cards: [
         { title: "Quality control", text: "Each module is checked before delivery and during installation." },
         { title: "Experienced specialists", text: "A focused team supervises design, production, and site work." },
@@ -187,48 +411,59 @@ export const content: Record<Lang, Content> = {
         { title: "Get recommendation", text: "Receive suitable projects and a consultation." }
       ]
     },
-    projectsSection: {
-      eyebrow: "Projects catalog",
-      title: "Popular small modular homes",
-      text: "Catalog cards focus on the exterior, plan, size, rooms, price, and construction time so customers can compare projects quickly."
+    packagesSection: {
+      eyebrow: "Package types",
+      title: "Choose your package",
+      text: "Every project is available in two configurations — a weatherproof warm shell, or a fully finished turnkey house ready to move in."
     },
-    projects: [
+    packages: [
       {
-        title: "Compact 36",
-        area: "36 m2",
-        rooms: "2 rooms",
-        price: "from 58,000 BYN",
-        time: "45-60 days",
-        image: "/house-photos/IMG_0640.JPG",
-        description: "A small year-round house with open kitchen-living space, bedroom, bathroom, and terrace option.",
-        plan: "studio"
+        name: "Warm Shell",
+        tagline: "A fully insulated, weatherproof structure ready for your own interior finishing.",
+        features: [
+          "Structural frame — dry timber 45×145",
+          "Roof — metal profile (color of choice)",
+          "Insulation 150 mm: floor, roof, walls (mineral wool)",
+          "Wind/moisture and vapor membranes with ventilation gaps",
+          "Exterior — painted timber-look cladding, grade AB",
+          "Floor — battens ready for moisture-resistant boards",
+          "PVC laminated windows, double-glazed; plastic entrance door",
+          "Floor pass-through for utility connections"
+        ]
       },
       {
-        title: "Family 54",
-        area: "54 m2",
-        rooms: "3 rooms",
-        price: "from 82,000 BYN",
-        time: "60-75 days",
-        image: "/house-photos/IMG_0640.JPG",
-        description: "Balanced layout for a family: two bedrooms, a shared living zone, technical storage, and warm timber finish.",
-        plan: "family"
-      },
-      {
-        title: "Forest 72",
-        area: "72 m2",
-        rooms: "4 rooms",
-        price: "from 108,000 BYN",
-        time: "75-90 days",
-        image: "/house-photos/IMG_0640.JPG",
-        description: "A larger modular home with separated sleeping rooms and a generous living-dining area for permanent use.",
-        plan: "forest"
+        name: "Turnkey",
+        tagline: "A fully finished house — move in and live, nothing left to do.",
+        features: [
+          "Structural frame — dry timber 45×145",
+          "Roof — metal profile (color of choice)",
+          "Insulation 150 mm: floor, roof, walls (mineral wool)",
+          "Wind/moisture and vapor membranes with ventilation gaps",
+          "Exterior — painted timber-look cladding, grade AB",
+          "PVC laminated windows, double-glazed; plastic entrance door"
+        ],
+        extrasLabel: "Added on top of the Warm Shell",
+        extras: [
+          "Interior finish — painted timber-look cladding, grade AB",
+          "Finish floor — class 33 laminate (color of choice)",
+          "MDF interior doors",
+          "Electrical: concealed/surface wiring, sockets, switches, lights, panel",
+          "5 water points: sink, shower, kitchen sink, toilet",
+          "50 L water heater and a shower cabin with mixer"
+        ]
       }
     ],
+    projectsSection: {
+      eyebrow: "Projects catalog",
+      title: "Modular houses and baths",
+      text: "Swipe through the lineup — from compact 22 m² houses to spacious 84 m² family homes and turnkey baths. Open any project for the full specification."
+    },
+    projects: buildProjects("en"),
     completed: {
       eyebrow: "Completed houses",
       title: "A finished modular house with warm timber interiors",
       text: "Completed near Brest with a terrace, panoramic glazing, bright kitchen-living space, bedroom, and fully finished interiors.",
-      quote: "We wanted a comfortable small house without a long construction process. The team helped choose the layout, prepared the modules, and handed over a ready space on schedule.",
+      quote: "Honestly, we didn't believe it could be this fast! We ordered in spring and by summer we were already having coffee on our own terrace. The team delivered everything, assembled it in a couple of weeks, and left no mess behind. The house is warm, cozy, and smells of real wood — we couldn't be happier.",
       location: "Brest region, Belarus",
       imageAlt: "Completed modular house photo"
     },
@@ -251,34 +486,23 @@ export const content: Record<Lang, Content> = {
         advantages: ["Strong bearing capacity", "Reliable geometry", "Good for wet areas"]
       },
       {
-        title: "Concrete Slab",
-        use: "Best for permanent homes with full utilities and high comfort requirements.",
-        description: "A monolithic base that creates a stable floor structure and clean installation platform.",
-        advantages: ["Excellent stability", "Comfortable floors", "Suitable for heating systems"]
-      },
-      {
         title: "Strip Foundation",
         use: "For traditional plots, larger houses, and projects with specific structural loads.",
         description: "A proven foundation format with strong perimeter support for long-term family homes.",
         advantages: ["Durable structure", "Flexible design", "Familiar service access"]
       }
     ],
-    process: {
-      eyebrow: "Construction process",
-      title: "From first call to project handover",
-      text: "A transparent timeline keeps the work predictable: scope first, price second, manufacturing third, and installation only after readiness is confirmed.",
-      steps: ["Consultation", "Project Selection", "Cost Estimation", "Contract Signing", "Manufacturing", "Delivery", "Installation", "Project Handover"]
-    },
     trust: {
       eyebrow: "Why choose us",
       title: "A calm process, fixed expectations, and accountable delivery",
-      text: "The offer is built for customers who need a permanent, comfortable home without improvisation on site.",
+      text: "",
       cards: ["Official Contract", "Transparent Pricing", "Fixed Deadlines", "Warranty", "Quality Control", "Premium Materials", "Full Customer Support", "Post-Construction Support"]
     },
     catalog: {
       eyebrow: "House plans catalog",
-      title: "Get our house plans catalog",
-      text: "Leave your phone and Telegram username to receive popular house designs, small-size prices, and planning options.",
+      title: "Download our house plans catalog",
+      text: "Get a PDF catalog with popular projects, house prices, and layout options — instant download, no sign-up required.",
+      cardText: "All current projects, prices, and layouts in a single PDF file.",
       perks: ["Eco materials", "Fast construction", "Modern design"]
     },
     consultation: {
@@ -316,40 +540,50 @@ export const content: Record<Lang, Content> = {
       switchTo: "EN"
     },
     nav: [
+      { label: "Каталог", href: "#projects" },
       { label: "Главная", href: "#home" },
-      { label: "О нас", href: "#about" },
-      { label: "Проекты", href: "#projects" },
-      { label: "Этапы строительства", href: "#process" },
+      { label: "Комплектации", href: "#packages" },
       { label: "Контакты", href: "#contacts" }
     ],
     brand: {
-      name: "Modul House",
+      name: "Modul S",
       location: "Брест, Беларусь",
-      tagline: "Современные модульные каркасные дома под ключ из Бреста, Беларусь."
+      tagline: "Современные модульные каркасные дома и бани под ключ из Бреста, Беларусь."
     },
     common: {
-      phone: "+375 44 570 27 87",
+      phone: "+375 44 570 27 27",
       consultation: "Получить консультацию",
       browseProjects: "Смотреть проекты",
       viewProject: "Смотреть проект",
-      getCatalog: "Получить каталог",
+      getCatalog: "Каталог",
       requestConsultation: "Оставить заявку",
       plan: "Планировка",
+      render: "Визуализация",
+      noPhoto: "Фото скоро",
       scaledPreview: "Схема проекта",
       googleMapsArea: "Место для Google Maps",
       telegram: "Telegram",
-      viber: "Viber"
+      viber: "Viber",
+      priceWarm: "Тёплый контур",
+      priceTurnkey: "Под ключ",
+      priceFinished: "Чистовая отделка",
+      dimensions: "Габариты",
+      terrace: "Терраса",
+      specsTitle: "Комплектация и характеристики",
+      close: "Закрыть",
+      prev: "Назад",
+      next: "Вперёд"
     },
     hero: {
-      eyebrow: "Современные модульные дома под ключ",
-      title: "Модульные дома под ключ",
-      lead: "Проектирование, производство, доставка и монтаж качественных модульных домов для семей, дач, владельцев участков и инвесторов по всей Беларуси."
+      eyebrow: "Модульные каркасные дома и бани",
+      title: "Модульные каркасные дома и бани",
+      lead: "Проектирование, производство, доставка и монтаж качественных модульных домов и бань по всей Беларуси."
     },
     benefits: ["Собственное производство", "Доставка по Беларуси", "Строительство под ключ", "Индивидуальные проекты домов"],
     about: {
       eyebrow: "О компании",
-      title: "Каркасные дома с точностью заводского производства",
-      text: "Мы создаем модульные дома и бани, в которых сочетаются комфорт, эстетика и гармония с природой. Каждый проект начинается с консультации и проходит через контролируемое производство, доставку, монтаж и передачу готового объекта.",
+      title: "",
+      text: "Мы создаем модульные дома и бани, в которых сочетаются комфорт, эстетика и гармония с природой. Каждый проект начинается с консультации и проходит через производство, доставку, монтаж и передачу готового домокомплекта.",
       cards: [
         { title: "Контроль качества", text: "Каждый модуль проверяется перед доставкой и на этапе монтажа." },
         { title: "Опытные специалисты", text: "Команда сопровождает проектирование, производство и работы на участке." },
@@ -369,48 +603,59 @@ export const content: Record<Lang, Content> = {
         { title: "Получите рекомендации", text: "Подберем подходящие проекты и проведем консультацию." }
       ]
     },
-    projectsSection: {
-      eyebrow: "Каталог проектов",
-      title: "Популярные небольшие модульные дома",
-      text: "Карточки каталога показывают внешний вид, планировку, площадь, комнаты, цену и срок строительства, чтобы клиент быстро сравнил варианты."
+    packagesSection: {
+      eyebrow: "Виды комплектаций",
+      title: "Выберите комплектацию",
+      text: "Каждый проект доступен в двух комплектациях — утеплённый «тёплый контур» или полностью готовый дом «под ключ»."
     },
-    projects: [
+    packages: [
       {
-        title: "Compact 36",
-        area: "36 м2",
-        rooms: "2 комнаты",
-        price: "от 58 000 BYN",
-        time: "45-60 дней",
-        image: "/house-photos/IMG_0640.JPG",
-        description: "Небольшой дом для круглогодичного проживания с кухней-гостиной, спальней, санузлом и вариантом террасы.",
-        plan: "studio"
+        name: "Тёплый контур",
+        tagline: "Утеплённая, защищённая от непогоды коробка, готовая под вашу внутреннюю отделку.",
+        features: [
+          "Силовой каркас — доска сухая 45×145",
+          "Кровля — металлопрофиль (цвет на выбор)",
+          "Утепление 150 мм: пол, кровля, стены (минеральная вата)",
+          "Ветро-влагозащитная и пароизоляционная мембраны с вент. зазорами",
+          "Наружная отделка — имитация бруса, окрашенная, сорт АВ",
+          "Пол — обрешётка под влагостойкие плиты ДСП",
+          "Окна ПВХ с двухкамерными стеклопакетами, входная пластиковая дверь",
+          "Проход в полу для подключения коммуникаций"
+        ]
       },
       {
-        title: "Family 54",
-        area: "54 м2",
-        rooms: "3 комнаты",
-        price: "от 82 000 BYN",
-        time: "60-75 дней",
-        image: "/house-photos/IMG_0640.JPG",
-        description: "Сбалансированная планировка для семьи: две спальни, общая гостиная зона, техпомещение и теплая деревянная отделка.",
-        plan: "family"
-      },
-      {
-        title: "Forest 72",
-        area: "72 м2",
-        rooms: "4 комнаты",
-        price: "от 108 000 BYN",
-        time: "75-90 дней",
-        image: "/house-photos/IMG_0640.JPG",
-        description: "Более просторный модульный дом с отдельными спальнями и большой зоной кухни-гостиной для постоянного проживания.",
-        plan: "forest"
+        name: "Под ключ",
+        tagline: "Полностью готовый дом с чистовой отделкой — заезжай и живи.",
+        features: [
+          "Силовой каркас — доска сухая 45×145",
+          "Кровля — металлопрофиль (цвет на выбор)",
+          "Утепление 150 мм: пол, кровля, стены (минеральная вата)",
+          "Ветро-влагозащитная и пароизоляционная мембраны с вент. зазорами",
+          "Наружная отделка — имитация бруса, окрашенная, сорт АВ",
+          "Окна ПВХ с двухкамерными стеклопакетами, входная пластиковая дверь"
+        ],
+        extrasLabel: "Дополнительно к «Тёплому контуру»",
+        extras: [
+          "Внутренняя отделка — имитация бруса, окрашенная, сорт АВ",
+          "Чистовой пол — ламинат 33 класс (цвет на выбор)",
+          "Межкомнатные двери МДФ",
+          "Электрика: скрытый/открытый монтаж, розетки, выключатели, свет, щит",
+          "5 водо-точек: раковина, душ, кухонная мойка, унитаз",
+          "Водонагреватель на 50 л и душевая кабина со смесителем"
+        ]
       }
     ],
+    projectsSection: {
+      eyebrow: "Каталог проектов",
+      title: "Модульные дома и бани",
+      text: "Листайте каталог — от компактных домов 22 м² до просторных семейных домов 84 м² и бань под ключ. Откройте любой проект, чтобы увидеть полную комплектацию."
+    },
+    projects: buildProjects("ru"),
     completed: {
       eyebrow: "Построенные дома",
       title: "Готовый модульный дом с теплой деревянной отделкой",
       text: "Проект реализован недалеко от Бреста: терраса, панорамное остекление, светлая кухня-гостиная, спальня и полностью готовые интерьеры.",
-      quote: "Мы хотели комфортный небольшой дом без долгой стройки. Команда помогла выбрать планировку, подготовила модули и передала готовое пространство в согласованные сроки.",
+      quote: "Честно, не верили, что можно так быстро! Заказали дом весной — а к лету уже пили кофе на своей террасе. Ребята всё привезли и собрали за пару недель, мусора после себя не оставили. Дом тёплый, уютный, пахнет настоящим деревом. Мы в полном восторге!",
       location: "Брестская область, Беларусь",
       imageAlt: "Фото готового модульного дома"
     },
@@ -433,34 +678,23 @@ export const content: Record<Lang, Content> = {
         advantages: ["Высокая несущая способность", "Точная геометрия", "Подходят для влажных участков"]
       },
       {
-        title: "Монолитная плита",
-        use: "Для постоянных домов с коммуникациями и повышенным уровнем комфорта.",
-        description: "Прочное основание, которое формирует стабильную платформу для монтажа и будущей эксплуатации.",
-        advantages: ["Отличная устойчивость", "Комфортные полы", "Подходит для теплого пола"]
-      },
-      {
         title: "Ленточный фундамент",
         use: "Для традиционных участков, больших домов и особых конструктивных нагрузок.",
         description: "Проверенный формат фундамента с надежной поддержкой по периметру дома.",
         advantages: ["Долговечная конструкция", "Гибкость проекта", "Удобный доступ к коммуникациям"]
       }
     ],
-    process: {
-      eyebrow: "Этапы строительства",
-      title: "От первого звонка до передачи дома",
-      text: "Прозрачный процесс делает работу предсказуемой: сначала задача, затем расчет, производство и монтаж после подтверждения готовности.",
-      steps: ["Консультация", "Выбор проекта", "Расчет стоимости", "Подписание договора", "Производство", "Доставка", "Монтаж", "Передача объекта"]
-    },
     trust: {
       eyebrow: "Почему выбирают нас",
       title: "Спокойный процесс, понятные условия и ответственная сдача",
-      text: "Предложение создано для клиентов, которым нужен постоянный комфортный дом без импровизации на участке.",
+      text: "",
       cards: ["Официальный договор", "Прозрачная цена", "Фиксированные сроки", "Гарантия", "Контроль качества", "Премиальные материалы", "Полная поддержка клиента", "Поддержка после строительства"]
     },
     catalog: {
       eyebrow: "Каталог планировок",
-      title: "Получите каталог проектов домов",
-      text: "Оставьте телефон и Telegram, чтобы получить популярные проекты, цены на небольшие дома и варианты планировок.",
+      title: "Скачайте каталог проектов домов",
+      text: "Каталог с популярными проектами, ценами на дома и вариантами планировок в PDF — мгновенное скачивание, без заявок.",
+      cardText: "Все актуальные проекты, цены и планировки в одном PDF-файле.",
       perks: ["Экологичные материалы", "Быстрое строительство", "Современный дизайн"]
     },
     consultation: {

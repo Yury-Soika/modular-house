@@ -39,9 +39,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Phone, Telegram, or email is required" }, { status: 400 });
   }
 
-  const subject = `New ${lead.leadType} lead from Modul House`;
+  const subject = `New ${lead.leadType} lead from Modul S`;
   const textBody = [
-    "New lead from the Modul House website",
+    "New lead from the Modul S website",
     "",
     `Lead type: ${lead.leadType}`,
     `Name: ${lead.name || "-"}`,

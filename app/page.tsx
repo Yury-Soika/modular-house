@@ -1,21 +1,21 @@
 "use client";
 
 import Image from "next/image";
-import { type FormEvent, useEffect, useState } from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
   Building2,
   ChevronLeft,
   ChevronRight,
   Check,
-  Clock3,
+  Download,
   Expand,
   Factory,
-  FileText,
   Globe,
   Hammer,
   Home,
-  Leaf,
+  ImageOff,
+  Layers,
   MapPin,
   MessageCircle,
   Phone,
@@ -23,13 +23,16 @@ import {
   ShieldCheck,
   Sparkles,
   Truck,
-  Users,
   X
 } from "lucide-react";
-import { content, type Content, type Lang } from "./data/content";
+import { content, type Content, type Lang, type Project } from "./data/content";
+
+// Public assets (files in /public) are not prefixed with basePath by next/image or
+// plain anchors, so we prefix them ourselves for the sub-path demo deployment.
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const asset = (path: string) => `${BASE_PATH}${path}`;
 
 const benefitIcons = [Factory, Truck, Hammer, Ruler];
-const catalogIcons = [Leaf, Clock3, Sparkles];
 const completedImages = [
   "/house-photos/IMG_0640.JPG",
   "/house-photos/IMG_1444.JPG",
@@ -40,37 +43,144 @@ const completedImages = [
   "/house-photos/IMG_1454.JPG"
 ];
 
-function PlanPreview({ variant, copy }: { variant: "studio" | "family" | "forest"; copy: Content["common"] }) {
-  const layout =
-    variant === "studio"
-      ? "grid-cols-[1.2fr_0.8fr] grid-rows-[1fr_0.8fr]"
-      : variant === "family"
-        ? "grid-cols-[1fr_1fr_0.8fr] grid-rows-[0.8fr_1.2fr]"
-        : "grid-cols-[0.9fr_1.1fr_0.9fr] grid-rows-[1fr_1fr]";
+type Gallery = { images: string[]; index: number };
 
+function PhotoPlaceholder({ label, className }: { label: string; className?: string }) {
   return (
-    <div className="rounded-md border border-forest-900/10 bg-white p-3">
-      <div className={`grid h-28 gap-1 ${layout}`}>
-        <div className="rounded-sm border border-forest-700/30 bg-forest-50" />
-        <div className="rounded-sm border border-forest-700/30 bg-linen" />
-        <div className="rounded-sm border border-forest-700/30 bg-white" />
-        <div className="rounded-sm border border-forest-700/30 bg-forest-100" />
-        <div className="rounded-sm border border-forest-700/30 bg-white" />
-      </div>
-      <div className="mt-2 flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.12em] text-forest-700">
-        <span>{copy.plan}</span>
-        <span>{copy.scaledPreview}</span>
-      </div>
+    <div className={`flex flex-col items-center justify-center gap-2 bg-forest-50 text-forest-700/70 ${className ?? ""}`}>
+      <ImageOff size={26} />
+      <span className="text-[11px] font-semibold uppercase tracking-[0.14em]">{label}</span>
     </div>
   );
 }
 
-function SectionHeading({ eyebrow, title, text }: { eyebrow: string; title: string; text: string }) {
+function SectionHeading({ eyebrow, title, text }: { eyebrow: string; title: string; text?: string }) {
   return (
     <div className="max-w-3xl">
       <p className="eyebrow">{eyebrow}</p>
-      <h2 className="mt-3 text-3xl font-semibold leading-tight text-forest-950 sm:text-4xl">{title}</h2>
-      <p className="mt-4 text-base leading-7 text-charcoal/70">{text}</p>
+      {title && <h2 className="mt-3 text-3xl font-semibold leading-tight text-forest-950 sm:text-4xl">{title}</h2>}
+      {text && <p className="mt-4 text-base leading-7 text-charcoal/70">{text}</p>}
+    </div>
+  );
+}
+
+function ProjectModal({
+  project,
+  copy,
+  onClose,
+  onOpenImage
+}: {
+  project: Project;
+  copy: Content["common"];
+  onClose: () => void;
+  onOpenImage: (images: string[], index: number) => void;
+}) {
+  const projectImages = [project.image, project.plan].filter(Boolean) as string[];
+  const imageBlocks: { src?: string; label: string }[] = [
+    { src: project.image, label: copy.render },
+    { src: project.plan, label: copy.plan }
+  ];
+
+  return (
+    <div className="fixed inset-0 z-[70] flex items-start justify-center overflow-y-auto bg-forest-950/80 p-4 sm:p-8" role="dialog" aria-modal="true">
+      <button className="absolute inset-0 cursor-default" onClick={onClose} type="button" aria-label={copy.close} />
+      <div className="relative z-10 my-4 w-full max-w-4xl rounded-lg bg-white shadow-soft">
+        <div className="flex items-start justify-between gap-4 border-b border-forest-900/10 p-6">
+          <div>
+            <h3 className="text-2xl font-semibold text-forest-950">{project.title}</h3>
+            <p className="mt-1 text-xs font-medium uppercase tracking-[0.1em] text-charcoal/45">{project.projectNo}</p>
+          </div>
+          <button
+            className="focus-ring flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-forest-900/10 text-forest-950 transition hover:bg-linen"
+            onClick={onClose}
+            type="button"
+            aria-label={copy.close}
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="p-6">
+          <div className="grid gap-4 sm:grid-cols-2">
+            {imageBlocks.map((block, index) =>
+              block.src ? (
+                <button
+                  key={block.label}
+                  className="group focus-ring relative h-52 overflow-hidden rounded-md bg-forest-950"
+                  onClick={() => onOpenImage(projectImages, projectImages.indexOf(block.src as string))}
+                  type="button"
+                  aria-label={block.label}
+                >
+                  <Image src={asset(block.src)} alt={`${project.title} — ${block.label}`} fill sizes="(min-width: 640px) 50vw, 100vw" className="object-cover transition duration-500 group-hover:scale-105" />
+                  <span className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-md bg-forest-950/75 text-white opacity-0 transition group-hover:opacity-100">
+                    <Expand size={17} />
+                  </span>
+                  <span className="absolute bottom-2 left-2 rounded bg-forest-950/75 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">{block.label}</span>
+                </button>
+              ) : (
+                <PhotoPlaceholder key={index} label={`${block.label} · ${copy.noPhoto}`} className="h-52 rounded-md" />
+              )
+            )}
+          </div>
+
+          <dl className="mt-6 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-md border border-forest-900/10 bg-linen px-4 py-3">
+              <dt className="text-[11px] font-semibold uppercase tracking-[0.1em] text-charcoal/55">{copy.dimensions}</dt>
+              <dd className="mt-1 text-sm font-medium text-forest-950">{project.size}</dd>
+            </div>
+            {project.terrace && (
+              <div className="rounded-md border border-forest-900/10 bg-linen px-4 py-3">
+                <dt className="text-[11px] font-semibold uppercase tracking-[0.1em] text-charcoal/55">{copy.terrace}</dt>
+                <dd className="mt-1 text-sm font-medium text-forest-950">{project.terrace}</dd>
+              </div>
+            )}
+          </dl>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {project.priceWarm && (
+              <div className="rounded-md border border-forest-900/10 bg-white px-4 py-3">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-charcoal/55">{copy.priceWarm}</p>
+                <strong className="mt-1 block text-lg text-forest-950">{project.priceWarm}</strong>
+              </div>
+            )}
+            <div className="rounded-md border border-forest-700 bg-forest-50 px-4 py-3">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-forest-700">{project.singleColumn ? copy.priceFinished : copy.priceTurnkey}</p>
+              <strong className="mt-1 block text-lg text-forest-950">{project.priceTurnkey}</strong>
+              {project.priceNote && <span className="mt-1 block text-xs text-charcoal/60">{project.priceNote}</span>}
+            </div>
+          </div>
+
+          <h4 className="mt-8 text-sm font-semibold uppercase tracking-[0.12em] text-forest-700">{copy.specsTitle}</h4>
+          <div className="mt-3 overflow-hidden rounded-md border border-forest-900/10">
+            {!project.singleColumn && (
+              <div className="grid grid-cols-[1.1fr_1fr_1fr] bg-forest-950 text-[11px] font-semibold uppercase tracking-[0.06em] text-white">
+                <span className="px-3 py-2" />
+                <span className="px-3 py-2">{copy.priceWarm}</span>
+                <span className="px-3 py-2">{copy.priceTurnkey}</span>
+              </div>
+            )}
+            {project.specs.map((row, index) => (
+              <div
+                key={`${row.label}-${index}`}
+                className={`grid ${project.singleColumn ? "grid-cols-[1fr_1.6fr]" : "grid-cols-[1.1fr_1fr_1fr]"} border-t border-forest-900/10 text-sm ${index % 2 === 0 ? "bg-white" : "bg-linen"}`}
+              >
+                <span className="px-3 py-2 font-semibold text-forest-950">{row.label}</span>
+                {!project.singleColumn && <span className="px-3 py-2 text-charcoal/72">{row.warm}</span>}
+                <span className="px-3 py-2 text-charcoal/72">{row.turnkey}</span>
+              </div>
+            ))}
+          </div>
+
+          <a
+            className="focus-ring mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-forest-700 px-5 text-sm font-semibold text-white transition hover:bg-forest-900"
+            href="#consultation"
+            onClick={onClose}
+          >
+            {copy.requestConsultation}
+            <ArrowRight size={17} />
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
@@ -140,25 +250,6 @@ function ContactForm({ forms, common }: { forms: Content["forms"]; common: Conte
           type="tel"
         />
       </label>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <label className="grid gap-2 text-sm font-semibold text-forest-950">
-          {forms.telegram}
-          <input
-            className="focus-ring h-12 rounded-md border border-forest-900/10 bg-white px-4 text-sm font-medium"
-            name="telegram"
-            placeholder={forms.telegramPlaceholder}
-          />
-        </label>
-        <label className="grid gap-2 text-sm font-semibold text-forest-950">
-          {forms.email}
-          <input
-            className="focus-ring h-12 rounded-md border border-forest-900/10 bg-white px-4 text-sm font-medium"
-            name="email"
-            placeholder={forms.emailPlaceholder}
-            type="email"
-          />
-        </label>
-      </div>
       <label className="grid gap-2 text-sm font-semibold text-forest-950">
         {forms.message}
         <textarea
@@ -183,37 +274,49 @@ function ContactForm({ forms, common }: { forms: Content["forms"]; common: Conte
 
 export default function HomePage() {
   const [lang, setLang] = useState<Lang>("ru");
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [gallery, setGallery] = useState<Gallery | null>(null);
+  const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const copy = content[lang];
-  const activeImage = lightboxIndex === null ? null : completedImages[lightboxIndex];
+  const activeImage = gallery ? gallery.images[gallery.index] : null;
 
-  const openLightbox = (src: string) => {
-    const index = completedImages.indexOf(src);
-    setLightboxIndex(index >= 0 ? index : 0);
+  const openGallery = (images: string[], index = 0) => {
+    if (!images.length) {
+      return;
+    }
+    setGallery({ images, index: Math.max(0, index) });
   };
 
-  const showPreviousImage = () => {
-    setLightboxIndex((current) => (current === null ? current : (current - 1 + completedImages.length) % completedImages.length));
-  };
+  const openCompleted = (src: string) => openGallery(completedImages, Math.max(0, completedImages.indexOf(src)));
 
-  const showNextImage = () => {
-    setLightboxIndex((current) => (current === null ? current : (current + 1) % completedImages.length));
+  const showPreviousImage = () =>
+    setGallery((current) => (current === null ? current : { ...current, index: (current.index - 1 + current.images.length) % current.images.length }));
+
+  const showNextImage = () =>
+    setGallery((current) => (current === null ? current : { ...current, index: (current.index + 1) % current.images.length }));
+
+  const scrollTrack = (direction: 1 | -1) => {
+    const el = trackRef.current;
+    if (!el) {
+      return;
+    }
+    el.scrollBy({ left: direction * Math.min(el.clientWidth * 0.9, 680), behavior: "smooth" });
   };
 
   useEffect(() => {
-    if (lightboxIndex === null) {
+    if (!gallery) {
       return;
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setLightboxIndex(null);
+        setGallery(null);
       }
       if (event.key === "ArrowLeft") {
-        setLightboxIndex((current) => (current === null ? current : (current - 1 + completedImages.length) % completedImages.length));
+        showPreviousImage();
       }
       if (event.key === "ArrowRight") {
-        setLightboxIndex((current) => (current === null ? current : (current + 1) % completedImages.length));
+        showNextImage();
       }
     };
 
@@ -224,7 +327,29 @@ export default function HomePage() {
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [lightboxIndex]);
+  }, [gallery]);
+
+  useEffect(() => {
+    if (!activeProject) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !gallery) {
+        setActiveProject(null);
+      }
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      if (!gallery) {
+        document.body.style.overflow = "";
+      }
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [activeProject, gallery]);
 
   return (
     <main id="home" className="overflow-hidden" lang={copy.meta.htmlLang}>
@@ -247,7 +372,7 @@ export default function HomePage() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <a className="hidden items-center gap-2 text-sm font-semibold text-white md:flex" href="tel:+375445702787">
+            <a className="hidden items-center gap-2 text-sm font-semibold text-white md:flex" href="tel:+375445702727">
               <Phone size={16} />
               {copy.common.phone}
             </a>
@@ -273,12 +398,12 @@ export default function HomePage() {
       <section className="relative min-h-[760px] bg-forest-950 pt-20 text-white">
         <button
           className="focus-ring absolute inset-0 block cursor-zoom-in"
-          onClick={() => openLightbox("/house-photos/IMG_0640.JPG")}
+          onClick={() => openCompleted("/house-photos/IMG_0640.JPG")}
           type="button"
           aria-label="Open hero photo preview"
         >
           <Image
-            src="/house-photos/IMG_0640.JPG"
+            src={asset("/house-photos/IMG_0640.JPG")}
             alt="Modular timber house with terrace near forest"
             fill
             priority
@@ -316,47 +441,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-white py-20" id="about">
-        <div className="section-shell grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-          <div>
-            <SectionHeading eyebrow={copy.about.eyebrow} title={copy.about.title} text={copy.about.text} />
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              {copy.about.cards.map((card) => (
-                <div className="rounded-md border border-forest-900/10 bg-linen p-5" key={card.title}>
-                  <Check className="text-forest-700" size={21} />
-                  <h3 className="mt-4 font-semibold text-forest-950">{card.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-charcoal/68">{card.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <button
-              className="group focus-ring relative h-80 overflow-hidden rounded-md"
-              onClick={() => openLightbox("/house-photos/IMG_1454.JPG")}
-              type="button"
-              aria-label={copy.about.imageAltKitchen}
-            >
-              <Image src="/house-photos/IMG_1454.JPG" alt={copy.about.imageAltKitchen} fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover transition duration-500 group-hover:scale-105" />
-              <span className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-md bg-forest-950/75 text-white opacity-0 transition group-hover:opacity-100">
-                <Expand size={17} />
-              </span>
-            </button>
-            <button
-              className="group focus-ring relative mt-12 h-80 overflow-hidden rounded-md"
-              onClick={() => openLightbox("/house-photos/IMG_1448.JPG")}
-              type="button"
-              aria-label={copy.about.imageAltBedroom}
-            >
-              <Image src="/house-photos/IMG_1448.JPG" alt={copy.about.imageAltBedroom} fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover transition duration-500 group-hover:scale-105" />
-              <span className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-md bg-forest-950/75 text-white opacity-0 transition group-hover:opacity-100">
-                <Expand size={17} />
-              </span>
-            </button>
-          </div>
-        </div>
-      </section>
-
       <section className="bg-linen py-20" id="quiz">
         <div className="section-shell grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
           <SectionHeading eyebrow={copy.quiz.eyebrow} title={copy.quiz.title} text={copy.quiz.text} />
@@ -374,55 +458,159 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="bg-linen py-20" id="packages">
+        <div className="section-shell">
+          <SectionHeading eyebrow={copy.packagesSection.eyebrow} title={copy.packagesSection.title} text={copy.packagesSection.text} />
+          <div className="mt-10 grid gap-6 lg:grid-cols-2">
+            {copy.packages.map((pkg, index) => (
+              <article
+                className={`flex flex-col rounded-md border p-7 ${index === 1 ? "border-forest-700 bg-forest-950 text-white" : "border-forest-900/10 bg-white"}`}
+                key={pkg.name}
+              >
+                <span className={`flex h-11 w-11 items-center justify-center rounded-md ${index === 1 ? "bg-sand text-forest-950" : "bg-forest-50 text-forest-700"}`}>
+                  <Layers size={22} />
+                </span>
+                <h3 className={`mt-5 text-2xl font-semibold ${index === 1 ? "text-white" : "text-forest-950"}`}>{pkg.name}</h3>
+                <p className={`mt-3 text-sm leading-6 ${index === 1 ? "text-white/72" : "text-charcoal/68"}`}>{pkg.tagline}</p>
+                <ul className={`mt-6 space-y-3 text-sm ${index === 1 ? "text-white/80" : "text-charcoal/72"}`}>
+                  {pkg.features.map((feature) => (
+                    <li className="flex items-start gap-2" key={feature}>
+                      <Check className={`mt-0.5 shrink-0 ${index === 1 ? "text-sand" : "text-forest-700"}`} size={16} />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                {pkg.extras && (
+                  <div className="mt-6 rounded-md bg-sand/15 p-5 ring-1 ring-sand/30">
+                    {pkg.extrasLabel && (
+                      <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-sand">
+                        <Sparkles size={15} />
+                        {pkg.extrasLabel}
+                      </p>
+                    )}
+                    <ul className="mt-4 space-y-3 text-sm text-white/85">
+                      {pkg.extras.map((feature) => (
+                        <li className="flex items-start gap-2" key={feature}>
+                          <Check className="mt-0.5 shrink-0 text-sand" size={16} />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="bg-white py-20" id="projects">
         <div className="section-shell">
           <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
             <SectionHeading eyebrow={copy.projectsSection.eyebrow} title={copy.projectsSection.title} text={copy.projectsSection.text} />
-            <a className="focus-ring inline-flex h-12 w-fit items-center justify-center gap-2 rounded-md bg-forest-700 px-5 text-sm font-semibold text-white transition hover:bg-forest-900" href="#catalog">
-              {copy.common.getCatalog}
-              <FileText size={17} />
-            </a>
+            <div className="flex items-center gap-2">
+              <a
+                className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-md bg-forest-700 px-5 text-sm font-semibold text-white transition hover:bg-forest-900"
+                href={asset("/catalog.pdf")}
+                target="_blank"
+                rel="noopener"
+              >
+                <Download size={17} />
+                {copy.common.getCatalog}
+              </a>
+              <button
+                className="focus-ring flex h-12 w-12 items-center justify-center rounded-md border border-forest-900/10 text-forest-950 transition hover:bg-linen"
+                onClick={() => scrollTrack(-1)}
+                type="button"
+                aria-label={copy.common.prev}
+              >
+                <ChevronLeft size={22} />
+              </button>
+              <button
+                className="focus-ring flex h-12 w-12 items-center justify-center rounded-md border border-forest-900/10 text-forest-950 transition hover:bg-linen"
+                onClick={() => scrollTrack(1)}
+                type="button"
+                aria-label={copy.common.next}
+              >
+                <ChevronRight size={22} />
+              </button>
+            </div>
           </div>
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
+
+          <div className="relative mt-10">
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-12 bg-gradient-to-r from-white to-transparent sm:block" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 hidden w-12 bg-gradient-to-l from-white to-transparent sm:block" />
+            <div
+              ref={trackRef}
+              className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto px-1 pb-2"
+            >
             {copy.projects.map((project) => (
-              <article className="rounded-md border border-forest-900/10 bg-white shadow-soft" key={project.title}>
-                <button
-                  className="group focus-ring relative block h-64 w-full cursor-zoom-in overflow-hidden rounded-t-md bg-forest-950"
-                  onClick={() => openLightbox(project.image)}
-                  type="button"
-                  aria-label={`Open ${project.title} photo preview`}
-                >
-                  <Image src={project.image} alt={`${project.title} modular house`} fill sizes="(min-width: 1024px) 33vw, 100vw" className="object-cover transition duration-500 group-hover:scale-105" />
-                  <span className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-md bg-forest-950/75 text-white opacity-0 transition group-hover:opacity-100">
-                    <Expand size={17} />
-                  </span>
-                </button>
-                <div className="p-5">
-                  <div className="flex items-start justify-between gap-4">
+              <article
+                className="flex w-[290px] shrink-0 snap-start flex-col overflow-hidden rounded-xl border border-forest-900/10 bg-white shadow-soft transition duration-300 hover:-translate-y-1 hover:border-forest-700/30 hover:shadow-lg sm:w-[320px]"
+                key={project.id}
+              >
+                <div className="relative">
+                  {project.image ? (
+                    <button
+                      className="group focus-ring relative block h-44 w-full cursor-zoom-in overflow-hidden bg-forest-950"
+                      onClick={() => openGallery([project.image, project.plan].filter(Boolean) as string[], 0)}
+                      type="button"
+                      aria-label={`${project.title} — ${copy.common.render}`}
+                    >
+                      <Image src={asset(project.image)} alt={`${project.title} — ${copy.common.render}`} fill sizes="320px" className="object-cover transition duration-500 group-hover:scale-105" />
+                    </button>
+                  ) : (
+                    <PhotoPlaceholder label={`${copy.common.render} · ${copy.common.noPhoto}`} className="h-44 w-full" />
+                  )}
+                  {project.plan ? (
+                    <button
+                      className="group focus-ring relative block h-28 w-full cursor-zoom-in overflow-hidden border-t border-forest-900/10 bg-white"
+                      onClick={() => openGallery([project.image, project.plan].filter(Boolean) as string[], project.image ? 1 : 0)}
+                      type="button"
+                      aria-label={`${project.title} — ${copy.common.plan}`}
+                    >
+                      <Image src={asset(project.plan)} alt={`${project.title} — ${copy.common.plan}`} fill sizes="320px" className="object-contain" />
+                    </button>
+                  ) : (
+                    <PhotoPlaceholder label={`${copy.common.plan} · ${copy.common.noPhoto}`} className="h-28 w-full border-t border-forest-900/10" />
+                  )}
+                </div>
+
+                <div className="flex flex-1 flex-col p-5">
+                  <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h3 className="text-xl font-semibold text-forest-950">{project.title}</h3>
-                      <p className="mt-2 text-sm leading-6 text-charcoal/68">{project.description}</p>
+                      <h3 className="text-lg font-semibold text-forest-950">{project.title}</h3>
+                      <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.1em] text-charcoal/45">{project.projectNo}</p>
                     </div>
-                    <span className="shrink-0 rounded-md bg-forest-50 px-3 py-2 text-sm font-semibold text-forest-700">
-                      {project.area}
-                    </span>
+                    <span className="shrink-0 rounded-md bg-forest-50 px-3 py-2 text-sm font-semibold text-forest-700">{project.area}</span>
                   </div>
-                  <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
-                    <span className="flex items-center gap-2 text-charcoal/72"><Users size={16} /> {project.rooms}</span>
-                    <span className="flex items-center gap-2 text-charcoal/72"><Clock3 size={16} /> {project.time}</span>
+                  <p className="mt-3 text-sm leading-6 text-charcoal/68">{project.summary}</p>
+
+                  <div className="mt-5 mb-6 grid gap-2">
+                    {project.priceWarm && (
+                      <div className="flex items-center justify-between rounded-md border border-forest-900/10 bg-linen px-3 py-2">
+                        <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-charcoal/55">{copy.common.priceWarm}</span>
+                        <strong className="text-sm text-forest-950">{project.priceWarm}</strong>
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between rounded-md border border-forest-700 bg-forest-50 px-3 py-2">
+                      <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-forest-700">{project.singleColumn ? copy.common.priceFinished : copy.common.priceTurnkey}</span>
+                      <strong className="text-sm text-forest-950">{project.priceTurnkey}</strong>
+                    </div>
                   </div>
-                  <div className="mt-5">
-                    <PlanPreview variant={project.plan} copy={copy.common} />
-                  </div>
-                  <div className="mt-5 flex items-center justify-between gap-4">
-                    <strong className="text-lg text-forest-950">{project.price}</strong>
-                    <a className="focus-ring inline-flex h-11 items-center justify-center rounded-md bg-forest-700 px-4 text-sm font-semibold text-white transition hover:bg-forest-900" href="#consultation">
-                      {copy.common.viewProject}
-                    </a>
-                  </div>
+
+                  <button
+                    className="focus-ring mt-auto inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-forest-700 px-4 text-sm font-semibold text-white transition hover:bg-forest-900"
+                    onClick={() => setActiveProject(project)}
+                    type="button"
+                  >
+                    {copy.common.viewProject}
+                    <ArrowRight size={16} />
+                  </button>
                 </div>
               </article>
             ))}
+            </div>
           </div>
         </div>
       </section>
@@ -446,11 +634,11 @@ export default function HomePage() {
               <button
                 className="group focus-ring relative h-56 cursor-zoom-in overflow-hidden rounded-md sm:h-72"
                 key={src}
-                onClick={() => setLightboxIndex(index)}
+                onClick={() => openGallery(completedImages, index)}
                 type="button"
                 aria-label={`${copy.completed.imageAlt} ${index + 1}`}
               >
-                <Image src={src} alt={`${copy.completed.imageAlt} ${index + 1}`} fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover transition duration-500 group-hover:scale-105" />
+                <Image src={asset(src)} alt={`${copy.completed.imageAlt} ${index + 1}`} fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover transition duration-500 group-hover:scale-105" />
                 <span className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-md bg-forest-950/75 text-white opacity-0 transition group-hover:opacity-100">
                   <Expand size={17} />
                 </span>
@@ -463,7 +651,7 @@ export default function HomePage() {
       <section className="bg-white py-20">
         <div className="section-shell">
           <SectionHeading eyebrow={copy.foundationsSection.eyebrow} title={copy.foundationsSection.title} text={copy.foundationsSection.text} />
-          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {copy.foundations.map((foundation) => (
               <article className="rounded-md border border-forest-900/10 bg-linen p-5" key={foundation.title}>
                 <Building2 className="text-forest-700" size={24} />
@@ -484,23 +672,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-linen py-20" id="process">
-        <div className="section-shell">
-          <SectionHeading eyebrow={copy.process.eyebrow} title={copy.process.title} text={copy.process.text} />
-          <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {copy.process.steps.map((step, index) => (
-              <div className="relative rounded-md bg-white p-5 shadow-soft" key={step}>
-                <span className="text-sm font-semibold text-forest-700">{String(index + 1).padStart(2, "0")}</span>
-                <h3 className="mt-5 font-semibold text-forest-950">{step}</h3>
-                <div className="mt-6 h-1 rounded-full bg-forest-100">
-                  <div className="h-1 rounded-full bg-forest-700" style={{ width: `${((index + 1) / copy.process.steps.length) * 100}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="bg-white py-20">
         <div className="section-shell grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
           <SectionHeading eyebrow={copy.trust.eyebrow} title={copy.trust.title} text={copy.trust.text} />
@@ -511,39 +682,6 @@ export default function HomePage() {
                 <span className="text-sm font-semibold text-forest-950">{item}</span>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-forest-950 py-20 text-white" id="catalog">
-        <div className="section-shell grid gap-10 lg:grid-cols-[1fr_0.75fr] lg:items-center">
-          <div>
-            <p className="eyebrow text-sand">{copy.catalog.eyebrow}</p>
-            <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl">{copy.catalog.title}</h2>
-            <p className="mt-5 max-w-2xl text-base leading-7 text-white/72">{copy.catalog.text}</p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              {copy.catalog.perks.map((text, index) => {
-                const Icon = catalogIcons[index];
-                return (
-                  <div className="rounded-md border border-white/12 p-4" key={text}>
-                    <Icon className="text-sand" size={23} />
-                    <p className="mt-4 text-sm font-semibold">{text}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-          <div className="rounded-md border border-white/12 bg-white/6 p-6 shadow-soft">
-            <FileText className="text-sand" size={28} />
-            <h3 className="mt-5 text-2xl font-semibold">{copy.common.getCatalog}</h3>
-            <p className="mt-3 text-sm leading-6 text-white/68">{copy.catalog.text}</p>
-            <a
-              className="focus-ring mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-md bg-sand px-5 text-sm font-semibold text-forest-950 transition hover:bg-white"
-              href="#consultation"
-            >
-              {copy.common.getCatalog}
-              <ArrowRight size={17} />
-            </a>
           </div>
         </div>
       </section>
@@ -571,7 +709,7 @@ export default function HomePage() {
           <div>
             <h3 className="font-semibold text-sand">{copy.footer.contacts}</h3>
             <div className="mt-4 space-y-3 text-sm text-white/75">
-              <a className="flex items-center gap-2 transition hover:text-white" href="tel:+375445702787"><Phone size={16} /> {copy.common.phone}</a>
+              <a className="flex items-center gap-2 transition hover:text-white" href="tel:+375445702727"><Phone size={16} /> {copy.common.phone}</a>
               <a className="flex items-center gap-2 transition hover:text-white" href="#consultation"><MessageCircle size={16} /> {copy.common.telegram}</a>
               <a className="flex items-center gap-2 transition hover:text-white" href="#consultation"><MessageCircle size={16} /> {copy.common.viber}</a>
             </div>
@@ -586,19 +724,28 @@ export default function HomePage() {
         </div>
       </footer>
 
+      {activeProject && (
+        <ProjectModal
+          project={activeProject}
+          copy={copy.common}
+          onClose={() => setActiveProject(null)}
+          onOpenImage={(images, index) => openGallery(images, index)}
+        />
+      )}
+
       {activeImage && (
         <div className="fixed inset-0 z-[80] bg-forest-950/95 text-white" role="dialog" aria-modal="true">
           <button
             className="absolute inset-0 cursor-zoom-out"
-            onClick={() => setLightboxIndex(null)}
+            onClick={() => setGallery(null)}
             type="button"
-            aria-label="Close image preview"
+            aria-label={copy.common.close}
           />
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-4 sm:p-8">
             <div className="relative h-[78vh] w-full max-w-6xl">
               <Image
-                src={activeImage}
-                alt={`${copy.completed.imageAlt} ${(lightboxIndex ?? 0) + 1}`}
+                src={asset(activeImage)}
+                alt={`${copy.completed.imageAlt} ${(gallery?.index ?? 0) + 1}`}
                 fill
                 sizes="100vw"
                 className="object-contain"
@@ -608,31 +755,35 @@ export default function HomePage() {
           </div>
           <button
             className="focus-ring absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-md bg-white/10 text-white transition hover:bg-white hover:text-forest-950"
-            onClick={() => setLightboxIndex(null)}
+            onClick={() => setGallery(null)}
             type="button"
-            aria-label="Close image preview"
+            aria-label={copy.common.close}
           >
             <X size={22} />
           </button>
-          <button
-            className="focus-ring absolute left-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-md bg-white/10 text-white transition hover:bg-white hover:text-forest-950"
-            onClick={showPreviousImage}
-            type="button"
-            aria-label="Previous image"
-          >
-            <ChevronLeft size={28} />
-          </button>
-          <button
-            className="focus-ring absolute right-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-md bg-white/10 text-white transition hover:bg-white hover:text-forest-950"
-            onClick={showNextImage}
-            type="button"
-            aria-label="Next image"
-          >
-            <ChevronRight size={28} />
-          </button>
-          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white">
-            {(lightboxIndex ?? 0) + 1} / {completedImages.length}
-          </div>
+          {gallery && gallery.images.length > 1 && (
+            <>
+              <button
+                className="focus-ring absolute left-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-md bg-white/10 text-white transition hover:bg-white hover:text-forest-950"
+                onClick={showPreviousImage}
+                type="button"
+                aria-label={copy.common.prev}
+              >
+                <ChevronLeft size={28} />
+              </button>
+              <button
+                className="focus-ring absolute right-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-md bg-white/10 text-white transition hover:bg-white hover:text-forest-950"
+                onClick={showNextImage}
+                type="button"
+                aria-label={copy.common.next}
+              >
+                <ChevronRight size={28} />
+              </button>
+              <div className="absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white">
+                {(gallery.index ?? 0) + 1} / {gallery.images.length}
+              </div>
+            </>
+          )}
         </div>
       )}
     </main>
