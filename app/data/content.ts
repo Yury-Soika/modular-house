@@ -333,8 +333,8 @@ const buildProjects = (lang: Lang): Project[] =>
             : `${price(s.noTerrace, lang)} without terrace`
           : undefined,
       summary: summaryFor(s, lang),
-      image: `/projects/${s.no}-render.jpeg`,
-      plan: `/projects/${s.no}-plan.jpeg`,
+      image: `/projects/${s.no}-render.jpg`,
+      plan: `/projects/${s.no}-plan.jpg`,
       singleColumn: isBath,
       specs: isBath ? bathSpecs(lang) : houseSpecs(lang, s.terrace)
     };
