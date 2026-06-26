@@ -33,15 +33,46 @@ const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const asset = (path: string) => `${BASE_PATH}${path}`;
 
 const benefitIcons = [Factory, Truck, Hammer, Ruler];
-const completedImages = [
-  "/house-photos/IMG_0640.JPG",
-  "/house-photos/IMG_1444.JPG",
-  "/house-photos/IMG_1445.JPG",
-  "/house-photos/IMG_1447.JPG",
-  "/house-photos/IMG_1448.JPG",
-  "/house-photos/IMG_1451.JPG",
-  "/house-photos/IMG_1454.JPG"
+const familyHouseImages = [
+  "/family-house/IMG_0640.JPG",
+  "/family-house/IMG_1444.JPG",
+  "/family-house/IMG_1445.JPG",
+  "/family-house/IMG_1447.JPG",
+  "/family-house/IMG_1448.JPG",
+  "/family-house/IMG_1451.JPG",
+  "/family-house/IMG_1454.JPG"
 ];
+
+const completedProjectImages = {
+  familyHouse: familyHouseImages,
+  oneRoomHouse: [
+    "/one-room-house/IMG_8366.JPG",
+    "/one-room-house/IMG_8369.JPG",
+    "/one-room-house/IMG_8373.JPG",
+    "/one-room-house/IMG_8377.JPG",
+    "/one-room-house/IMG_8385.JPG",
+    "/one-room-house/IMG_8386.JPG"
+  ],
+  sauna: [
+    "/sauna/IMG_1319.JPG",
+    "/sauna/IMG_1320.JPG",
+    "/sauna/IMG_1322.JPG",
+    "/sauna/IMG_1323.JPG",
+    "/sauna/IMG_1326.JPG",
+    "/sauna/IMG_1334.JPG",
+    "/sauna/IMG_1337.JPG"
+  ],
+  cafe: [
+    "/caffee/IMG_0788.JPG",
+    "/caffee/IMG_0791.JPG",
+    "/caffee/IMG_0798.JPG",
+    "/caffee/IMG_0799.JPG",
+    "/caffee/IMG_0802.JPG",
+    "/caffee/IMG_0804.JPG",
+    "/caffee/IMG_0806.JPG",
+    "/caffee/IMG_0812.JPG"
+  ]
+};
 
 type Gallery = { images: string[]; index: number };
 
@@ -276,9 +307,50 @@ export default function HomePage() {
   const [lang, setLang] = useState<Lang>("ru");
   const [gallery, setGallery] = useState<Gallery | null>(null);
   const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [activeCompleted, setActiveCompleted] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
   const copy = content[lang];
   const activeImage = gallery ? gallery.images[gallery.index] : null;
+  const completedProjects = [
+    {
+      title: lang === "ru" ? "Готовый модульный дом с теплой деревянной отделкой" : "Finished modular house with warm timber interiors",
+      meta: lang === "ru" ? "Дом с террасой и готовой отделкой" : "House with terrace and finished interiors",
+      text:
+        lang === "ru"
+          ? "Готовый дом с террасой, панорамным остеклением, светлой кухней-гостиной, спальней и полностью готовыми интерьерами."
+          : "A completed house with a terrace, panoramic glazing, bright kitchen-living space, bedroom, and fully finished interiors.",
+      quote: copy.completed.quote,
+      images: completedProjectImages.familyHouse
+    },
+    {
+      title: lang === "ru" ? "Компактный дом-студия" : "Compact studio house",
+      meta: lang === "ru" ? "Готовый дом для дачи или гостевого проживания" : "Finished house for a country plot or guest stay",
+      text:
+        lang === "ru"
+          ? "Небольшой аккуратный формат, где все ключевые зоны собраны в удобном и светлом пространстве."
+          : "A small, tidy format where every key zone fits into a bright and practical space.",
+      images: completedProjectImages.oneRoomHouse
+    },
+    {
+      title: lang === "ru" ? "Баня под ключ" : "Turnkey sauna",
+      meta: lang === "ru" ? "Парная, душевая и зона отдыха" : "Steam room, shower, and rest area",
+      text:
+        lang === "ru"
+          ? "Отдельная баня с чистовой отделкой, парной и готовыми инженерными решениями."
+          : "A separate sauna with finished interiors, a steam room, and ready utility solutions.",
+      images: completedProjectImages.sauna
+    },
+    {
+      title: lang === "ru" ? "Коммерческий модуль" : "Commercial module",
+      meta: lang === "ru" ? "Кафе в модульном формате" : "Cafe in a modular format",
+      text:
+        lang === "ru"
+          ? "Готовое коммерческое пространство, которое показывает, как модульная технология работает не только для домов."
+          : "A finished commercial space showing how modular construction works beyond residential houses.",
+      images: completedProjectImages.cafe
+    }
+  ];
+  const selectedCompleted = completedProjects[activeCompleted] ?? completedProjects[0];
 
   const openGallery = (images: string[], index = 0) => {
     if (!images.length) {
@@ -287,7 +359,7 @@ export default function HomePage() {
     setGallery({ images, index: Math.max(0, index) });
   };
 
-  const openCompleted = (src: string) => openGallery(completedImages, Math.max(0, completedImages.indexOf(src)));
+  const openCompleted = (src: string) => openGallery(familyHouseImages, Math.max(0, familyHouseImages.indexOf(src)));
 
   const showPreviousImage = () =>
     setGallery((current) => (current === null ? current : { ...current, index: (current.index - 1 + current.images.length) % current.images.length }));
@@ -353,31 +425,31 @@ export default function HomePage() {
 
   return (
     <main id="home" className="overflow-hidden" lang={copy.meta.htmlLang}>
-      <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-forest-950/90 backdrop-blur">
-        <div className="section-shell flex h-20 items-center justify-between gap-5 text-white">
+      <header className="fixed left-0 right-0 top-0 z-50 border-b border-forest-900/10 bg-white/95 shadow-sm backdrop-blur">
+        <div className="section-shell flex h-20 items-center justify-between gap-5 text-forest-950">
           <a className="focus-ring flex items-center gap-3 rounded-md" href="#home" aria-label={`${copy.brand.name} home`}>
-            <span className="flex h-10 w-10 items-center justify-center rounded-md border border-sand/60 text-sand">
+            <span className="flex h-10 w-10 items-center justify-center rounded-md border border-forest-900/15 text-forest-700">
               <Home size={21} />
             </span>
             <span className="leading-none">
               <span className="block text-lg font-semibold uppercase tracking-[0.22em]">{copy.brand.name}</span>
-              <span className="mt-1 block text-[10px] uppercase tracking-[0.25em] text-sand">{copy.brand.location}</span>
+              <span className="mt-1 block text-[10px] uppercase tracking-[0.25em] text-charcoal/55">{copy.brand.location}</span>
             </span>
           </a>
-          <nav className="hidden items-center gap-7 text-sm font-medium text-white/75 lg:flex" aria-label="Primary">
+          <nav className="hidden items-center gap-7 text-sm font-medium text-charcoal/70 lg:flex" aria-label="Primary">
             {copy.nav.map((item) => (
-              <a className="transition hover:text-white" href={item.href} key={item.href}>
+              <a className="transition hover:text-forest-950" href={item.href} key={item.href}>
                 {item.label}
               </a>
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <a className="hidden items-center gap-2 text-sm font-semibold text-white md:flex" href="tel:+375445702727">
+            <a className="hidden items-center gap-2 text-sm font-semibold text-forest-950 md:flex" href="tel:+375445702727">
               <Phone size={16} />
               {copy.common.phone}
             </a>
             <button
-              className="focus-ring inline-flex h-11 items-center justify-center gap-2 rounded-md border border-white/15 px-3 text-xs font-semibold text-white transition hover:bg-white/10"
+              className="focus-ring inline-flex h-11 items-center justify-center gap-2 rounded-md border border-forest-900/10 px-3 text-xs font-semibold text-forest-950 transition hover:bg-linen"
               onClick={() => setLang(lang === "en" ? "ru" : "en")}
               aria-label={copy.meta.switchLabel}
               type="button"
@@ -386,7 +458,7 @@ export default function HomePage() {
               {copy.meta.switchTo}
             </button>
             <a
-              className="focus-ring hidden h-11 items-center justify-center gap-2 rounded-md bg-sand px-4 text-sm font-semibold text-forest-950 transition hover:bg-white sm:inline-flex"
+              className="focus-ring hidden h-11 items-center justify-center gap-2 rounded-md bg-forest-700 px-4 text-sm font-semibold text-white transition hover:bg-forest-900 sm:inline-flex"
               href="#consultation"
             >
               {copy.common.consultation}
@@ -398,24 +470,24 @@ export default function HomePage() {
       <section className="relative min-h-[760px] bg-forest-950 pt-20 text-white">
         <button
           className="focus-ring absolute inset-0 block cursor-zoom-in"
-          onClick={() => openCompleted("/house-photos/IMG_0640.JPG")}
+          onClick={() => openCompleted("/family-house/IMG_0640.JPG")}
           type="button"
           aria-label="Open hero photo preview"
         >
           <Image
-            src={asset("/house-photos/IMG_0640.JPG")}
+            src={asset("/family-house/IMG_0640.JPG")}
             alt="Modular timber house with terrace near forest"
             fill
             priority
             sizes="100vw"
-            className="object-cover opacity-55"
+            className="object-cover opacity-75"
           />
         </button>
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-forest-950 via-forest-950/70 to-forest-950/10" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-forest-950/80 via-forest-950/45 to-forest-950/5" />
         <div className="section-shell relative flex min-h-[680px] items-center">
           <div className="max-w-3xl py-20">
-            <p className="eyebrow text-sand">{copy.hero.eyebrow}</p>
-            <h1 className="mt-5 text-5xl font-semibold leading-[1.05] sm:text-6xl lg:text-7xl">{copy.hero.title}</h1>
+            {copy.hero.eyebrow && <p className="eyebrow text-sand">{copy.hero.eyebrow}</p>}
+            <h1 className={`${copy.hero.eyebrow ? "mt-5" : ""} text-5xl font-semibold leading-[1.05] sm:text-6xl lg:text-7xl`}>{copy.hero.title}</h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-white/78">{copy.hero.lead}</p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <a className="focus-ring inline-flex min-h-14 items-center justify-center gap-2 rounded-md bg-sand px-6 py-4 text-sm font-semibold text-forest-950 transition hover:bg-white" href="#consultation">
@@ -441,57 +513,40 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-linen py-20" id="quiz">
-        <div className="section-shell grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-          <SectionHeading eyebrow={copy.quiz.eyebrow} title={copy.quiz.title} text={copy.quiz.text} />
-          <div className="grid gap-4 sm:grid-cols-3">
-            {copy.quiz.steps.map((step, index) => (
-              <div className="rounded-md bg-white p-6 shadow-soft" key={step.title}>
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-forest-700 text-sm font-semibold text-white">
-                  {index + 1}
-                </span>
-                <h3 className="mt-5 font-semibold text-forest-950">{step.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-charcoal/68">{step.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="bg-linen py-20" id="packages">
         <div className="section-shell">
           <SectionHeading eyebrow={copy.packagesSection.eyebrow} title={copy.packagesSection.title} text={copy.packagesSection.text} />
           <div className="mt-10 grid gap-6 lg:grid-cols-2">
             {copy.packages.map((pkg, index) => (
               <article
-                className={`flex flex-col rounded-md border p-7 ${index === 1 ? "border-forest-700 bg-forest-950 text-white" : "border-forest-900/10 bg-white"}`}
+                className={`flex flex-col rounded-md border p-7 ${index === 1 ? "border-forest-700/30 bg-white" : "border-forest-900/10 bg-white"}`}
                 key={pkg.name}
               >
-                <span className={`flex h-11 w-11 items-center justify-center rounded-md ${index === 1 ? "bg-sand text-forest-950" : "bg-forest-50 text-forest-700"}`}>
+                <span className={`flex h-11 w-11 items-center justify-center rounded-md ${index === 1 ? "bg-forest-700 text-white" : "bg-forest-50 text-forest-700"}`}>
                   <Layers size={22} />
                 </span>
-                <h3 className={`mt-5 text-2xl font-semibold ${index === 1 ? "text-white" : "text-forest-950"}`}>{pkg.name}</h3>
-                <p className={`mt-3 text-sm leading-6 ${index === 1 ? "text-white/72" : "text-charcoal/68"}`}>{pkg.tagline}</p>
-                <ul className={`mt-6 space-y-3 text-sm ${index === 1 ? "text-white/80" : "text-charcoal/72"}`}>
+                <h3 className="mt-5 text-2xl font-semibold text-forest-950">{pkg.name}</h3>
+                <p className="mt-3 text-sm leading-6 text-charcoal/68">{pkg.tagline}</p>
+                <ul className="mt-6 space-y-3 text-sm text-charcoal/72">
                   {pkg.features.map((feature) => (
                     <li className="flex items-start gap-2" key={feature}>
-                      <Check className={`mt-0.5 shrink-0 ${index === 1 ? "text-sand" : "text-forest-700"}`} size={16} />
+                      <Check className="mt-0.5 shrink-0 text-forest-700" size={16} />
                       <span>{feature}</span>
                     </li>
                   ))}
                 </ul>
                 {pkg.extras && (
-                  <div className="mt-6 rounded-md bg-sand/15 p-5 ring-1 ring-sand/30">
+                  <div className="mt-6 rounded-md bg-linen p-5 ring-1 ring-forest-900/10">
                     {pkg.extrasLabel && (
-                      <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-sand">
+                      <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-forest-700">
                         <Sparkles size={15} />
                         {pkg.extrasLabel}
                       </p>
                     )}
-                    <ul className="mt-4 space-y-3 text-sm text-white/85">
+                    <ul className="mt-4 space-y-3 text-sm text-charcoal/72">
                       {pkg.extras.map((feature) => (
                         <li className="flex items-start gap-2" key={feature}>
-                          <Check className="mt-0.5 shrink-0 text-sand" size={16} />
+                          <Check className="mt-0.5 shrink-0 text-forest-700" size={16} />
                           <span>{feature}</span>
                         </li>
                       ))}
@@ -616,34 +671,78 @@ export default function HomePage() {
       </section>
 
       <section className="bg-forest-950 py-20 text-white">
-        <div className="section-shell grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <div className="section-shell grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
           <div>
             <p className="eyebrow text-sand">{copy.completed.eyebrow}</p>
             <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl">{copy.completed.title}</h2>
             <p className="mt-5 text-base leading-7 text-white/72">{copy.completed.text}</p>
-            <blockquote className="mt-8 border-l-2 border-sand pl-5 text-lg leading-8 text-white/86">
-              &quot;{copy.completed.quote}&quot;
-            </blockquote>
-            <p className="mt-5 flex items-center gap-2 text-sm font-semibold text-sand">
-              <MapPin size={17} />
-              {copy.completed.location}
-            </p>
+            {copy.completed.location && (
+              <p className="mt-5 flex items-center gap-2 text-sm font-semibold text-sand">
+                <MapPin size={17} />
+                {copy.completed.location}
+              </p>
+            )}
+            <div className="mt-9 grid gap-3">
+              {completedProjects.map((project, index) => {
+                const active = index === activeCompleted;
+                return (
+                  <button
+                    className={`focus-ring group grid grid-cols-[72px_1fr] items-center gap-4 rounded-md border p-3 text-left transition ${
+                      active ? "border-sand bg-white text-forest-950" : "border-white/12 bg-white/5 text-white hover:border-white/30 hover:bg-white/10"
+                    }`}
+                    key={project.title}
+                    onClick={() => setActiveCompleted(index)}
+                    type="button"
+                  >
+                    <span className="relative h-16 overflow-hidden rounded-md bg-forest-900">
+                      <Image src={asset(project.images[0])} alt={project.title} fill sizes="72px" className="object-cover transition duration-500 group-hover:scale-105" />
+                    </span>
+                    <span>
+                      <span className="block text-sm font-semibold">{project.title}</span>
+                      <span className={`mt-1 block text-xs leading-5 ${active ? "text-charcoal/62" : "text-white/58"}`}>{project.meta}</span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            {completedImages.map((src, index) => (
+          <div>
+            <button
+              className="group focus-ring relative block h-[420px] w-full cursor-zoom-in overflow-hidden rounded-md bg-forest-900 shadow-2xl"
+              onClick={() => openGallery(selectedCompleted.images, 0)}
+              type="button"
+              aria-label={`${copy.completed.imageAlt} ${selectedCompleted.title}`}
+            >
+              <Image src={asset(selectedCompleted.images[0])} alt={selectedCompleted.title} fill sizes="(min-width: 1024px) 58vw, 100vw" className="object-cover transition duration-700 group-hover:scale-105" />
+              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-forest-950/90 to-transparent p-5">
+                <span className="block text-xl font-semibold">{selectedCompleted.title}</span>
+                <span className="mt-2 block max-w-2xl text-sm leading-6 text-white/72">{selectedCompleted.text}</span>
+              </span>
+              <span className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-md bg-forest-950/75 text-white opacity-0 transition group-hover:opacity-100">
+                <Expand size={18} />
+              </span>
+            </button>
+            <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
+              {selectedCompleted.images.slice(1).map((src, index) => (
               <button
-                className="group focus-ring relative h-56 cursor-zoom-in overflow-hidden rounded-md sm:h-72"
+                className="group focus-ring relative h-24 cursor-zoom-in overflow-hidden rounded-md bg-forest-900 sm:h-28"
                 key={src}
-                onClick={() => openGallery(completedImages, index)}
+                onClick={() => openGallery(selectedCompleted.images, index + 1)}
                 type="button"
                 aria-label={`${copy.completed.imageAlt} ${index + 1}`}
               >
-                <Image src={asset(src)} alt={`${copy.completed.imageAlt} ${index + 1}`} fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover transition duration-500 group-hover:scale-105" />
+                <Image src={asset(src)} alt={`${selectedCompleted.title} ${index + 2}`} fill sizes="160px" className="object-cover transition duration-500 group-hover:scale-105" />
                 <span className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-md bg-forest-950/75 text-white opacity-0 transition group-hover:opacity-100">
                   <Expand size={17} />
                 </span>
               </button>
-            ))}
+              ))}
+            </div>
+            {"quote" in selectedCompleted && selectedCompleted.quote && (
+              <blockquote className="mt-5 rounded-md border border-sand/30 bg-white/8 p-5 text-base leading-7 text-white/86">
+                &quot;{selectedCompleted.quote}&quot;
+              </blockquote>
+            )}
           </div>
         </div>
       </section>
@@ -680,6 +779,23 @@ export default function HomePage() {
               <div className="flex items-center gap-3 rounded-md border border-forest-900/10 bg-linen p-4" key={item}>
                 <ShieldCheck className="shrink-0 text-forest-700" size={21} />
                 <span className="text-sm font-semibold text-forest-950">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-linen py-20" id="quiz">
+        <div className="section-shell grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+          <SectionHeading eyebrow={copy.quiz.eyebrow} title={copy.quiz.title} text={copy.quiz.text} />
+          <div className="grid gap-4 sm:grid-cols-3">
+            {copy.quiz.steps.map((step, index) => (
+              <div className="rounded-md bg-white p-6 shadow-soft" key={step.title}>
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-forest-700 text-sm font-semibold text-white">
+                  {index + 1}
+                </span>
+                <h3 className="mt-5 font-semibold text-forest-950">{step.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-charcoal/68">{step.text}</p>
               </div>
             ))}
           </div>

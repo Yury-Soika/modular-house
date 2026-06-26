@@ -299,6 +299,50 @@ const bathSpecs = (lang: Lang): SpecRow[] => {
 
 const summaryFor = (s: Seed, lang: Lang): string => {
   const r = lang === "ru";
+  const ruSummaries: Record<string, string> = {
+    "6920353": "Уютный домик для комфортной жизни на природе.",
+    "6970893": "Компактный и функциональный дом для дачи или постоянного проживания.",
+    "6971406": "Идеальное решение для небольшой семьи с продуманной планировкой.",
+    "7004381": "Минималистичный дом — идеальное пространство для жизни.",
+    "6920434": "Небольшой дачный дом с парной.",
+    "6892350": "Небольшой дачный дом с парной.",
+    "6972660": "Современный дом с продуманной планировкой и стильным дизайном.",
+    "6971491": "Удобное пространство для создания уютного семейного гнездышка.",
+    "6972735": "Энергоэффективный дом, который обеспечит комфорт круглый год.",
+    "7066580": "Прекрасное сочетание стиля и функциональности в доме.",
+    "6966147": "Просторный дом для комфортной жизни всей семьи.",
+    "7055054": "Дом с возможностью индивидуальной настройки под ваши нужды.",
+    "7068240": "Просторные комнаты и светлые интерьеры для активной жизни.",
+    "6964526": "Идеальное решение для большой семьи с несколькими спальнями.",
+    "6985270": "Уютное пространство для создания теплой атмосферы в вашем доме.",
+    "7042179": "Просторный и функциональный дом для активного отдыха.",
+    "6915271": "Идеальное место для семейных встреч с большой гостиной.",
+    "6964606": "Стильный и современный дом, который вдохновляет на новые идеи."
+  };
+  const enSummaries: Record<string, string> = {
+    "6920353": "A cozy house for comfortable living close to nature.",
+    "6970893": "A compact, functional house for a country plot or year-round living.",
+    "6971406": "A smart solution for a small family with a well-planned layout.",
+    "7004381": "A minimalist house with flexible space for everyday life.",
+    "6920434": "A small country house with a steam room.",
+    "6892350": "A small country house with a steam room.",
+    "6972660": "A modern home with a thoughtful layout and clean design.",
+    "6971491": "A comfortable space for creating a warm family home.",
+    "6972735": "An energy-efficient house designed for comfort in every season.",
+    "7066580": "A balanced mix of style and practical planning.",
+    "6966147": "A spacious house for comfortable living with the whole family.",
+    "7055054": "A home that can be adjusted to your needs and lifestyle.",
+    "7068240": "Bright rooms and generous interiors for active family life.",
+    "6964526": "A strong choice for a larger family with several bedrooms.",
+    "6985270": "A warm, inviting home for creating a calm everyday atmosphere.",
+    "7042179": "A spacious and functional house for active rest and family time.",
+    "6915271": "An ideal place for family gatherings with a large living area.",
+    "6964606": "A stylish modern home that leaves room for your own ideas."
+  };
+  const custom = r ? ruSummaries[s.no] : enSummaries[s.no];
+  if (custom) {
+    return custom;
+  }
   if (s.kind === "bath") {
     return r ? "Баня под ключ с парной из ольхи и дровяной печью." : "A turnkey bath with an alder steam room and a wood-fired stove.";
   }
@@ -348,9 +392,9 @@ export const content: Record<Lang, Content> = {
       switchTo: "RU"
     },
     nav: [
-      { label: "Catalog", href: "#projects" },
       { label: "Home", href: "#home" },
       { label: "Packages", href: "#packages" },
+      { label: "Catalog", href: "#projects" },
       { label: "Contacts", href: "#contacts" }
     ],
     brand: {
@@ -383,7 +427,7 @@ export const content: Record<Lang, Content> = {
       next: "Next"
     },
     hero: {
-      eyebrow: "Modular timber houses and baths",
+      eyebrow: "",
       title: "Modular Timber-Frame Houses & Baths",
       lead: "Design, manufacturing, delivery, and installation of high-quality modular houses and baths across Belarus."
     },
@@ -414,7 +458,7 @@ export const content: Record<Lang, Content> = {
     packagesSection: {
       eyebrow: "Package types",
       title: "Choose your package",
-      text: "Every project is available in two configurations — a weatherproof warm shell, or a fully finished turnkey house ready to move in."
+      text: "Every project is available in two configurations — an insulated warm shell, or a fully finished turnkey house."
     },
     packages: [
       {
@@ -447,8 +491,8 @@ export const content: Record<Lang, Content> = {
           "Interior finish — painted timber-look cladding, grade AB",
           "Finish floor — class 33 laminate (color of choice)",
           "MDF interior doors",
-          "Electrical: concealed/surface wiring, sockets, switches, lights, panel",
-          "5 water points: sink, shower, kitchen sink, toilet",
+          "Electrical: concealed/surface wiring, sockets, switches, light fixtures, electrical panel",
+          "5 water points: sink, shower, kitchen sink, toilet, water heater",
           "50 L water heater and a shower cabin with mixer"
         ]
       }
@@ -456,15 +500,15 @@ export const content: Record<Lang, Content> = {
     projectsSection: {
       eyebrow: "Projects catalog",
       title: "Modular houses and baths",
-      text: "Swipe through the lineup — from compact 22 m² houses to spacious 84 m² family homes and turnkey baths. Open any project for the full specification."
+      text: "Swipe through the lineup — from compact 22 m² houses to spacious 84 m² family homes and turnkey baths. Open any project to see the full layout. Layout changes are possible for every project, and we also build custom designs."
     },
     projects: buildProjects("en"),
     completed: {
       eyebrow: "Completed houses",
-      title: "A finished modular house with warm timber interiors",
-      text: "Completed near Brest with a terrace, panoramic glazing, bright kitchen-living space, bedroom, and fully finished interiors.",
-      quote: "Honestly, we didn't believe it could be this fast! We ordered in spring and by summer we were already having coffee on our own terrace. The team delivered everything, assembled it in a couple of weeks, and left no mess behind. The house is warm, cozy, and smells of real wood — we couldn't be happier.",
-      location: "Brest region, Belarus",
+      title: "Built modular projects",
+      text: "A selection of completed houses, baths, and modular commercial spaces. Each project has its own photos and details.",
+      quote: "Honestly, we didn't believe it could be this fast! We ordered in spring and by summer we were already having coffee on our own terrace. The house is warm, cozy, and smells of real wood — we couldn't be happier.",
+      location: "",
       imageAlt: "Completed modular house photo"
     },
     foundationsSection: {
@@ -496,7 +540,7 @@ export const content: Record<Lang, Content> = {
       eyebrow: "Why choose us",
       title: "A calm process, fixed expectations, and accountable delivery",
       text: "",
-      cards: ["Official Contract", "Transparent Pricing", "Fixed Deadlines", "Warranty", "Quality Control", "Premium Materials", "Full Customer Support", "Post-Construction Support"]
+      cards: ["Official Contract", "Transparent Pricing", "Fixed Deadlines", "Warranty", "Quality Control", "Quality Materials", "Photo and Video at Every Stage", "Post-Construction Support"]
     },
     catalog: {
       eyebrow: "House plans catalog",
@@ -540,9 +584,9 @@ export const content: Record<Lang, Content> = {
       switchTo: "EN"
     },
     nav: [
-      { label: "Каталог", href: "#projects" },
       { label: "Главная", href: "#home" },
       { label: "Комплектации", href: "#packages" },
+      { label: "Каталог", href: "#projects" },
       { label: "Контакты", href: "#contacts" }
     ],
     brand: {
@@ -575,7 +619,7 @@ export const content: Record<Lang, Content> = {
       next: "Вперёд"
     },
     hero: {
-      eyebrow: "Модульные каркасные дома и бани",
+      eyebrow: "",
       title: "Модульные каркасные дома и бани",
       lead: "Проектирование, производство, доставка и монтаж качественных модульных домов и бань по всей Беларуси."
     },
@@ -606,7 +650,7 @@ export const content: Record<Lang, Content> = {
     packagesSection: {
       eyebrow: "Виды комплектаций",
       title: "Выберите комплектацию",
-      text: "Каждый проект доступен в двух комплектациях — утеплённый «тёплый контур» или полностью готовый дом «под ключ»."
+      text: "Каждый проект доступен в двух комплектациях — каркас с утеплением «тёплый контур» или полностью готовый дом с отделкой «под ключ»."
     },
     packages: [
       {
@@ -639,8 +683,8 @@ export const content: Record<Lang, Content> = {
           "Внутренняя отделка — имитация бруса, окрашенная, сорт АВ",
           "Чистовой пол — ламинат 33 класс (цвет на выбор)",
           "Межкомнатные двери МДФ",
-          "Электрика: скрытый/открытый монтаж, розетки, выключатели, свет, щит",
-          "5 водо-точек: раковина, душ, кухонная мойка, унитаз",
+          "Электрика: скрытый/открытый монтаж, розетки, выключатели, светильники, электр. щит",
+          "5 водо-точек: раковина, душ, кухонная мойка, унитаз, водонагреватель",
           "Водонагреватель на 50 л и душевая кабина со смесителем"
         ]
       }
@@ -648,15 +692,15 @@ export const content: Record<Lang, Content> = {
     projectsSection: {
       eyebrow: "Каталог проектов",
       title: "Модульные дома и бани",
-      text: "Листайте каталог — от компактных домов 22 м² до просторных семейных домов 84 м² и бань под ключ. Откройте любой проект, чтобы увидеть полную комплектацию."
+      text: "Листайте каталог — от компактных домов 22 м² до просторных семейных домов 84 м² и бань под ключ. Откройте любой проект, чтобы увидеть полную планировку. В каждом проекте возможна перепланировка. Строим по индивидуальным проектам."
     },
     projects: buildProjects("ru"),
     completed: {
       eyebrow: "Построенные дома",
-      title: "Готовый модульный дом с теплой деревянной отделкой",
-      text: "Проект реализован недалеко от Бреста: терраса, панорамное остекление, светлая кухня-гостиная, спальня и полностью готовые интерьеры.",
-      quote: "Честно, не верили, что можно так быстро! Заказали дом весной — а к лету уже пили кофе на своей террасе. Ребята всё привезли и собрали за пару недель, мусора после себя не оставили. Дом тёплый, уютный, пахнет настоящим деревом. Мы в полном восторге!",
-      location: "Брестская область, Беларусь",
+      title: "Реализованные модульные проекты",
+      text: "Подборка построенных домов, бань и коммерческих модулей. У каждого объекта — свои фотографии и детали.",
+      quote: "Честно, не верили, что можно так быстро! Заказали дом весной — а к лету уже пили кофе на своей террасе. Дом тёплый, уютный, пахнет настоящим деревом. Мы в полном восторге!",
+      location: "",
       imageAlt: "Фото готового модульного дома"
     },
     foundationsSection: {
@@ -688,7 +732,7 @@ export const content: Record<Lang, Content> = {
       eyebrow: "Почему выбирают нас",
       title: "Спокойный процесс, понятные условия и ответственная сдача",
       text: "",
-      cards: ["Официальный договор", "Прозрачная цена", "Фиксированные сроки", "Гарантия", "Контроль качества", "Премиальные материалы", "Полная поддержка клиента", "Поддержка после строительства"]
+      cards: ["Официальный договор", "Прозрачная цена", "Фиксированные сроки", "Гарантия", "Контроль качества", "Качественные материалы", "Фото и видео на каждом этапе", "Поддержка после строительства"]
     },
     catalog: {
       eyebrow: "Каталог планировок",
