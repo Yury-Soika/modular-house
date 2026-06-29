@@ -10,11 +10,17 @@ type LeadPayload = {
   message?: string;
 };
 
-const rusenderToken = process.env.RUSENDER_API_TOKEN;
-const rusenderKeyId = process.env.RUSENDER_KEY_ID;
-const leadRecipient = process.env.LEAD_RECIPIENT_EMAIL;
-const leadSender = process.env.RUSENDER_FROM_EMAIL;
-const leadSenderName = process.env.RUSENDER_FROM_NAME || "Modul S";
+const unisenderApiKey = process.env.UNISENDER_API_KEY;
+const unisenderListId = process.env.UNISENDER_LIST_ID;
+const leadRecipient = process.env.LEAD_RECIPIENT_EMAIL || "Modulsdom@mail.ru";
+const leadSender = process.env.UNISENDER_SENDER_EMAIL;
+const leadSenderName = process.env.UNISENDER_SENDER_NAME || "Modul S";
+
+type UnisenderResponse = {
+  error?: string;
+  code?: string;
+  result?: Array<{ id?: string; errors?: Array<{ code?: string; message?: string }> }>;
+};
 
 function clean(value: unknown) {
   return typeof value === "string" ? value.trim().slice(0, 300) : "";
@@ -53,18 +59,6 @@ export async function POST(request: Request) {
   }
 
   const subject = `Новая заявка с сайта Modul S — ${lead.leadType}`;
-  const textBody = [
-    "Новая заявка с сайта Modul S",
-    "",
-    `Тип заявки: ${lead.leadType}`,
-    `Имя: ${lead.name || "-"}`,
-    `Телефон: ${lead.phone || "-"}`,
-    `Telegram: ${lead.telegram || "-"}`,
-    `Email: ${lead.email || "-"}`,
-    `Сообщение: ${lead.message || "-"}`,
-    `Создано: ${new Date().toLocaleString("ru-RU", { timeZone: "Europe/Minsk" })}`
-  ].join("\n");
-
   const htmlBody = `
     <h2>Новая заявка с сайта Modul S</h2>
     <table cellpadding="8" cellspacing="0" style="border-collapse:collapse">
@@ -74,36 +68,48 @@ export async function POST(request: Request) {
       <tr><td><strong>Telegram</strong></td><td>${escapeHtml(lead.telegram || "-")}</td></tr>
       <tr><td><strong>Email</strong></td><td>${escapeHtml(lead.email || "-")}</td></tr>
       <tr><td><strong>Сообщение</strong></td><td>${escapeHtml(lead.message || "-")}</td></tr>
+      <tr><td><strong>Создано</strong></td><td>${escapeHtml(new Date().toLocaleString("ru-RU", { timeZone: "Europe/Minsk" }))}</td></tr>
     </table>`;
 
-  if (!rusenderToken || !rusenderKeyId || !leadRecipient || !leadSender) {
-    console.error("RuSender is not configured", { textBody });
+  if (!unisenderApiKey || !unisenderListId || !leadSender) {
+    console.error("UniSender is not configured");
     return NextResponse.json({ error: "Email delivery is not configured" }, { status: 503 });
   }
 
-  const response = await fetch(`https://api.rusender.ru/api/v1/external-mails/send/${encodeURIComponent(rusenderKeyId)}`, {
+  const requestBody = new URLSearchParams({
+    format: "json",
+    api_key: unisenderApiKey,
+    email: leadRecipient,
+    sender_name: leadSenderName,
+    sender_email: leadSender,
+    subject,
+    body: htmlBody,
+    list_id: unisenderListId,
+    lang: "ru",
+    track_read: "0",
+    track_links: "0",
+    error_checking: "1",
+    ref_key: `modul-s-lead-${randomUUID()}`
+  });
+
+  const response = await fetch("https://api.unisender.com/ru/api/sendEmail", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${rusenderToken}`
-    },
-    body: JSON.stringify({
-      idempotencyKey: `modul-s-lead-${randomUUID()}`,
-      mail: {
-        to: { email: leadRecipient, name: "Modul S" },
-        from: { email: leadSender, name: leadSenderName },
-        subject,
-        previewTitle: "Новая заявка с сайта",
-        text: textBody,
-        html: htmlBody
-      }
-    })
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: requestBody.toString()
   });
 
   if (!response.ok) {
-    console.error("RuSender delivery failed", response.status, await response.text());
+    console.error("UniSender HTTP request failed", response.status, await response.text());
     return NextResponse.json({ error: "Email delivery failed" }, { status: 502 });
   }
 
-  return NextResponse.json({ ok: true, delivery: "rusender" });
+  const result = (await response.json()) as UnisenderResponse;
+  const recipientResult = Array.isArray(result.result) ? result.result[0] : undefined;
+
+  if (result.error || recipientResult?.errors?.length || !recipientResult?.id) {
+    console.error("UniSender delivery failed", JSON.stringify(result));
+    return NextResponse.json({ error: "Email delivery failed" }, { status: 502 });
+  }
+
+  return NextResponse.json({ ok: true, delivery: "unisender" });
 }
