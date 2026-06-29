@@ -70,12 +70,6 @@ export type Content = {
     imageAltKitchen: string;
     imageAltBedroom: string;
   };
-  quiz: {
-    eyebrow: string;
-    title: string;
-    text: string;
-    steps: { title: string; text: string }[];
-  };
   packagesSection: {
     eyebrow: string;
     title: string;
@@ -94,6 +88,12 @@ export type Content = {
     text: string;
   };
   projects: Project[];
+  optionsSection: {
+    eyebrow: string;
+    title: string;
+    text: string;
+  };
+  options: string[];
   completed: {
     eyebrow: string;
     title: string;
@@ -152,6 +152,8 @@ export type Content = {
   footer: {
     contacts: string;
     address: string;
+    legalTitle: string;
+    legalText: string;
   };
 };
 
@@ -445,16 +447,6 @@ export const content: Record<Lang, Content> = {
       imageAltKitchen: "Kitchen in modular house",
       imageAltBedroom: "Bedroom with timber walls"
     },
-    quiz: {
-      eyebrow: "House selection quiz",
-      title: "Find the perfect house for your needs",
-      text: "A short guided request helps match size, budget, foundation type, and deadline before the specialist calls back.",
-      steps: [
-        { title: "Choose house size", text: "Select compact, family, or custom layouts." },
-        { title: "Share plot details", text: "Clarify access, utilities, and foundation needs." },
-        { title: "Get recommendation", text: "Receive suitable projects and a consultation." }
-      ]
-    },
     packagesSection: {
       eyebrow: "Package types",
       title: "Choose your package",
@@ -488,12 +480,12 @@ export const content: Record<Lang, Content> = {
         ],
         extrasLabel: "Added on top of the Warm Shell",
         extras: [
-          "Interior finish — painted timber-look cladding, grade AB",
+          "Interior finish — painted timber-look cladding, grade AB, or plasterboard",
           "Finish floor — class 33 laminate (color of choice)",
+          "Finished bathroom floor — tile (color of choice)",
           "MDF interior doors",
           "Electrical: concealed/surface wiring, sockets, switches, light fixtures, electrical panel",
-          "5 water points: sink, shower, kitchen sink, toilet, water heater",
-          "50 L water heater and a shower cabin with mixer"
+          "5 water points: sink, shower, kitchen sink, toilet, water heater"
         ]
       }
     ],
@@ -503,6 +495,29 @@ export const content: Record<Lang, Content> = {
       text: "Swipe through the lineup — from compact 22 m² houses to spacious 84 m² family homes and turnkey baths. Open any project to see the full layout. Layout changes are possible for every project, and we also build custom designs."
     },
     projects: buildProjects("en"),
+    optionsSection: {
+      eyebrow: "Customize your house",
+      title: "Additional house options",
+      text: "Add practical engineering, finishing, and comfort options to your selected project. The final specification and price are calculated individually."
+    },
+    options: [
+      "Extended roof overhang",
+      "Terrace construction",
+      "Decorative slats and terrace railing",
+      "Outdoor frost-proof tap installation",
+      "Rainwater drainage system installation",
+      "Additional 50 mm insulation",
+      "Fireplace stove installation",
+      "Lighting installation",
+      "Underfloor heating installation",
+      "Heat recovery ventilator installation",
+      "Wall-hung toilet installation frame",
+      "Shower cabin installation",
+      "Water heater installation",
+      "Quartz vinyl flooring instead of laminate",
+      "Tile flooring instead of laminate",
+      "Full bathroom wall and floor tiling"
+    ],
     completed: {
       eyebrow: "Completed houses",
       title: "Built modular projects",
@@ -574,7 +589,9 @@ export const content: Record<Lang, Content> = {
     },
     footer: {
       contacts: "Contacts",
-      address: "Address"
+      address: "Address",
+      legalTitle: "Company details",
+      legalText: "CampingDom LLC, 90D Syabrovskaya Street, Brest, Brest District, Brest Region, 224000, Belarus. Tax ID 291924206. Opening hours: Mon–Fri 09:00–18:00; Sat–Sun closed. Registered by the Brest Regional Executive Committee. This website is not an online store, and the listed prices are not invoices for payment. All information is provided for informational purposes only."
     }
   },
   ru: {
@@ -637,16 +654,6 @@ export const content: Record<Lang, Content> = {
       imageAltKitchen: "Кухня в модульном доме",
       imageAltBedroom: "Спальня с деревянной отделкой"
     },
-    quiz: {
-      eyebrow: "Подбор дома",
-      title: "Подберите дом под ваши задачи",
-      text: "Короткая заявка помогает определить площадь, бюджет, тип фундамента и сроки до звонка специалиста.",
-      steps: [
-        { title: "Выберите размер дома", text: "Компактный, семейный или индивидуальный вариант планировки." },
-        { title: "Расскажите об участке", text: "Уточним подъезд, коммуникации и требования к фундаменту." },
-        { title: "Получите рекомендации", text: "Подберем подходящие проекты и проведем консультацию." }
-      ]
-    },
     packagesSection: {
       eyebrow: "Виды комплектаций",
       title: "Выберите комплектацию",
@@ -680,12 +687,12 @@ export const content: Record<Lang, Content> = {
         ],
         extrasLabel: "Дополнительно к «Тёплому контуру»",
         extras: [
-          "Внутренняя отделка — имитация бруса, окрашенная, сорт АВ",
+          "Внутренняя отделка — имитация бруса, окрашенная, сорт АВ или гипсокартон",
           "Чистовой пол — ламинат 33 класс (цвет на выбор)",
+          "Чистовой пол в ванной комнате — плитка (цвет на выбор)",
           "Межкомнатные двери МДФ",
           "Электрика: скрытый/открытый монтаж, розетки, выключатели, светильники, электр. щит",
-          "5 водо-точек: раковина, душ, кухонная мойка, унитаз, водонагреватель",
-          "Водонагреватель на 50 л и душевая кабина со смесителем"
+          "5 водо-точек: раковина, душ, кухонная мойка, унитаз, водонагреватель"
         ]
       }
     ],
@@ -695,6 +702,29 @@ export const content: Record<Lang, Content> = {
       text: "Листайте каталог — от компактных домов 22 м² до просторных семейных домов 84 м² и бань под ключ. Откройте любой проект, чтобы увидеть полную планировку. В каждом проекте возможна перепланировка. Строим по индивидуальным проектам."
     },
     projects: buildProjects("ru"),
+    optionsSection: {
+      eyebrow: "Индивидуальная комплектация",
+      title: "Дополнительные опции к дому",
+      text: "Дополните выбранный проект инженерными решениями, отделкой и элементами комфорта. Итоговая комплектация и стоимость рассчитываются индивидуально."
+    },
+    options: [
+      "Свес крыши",
+      "Обустройство террасы",
+      "Декоративные рейки и ограждение террасы",
+      "Установка уличного незамерзающего крана",
+      "Установка водосточной системы",
+      "Дополнительное утепление +50 мм",
+      "Установка печи-камина",
+      "Установка подсветки",
+      "Монтаж тёплого пола",
+      "Установка рекуператора",
+      "Установка инсталляции",
+      "Установка душевой кабины",
+      "Установка водонагревателя",
+      "Укладка кварцвинила вместо ламината",
+      "Укладка плитки вместо ламината",
+      "Полная укладка плитки в ванной комнате"
+    ],
     completed: {
       eyebrow: "Построенные дома",
       title: "Реализованные модульные проекты",
@@ -766,7 +796,9 @@ export const content: Record<Lang, Content> = {
     },
     footer: {
       contacts: "Контакты",
-      address: "Адрес"
+      address: "Адрес",
+      legalTitle: "Реквизиты компании",
+      legalText: "ООО «КемпингДом», 224000, Брестская область, Брестский район, г. Брест, ул. Сябровская, д. 90Д. УНП 291924206. Режим работы: пн–пт 09:00–18:00; сб, вс — выходной. Зарегистрировано Брестским областным исполнительным комитетом. Данный сайт не является интернет-магазином, а указанные цены не являются счётом для оплаты. Представленная информация носит исключительно информационный характер."
     }
   }
 };

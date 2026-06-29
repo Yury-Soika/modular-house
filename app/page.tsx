@@ -741,6 +741,24 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="bg-linen py-20" id="options">
+        <div className="section-shell">
+          <SectionHeading
+            eyebrow={copy.optionsSection.eyebrow}
+            title={copy.optionsSection.title}
+            text={copy.optionsSection.text}
+          />
+          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {copy.options.map((option) => (
+              <div className="flex items-start gap-3 rounded-md border border-forest-900/10 bg-white p-4" key={option}>
+                <Check className="mt-0.5 shrink-0 text-forest-700" size={18} />
+                <span className="text-sm font-semibold leading-6 text-forest-950">{option}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="bg-forest-950 py-20 text-white">
         <div className="section-shell grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
           <div>
@@ -856,23 +874,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-linen py-20" id="quiz">
-        <div className="section-shell grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-          <SectionHeading eyebrow={copy.quiz.eyebrow} title={copy.quiz.title} text={copy.quiz.text} />
-          <div className="grid gap-4 sm:grid-cols-3">
-            {copy.quiz.steps.map((step, index) => (
-              <div className="rounded-md bg-white p-6 shadow-soft" key={step.title}>
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-forest-700 text-sm font-semibold text-white">
-                  {index + 1}
-                </span>
-                <h3 className="mt-5 font-semibold text-forest-950">{step.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-charcoal/68">{step.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="bg-linen py-20" id="consultation">
         <div className="section-shell grid gap-10 lg:grid-cols-[0.85fr_0.75fr] lg:items-start">
           <SectionHeading eyebrow={copy.consultation.eyebrow} title={copy.consultation.title} text={copy.consultation.text} />
@@ -939,6 +940,10 @@ export default function HomePage() {
               </a>
             </div>
           </div>
+        </div>
+        <div className="section-shell mt-10 border-t border-white/12 pt-8">
+          <h3 className="text-sm font-semibold text-sand">{copy.footer.legalTitle}</h3>
+          <p className="mt-3 max-w-6xl text-xs leading-6 text-white/55">{copy.footer.legalText}</p>
         </div>
       </footer>
 
