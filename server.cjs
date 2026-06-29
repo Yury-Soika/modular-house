@@ -3,7 +3,7 @@ const http = require("node:http");
 const next = require("next");
 
 const dev = process.env.NODE_ENV !== "production";
-const socketPath = process.env.SOCKET_PATH || "/var/www/h211034/data/nodejs/5.sock";
+const socketPath = process.env.SOCKET || process.env.SOCKET_PATH || "/var/www/h211034/data/nodejs/5.sock";
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
