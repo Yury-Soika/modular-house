@@ -31,6 +31,11 @@ import { content, type Content, type Lang, type Project } from "./data/content";
 // plain anchors, so we prefix them ourselves for the sub-path demo deployment.
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const asset = (path: string) => `${BASE_PATH}${path}`;
+const CONTACT_PHONE = "+375445702727";
+const TELEGRAM_URL = `https://t.me/${CONTACT_PHONE}`;
+const VIBER_URL = `viber://chat?number=${encodeURIComponent(CONTACT_PHONE)}`;
+const YANDEX_MAPS_URL = "https://yandex.by/maps/?ll=23.716577%2C52.064675&mode=whatshere&whatshere%5Bpoint%5D=23.716577%2C52.064675&whatshere%5Bzoom%5D=17&z=17";
+const YANDEX_MAP_WIDGET_URL = "https://yandex.by/map-widget/v1/?ll=23.716577%2C52.064675&mode=whatshere&whatshere%5Bpoint%5D=23.716577%2C52.064675&whatshere%5Bzoom%5D=17&z=17";
 
 const benefitIcons = [Factory, Truck, Hammer, Ruler];
 const familyHouseImages = [
@@ -892,15 +897,46 @@ export default function HomePage() {
             <h3 className="font-semibold text-sand">{copy.footer.contacts}</h3>
             <div className="mt-4 space-y-3 text-sm text-white/75">
               <a className="flex items-center gap-2 transition hover:text-white" href="tel:+375445702727"><Phone size={16} /> {copy.common.phone}</a>
-              <a className="flex items-center gap-2 transition hover:text-white" href="#consultation"><MessageCircle size={16} /> {copy.common.telegram}</a>
-              <a className="flex items-center gap-2 transition hover:text-white" href="#consultation"><MessageCircle size={16} /> {copy.common.viber}</a>
+              <a
+                className="flex items-center gap-2 transition hover:text-white"
+                href={TELEGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${copy.common.telegram}: ${copy.common.phone}`}
+              >
+                <MessageCircle size={16} /> {copy.common.telegram}
+              </a>
+              <a
+                className="flex items-center gap-2 transition hover:text-white"
+                href={VIBER_URL}
+                aria-label={`${copy.common.viber}: ${copy.common.phone}`}
+              >
+                <MessageCircle size={16} /> {copy.common.viber}
+              </a>
             </div>
           </div>
           <div>
             <h3 className="font-semibold text-sand">{copy.footer.address}</h3>
-            <p className="mt-4 flex items-center gap-2 text-sm text-white/75"><MapPin size={16} /> {copy.brand.location}</p>
-            <div className="mt-4 flex h-32 items-center justify-center rounded-md border border-white/12 bg-white/5 text-sm text-white/55">
-              {copy.common.googleMapsArea}
+            <p className="mt-4 flex items-center gap-2 text-sm text-white/75">
+              <MapPin size={16} /> {lang === "ru" ? "г. Брест, ул. Сябровская, 90Д" : "90D Syabrovskaya Street, Brest, Belarus"}
+            </p>
+            <div className="mt-4 overflow-hidden rounded-md border border-white/12 bg-white/5">
+              <iframe
+                className="h-52 w-full border-0"
+                src={YANDEX_MAP_WIDGET_URL}
+                title={lang === "ru" ? "Карта проезда — Сябровская, 90Д" : "Directions map — 90D Syabrovskaya Street"}
+                loading="lazy"
+                allowFullScreen
+              />
+              <a
+                className="focus-ring flex items-center justify-center gap-2 border-t border-white/12 px-4 py-3 text-sm font-semibold text-white/75 transition hover:bg-white/10 hover:text-white"
+                href={YANDEX_MAPS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MapPin className="text-sand" size={16} />
+                {copy.common.googleMapsArea}
+              </a>
             </div>
           </div>
         </div>

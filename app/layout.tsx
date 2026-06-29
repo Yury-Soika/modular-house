@@ -88,7 +88,12 @@ export default function RootLayout({
     image: "https://modulsdom-brest.by/site-preview-ru.jpg",
     telephone: "+375445702727",
     description: "Производство модульных каркасных домов и бань под ключ в Беларуси.",
-    address: { "@type": "PostalAddress", addressLocality: "Брест", addressCountry: "BY" },
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "ул. Сябровская, 90Д",
+      addressLocality: "Брест",
+      addressCountry: "BY"
+    },
     areaServed: { "@type": "Country", name: "Беларусь" },
     knowsLanguage: ["ru", "en"]
   };

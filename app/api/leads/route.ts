@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 
 type LeadPayload = {
@@ -9,12 +10,24 @@ type LeadPayload = {
   message?: string;
 };
 
-const postmarkToken = process.env.POSTMARK_SERVER_TOKEN;
+const rusenderToken = process.env.RUSENDER_API_TOKEN;
+const rusenderKeyId = process.env.RUSENDER_KEY_ID;
 const leadRecipient = process.env.LEAD_RECIPIENT_EMAIL;
-const leadSender = process.env.LEAD_SENDER_EMAIL;
+const leadSender = process.env.RUSENDER_FROM_EMAIL;
+const leadSenderName = process.env.RUSENDER_FROM_NAME || "Modul S";
 
 function clean(value: unknown) {
   return typeof value === "string" ? value.trim().slice(0, 300) : "";
+}
+
+function escapeHtml(value: string) {
+  return value.replace(/[&<>'"]/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "'": "&#39;",
+    '"': "&quot;"
+  })[character] as string);
 }
 
 export async function POST(request: Request) {
@@ -39,43 +52,58 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Phone, Telegram, or email is required" }, { status: 400 });
   }
 
-  const subject = `New ${lead.leadType} lead from Modul S`;
+  const subject = `Новая заявка с сайта Modul S — ${lead.leadType}`;
   const textBody = [
-    "New lead from the Modul S website",
+    "Новая заявка с сайта Modul S",
     "",
-    `Lead type: ${lead.leadType}`,
-    `Name: ${lead.name || "-"}`,
-    `Phone: ${lead.phone || "-"}`,
+    `Тип заявки: ${lead.leadType}`,
+    `Имя: ${lead.name || "-"}`,
+    `Телефон: ${lead.phone || "-"}`,
     `Telegram: ${lead.telegram || "-"}`,
     `Email: ${lead.email || "-"}`,
-    `Message: ${lead.message || "-"}`,
-    `Created at: ${new Date().toISOString()}`
+    `Сообщение: ${lead.message || "-"}`,
+    `Создано: ${new Date().toLocaleString("ru-RU", { timeZone: "Europe/Minsk" })}`
   ].join("\n");
 
-  if (!postmarkToken || !leadRecipient || !leadSender) {
-    console.info(textBody);
-    return NextResponse.json({ ok: true, delivery: "logged" });
+  const htmlBody = `
+    <h2>Новая заявка с сайта Modul S</h2>
+    <table cellpadding="8" cellspacing="0" style="border-collapse:collapse">
+      <tr><td><strong>Тип заявки</strong></td><td>${escapeHtml(lead.leadType)}</td></tr>
+      <tr><td><strong>Имя</strong></td><td>${escapeHtml(lead.name || "-")}</td></tr>
+      <tr><td><strong>Телефон</strong></td><td>${escapeHtml(lead.phone || "-")}</td></tr>
+      <tr><td><strong>Telegram</strong></td><td>${escapeHtml(lead.telegram || "-")}</td></tr>
+      <tr><td><strong>Email</strong></td><td>${escapeHtml(lead.email || "-")}</td></tr>
+      <tr><td><strong>Сообщение</strong></td><td>${escapeHtml(lead.message || "-")}</td></tr>
+    </table>`;
+
+  if (!rusenderToken || !rusenderKeyId || !leadRecipient || !leadSender) {
+    console.error("RuSender is not configured", { textBody });
+    return NextResponse.json({ error: "Email delivery is not configured" }, { status: 503 });
   }
 
-  const response = await fetch("https://api.postmarkapp.com/email", {
+  const response = await fetch(`https://api.rusender.ru/api/v1/external-mails/send/${encodeURIComponent(rusenderKeyId)}`, {
     method: "POST",
     headers: {
-      Accept: "application/json",
       "Content-Type": "application/json",
-      "X-Postmark-Server-Token": postmarkToken
+      Authorization: `Bearer ${rusenderToken}`
     },
     body: JSON.stringify({
-      From: leadSender,
-      To: leadRecipient,
-      Subject: subject,
-      TextBody: textBody,
-      MessageStream: "outbound"
+      idempotencyKey: `modul-s-lead-${randomUUID()}`,
+      mail: {
+        to: { email: leadRecipient, name: "Modul S" },
+        from: { email: leadSender, name: leadSenderName },
+        subject,
+        previewTitle: "Новая заявка с сайта",
+        text: textBody,
+        html: htmlBody
+      }
     })
   });
 
   if (!response.ok) {
+    console.error("RuSender delivery failed", response.status, await response.text());
     return NextResponse.json({ error: "Email delivery failed" }, { status: 502 });
   }
 
-  return NextResponse.json({ ok: true, delivery: "email" });
+  return NextResponse.json({ ok: true, delivery: "rusender" });
 }
