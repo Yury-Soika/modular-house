@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
   Building2,
@@ -17,6 +17,7 @@ import {
   ImageOff,
   Layers,
   MapPin,
+  Mail,
   MessageCircle,
   Phone,
   Ruler,
@@ -34,6 +35,7 @@ const asset = (path: string) => `${BASE_PATH}${path}`;
 const CONTACT_PHONE = "+375445702727";
 const TELEGRAM_URL = `https://t.me/${CONTACT_PHONE}`;
 const VIBER_URL = `viber://chat?number=${encodeURIComponent(CONTACT_PHONE)}`;
+const CONTACT_EMAIL = "Modulsdom@mail.ru";
 const YANDEX_MAPS_URL = "https://yandex.by/maps/?ll=23.716577%2C52.064675&mode=whatshere&whatshere%5Bpoint%5D=23.716577%2C52.064675&whatshere%5Bzoom%5D=17&z=17";
 const YANDEX_MAP_WIDGET_URL = "https://yandex.by/map-widget/v1/?ll=23.716577%2C52.064675&mode=whatshere&whatshere%5Bpoint%5D=23.716577%2C52.064675&whatshere%5Bzoom%5D=17&z=17";
 
@@ -221,93 +223,6 @@ function ProjectModal({
   );
 }
 
-function ContactForm({ forms, common }: { forms: Content["forms"]; common: Content["common"] }) {
-  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setStatus("sending");
-
-    const formData = new FormData(event.currentTarget);
-    const payload = {
-      leadType: String(formData.get("leadType") || "consultation"),
-      name: String(formData.get("name") || ""),
-      phone: String(formData.get("phone") || ""),
-      telegram: String(formData.get("telegram") || ""),
-      email: String(formData.get("email") || ""),
-      message: String(formData.get("message") || "")
-    };
-
-    try {
-      const response = await fetch("/api/leads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        throw new Error("Lead request failed");
-      }
-
-      event.currentTarget.reset();
-      setStatus("success");
-    } catch {
-      setStatus("error");
-    }
-  };
-
-  return (
-    <form className="grid gap-3" onSubmit={handleSubmit}>
-      <label className="grid gap-2 text-sm font-semibold text-forest-950">
-        {forms.requestType}
-        <select
-          className="focus-ring h-12 rounded-md border border-forest-900/10 bg-white px-4 text-sm font-medium"
-          name="leadType"
-          defaultValue="consultation"
-        >
-          <option value="consultation">{forms.requestConsultation}</option>
-          <option value="catalog">{forms.requestCatalog}</option>
-        </select>
-      </label>
-      <label className="grid gap-2 text-sm font-semibold text-forest-950">
-        {forms.name}
-        <input
-          className="focus-ring h-12 rounded-md border border-forest-900/10 bg-white px-4 text-sm font-medium"
-          name="name"
-          placeholder={forms.namePlaceholder}
-        />
-      </label>
-      <label className="grid gap-2 text-sm font-semibold text-forest-950">
-        {forms.phone}
-        <input
-          className="focus-ring h-12 rounded-md border border-forest-900/10 bg-white px-4 text-sm font-medium"
-          name="phone"
-          placeholder={forms.phonePlaceholder}
-          type="tel"
-        />
-      </label>
-      <label className="grid gap-2 text-sm font-semibold text-forest-950">
-        {forms.message}
-        <textarea
-          className="focus-ring min-h-28 rounded-md border border-forest-900/10 bg-white px-4 py-3 text-sm font-medium"
-          name="message"
-          placeholder={forms.messagePlaceholder}
-        />
-      </label>
-      <button
-        className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-md bg-forest-700 px-5 text-sm font-semibold text-white transition hover:bg-forest-900 disabled:cursor-not-allowed disabled:opacity-70"
-        disabled={status === "sending"}
-        type="submit"
-      >
-        {status === "sending" ? forms.sending : common.requestConsultation}
-        <ArrowRight size={17} />
-      </button>
-      {status === "success" && <p className="text-sm font-semibold text-forest-700">{forms.success}</p>}
-      {status === "error" && <p className="text-sm font-semibold text-red-700">{forms.error}</p>}
-    </form>
-  );
-}
-
 type ConsentChoice = "all" | "necessary";
 
 function CookieNotice({ lang }: { lang: Lang }) {
@@ -418,6 +333,12 @@ export default function HomePage() {
     }
   ];
   const selectedCompleted = completedProjects[activeCompleted] ?? completedProjects[0];
+  const contactActions = [
+    { label: lang === "ru" ? "Позвонить" : "Call us", detail: copy.common.phone, href: `tel:${CONTACT_PHONE}`, icon: Phone },
+    { label: "Email", detail: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}`, icon: Mail },
+    { label: copy.common.telegram, detail: copy.common.phone, href: TELEGRAM_URL, icon: MessageCircle },
+    { label: copy.common.viber, detail: copy.common.phone, href: VIBER_URL, icon: MessageCircle }
+  ];
 
   const openGallery = (images: string[], index = 0) => {
     if (!images.length) {
@@ -877,8 +798,22 @@ export default function HomePage() {
       <section className="bg-linen py-20" id="consultation">
         <div className="section-shell grid gap-10 lg:grid-cols-[0.85fr_0.75fr] lg:items-start">
           <SectionHeading eyebrow={copy.consultation.eyebrow} title={copy.consultation.title} text={copy.consultation.text} />
-          <div className="rounded-md bg-white p-6 shadow-soft">
-            <ContactForm forms={copy.forms} common={copy.common} />
+          <div className="grid gap-3 sm:grid-cols-2">
+            {contactActions.map(({ label, detail, href, icon: Icon }) => (
+              <a
+                className="focus-ring group flex min-h-32 flex-col justify-between rounded-md border border-forest-900/10 bg-white p-5 shadow-soft transition hover:-translate-y-1 hover:border-forest-700/30"
+                href={href}
+                key={label}
+                target={href.startsWith("https://") ? "_blank" : undefined}
+                rel={href.startsWith("https://") ? "noopener noreferrer" : undefined}
+              >
+                <Icon className="text-forest-700" size={24} />
+                <span className="mt-5">
+                  <span className="block text-sm font-semibold text-forest-950">{label}</span>
+                  <span className="mt-1 block break-all text-xs text-charcoal/60">{detail}</span>
+                </span>
+              </a>
+            ))}
           </div>
         </div>
       </section>

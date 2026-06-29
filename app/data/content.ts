@@ -131,24 +131,6 @@ export type Content = {
     title: string;
     text: string;
   };
-  forms: {
-    requestType: string;
-    requestCatalog: string;
-    requestConsultation: string;
-    name: string;
-    namePlaceholder: string;
-    phone: string;
-    phonePlaceholder: string;
-    telegram: string;
-    telegramPlaceholder: string;
-    email: string;
-    emailPlaceholder: string;
-    message: string;
-    messagePlaceholder: string;
-    sending: string;
-    success: string;
-    error: string;
-  };
   footer: {
     contacts: string;
     address: string;
@@ -566,26 +548,8 @@ export const content: Record<Lang, Content> = {
     },
     consultation: {
       eyebrow: "Consultation",
-      title: "Still have questions?",
-      text: "Get a free consultation from a specialist. We can discuss the plot, budget, preferred size, foundation type, and delivery timeline."
-    },
-    forms: {
-      requestType: "Request type",
-      requestCatalog: "House plans catalog",
-      requestConsultation: "Free consultation",
-      name: "Name",
-      namePlaceholder: "Your name",
-      phone: "Phone Number",
-      phonePlaceholder: "+375 __ ___ __ __",
-      telegram: "Telegram Username",
-      telegramPlaceholder: "@username",
-      email: "Email",
-      emailPlaceholder: "name@example.com",
-      message: "Message",
-      messagePlaceholder: "Tell us about your plot, desired house size, budget, or timeline.",
-      sending: "Sending...",
-      success: "Thank you. We will contact you soon.",
-      error: "Something went wrong. Please call or message us directly."
+      title: "Contact us directly",
+      text: "Choose the most convenient way to reach us. We will answer your questions about projects, pricing, delivery, and installation."
     },
     footer: {
       contacts: "Contacts",
@@ -773,26 +737,8 @@ export const content: Record<Lang, Content> = {
     },
     consultation: {
       eyebrow: "Консультация",
-      title: "Остались вопросы?",
-      text: "Получите бесплатную консультацию специалиста. Обсудим участок, бюджет, нужную площадь, тип фундамента и сроки доставки."
-    },
-    forms: {
-      requestType: "Тип заявки",
-      requestCatalog: "Каталог проектов домов",
-      requestConsultation: "Бесплатная консультация",
-      name: "Имя",
-      namePlaceholder: "Ваше имя",
-      phone: "Телефон",
-      phonePlaceholder: "+375 __ ___ __ __",
-      telegram: "Telegram",
-      telegramPlaceholder: "@username",
-      email: "Email",
-      emailPlaceholder: "name@example.com",
-      message: "Сообщение",
-      messagePlaceholder: "Расскажите об участке, желаемой площади дома, бюджете или сроках.",
-      sending: "Отправляем...",
-      success: "Спасибо. Мы скоро свяжемся с вами.",
-      error: "Что-то пошло не так. Пожалуйста, позвоните или напишите нам напрямую."
+      title: "Свяжитесь с нами напрямую",
+      text: "Выберите удобный способ связи. Ответим на вопросы о проектах, стоимости, доставке и монтаже."
     },
     footer: {
       contacts: "Контакты",
