@@ -26,6 +26,11 @@ SOCKET_PATH="/var/www/h211034/data/nodejs/5.sock"
 NODE_PATH="/var/www/h211034/data/.nvm/versions/node/v26.4.0/bin/node"
 PM2_PATH="/usr/lib/ispnodejs/bin/pm2"
 
+# Hoster.by does not expose Node in non-login SSH sessions. PM2 itself uses
+# /usr/bin/env node, so both the selected application runtime and ISP binaries
+# must be available before any PM2 command runs.
+export PATH="$(dirname "$NODE_PATH"):/usr/lib/ispnodejs/bin:$PATH"
+
 publish() {
   command -v gh >/dev/null || { echo "GitHub CLI (gh) is required." >&2; exit 1; }
   command -v npm >/dev/null || { echo "npm is required." >&2; exit 1; }
