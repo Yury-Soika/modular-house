@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "deploy:hoster": "./deploy-hoster.sh publish",
     "start": "NODE_ENV=production node server.cjs",
     "start:tcp": "next start",
     "lint": "next lint"
