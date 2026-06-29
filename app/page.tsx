@@ -699,6 +699,23 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="bg-white py-20" id="faq">
+        <div className="section-shell grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
+          <SectionHeading eyebrow={copy.faq.eyebrow} title={copy.faq.title} text={copy.faq.text} />
+          <div className="divide-y divide-forest-900/10 overflow-hidden rounded-md border border-forest-900/10 bg-white">
+            {copy.faq.items.map((item, index) => (
+              <details className="group p-5 open:bg-linen/60" key={item.question} open={index === 0}>
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-forest-950">
+                  {item.question}
+                  <span className="text-xl font-normal text-forest-700 transition group-open:rotate-45">+</span>
+                </summary>
+                <p className="mt-4 pr-8 text-sm leading-7 text-charcoal/70">{item.answer}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="bg-forest-950 py-20 text-white">
         <div className="section-shell grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
           <div>

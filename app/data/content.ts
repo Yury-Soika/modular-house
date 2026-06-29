@@ -100,6 +100,12 @@ export type Content = {
     text: string;
   };
   options: string[];
+  faq: {
+    eyebrow: string;
+    title: string;
+    text: string;
+    items: { question: string; answer: string }[];
+  };
   completed: {
     eyebrow: string;
     title: string;
@@ -515,6 +521,22 @@ export const content: Record<Lang, Content> = {
       "Tile flooring instead of laminate",
       "Full bathroom wall and floor tiling"
     ],
+    faq: {
+      eyebrow: "Questions and answers",
+      title: "About modular houses, pricing, and construction",
+      text: "Key information to help you choose a project and prepare for a consultation.",
+      items: [
+        { question: "How much does a turnkey modular house cost?", answer: "The price depends on floor area, layout, package, terrace, foundation, utilities, and additional options. Current indicative prices are shown in the project catalog; the final estimate is prepared after discussing your plot and specification." },
+        { question: "Are modular houses suitable for permanent living?", answer: "Yes. The projects use an insulated timber frame, membranes, double-glazed windows, and utility solutions. Heating and the final engineering specification are selected for your living pattern and site conditions." },
+        { question: "Can you deliver and install a house anywhere in Belarus?", answer: "We manufacture modules in Brest and arrange delivery and installation throughout Belarus. Access roads, crane placement, distance, and site preparation are clarified before the contract." },
+        { question: "Can the standard layout be changed?", answer: "Yes. Room arrangement, glazing, terrace, finishes, and engineering options can be adapted where the structure permits. We also develop individual house projects." },
+        { question: "What is the difference between Warm Shell and Turnkey?", answer: "Warm Shell is an insulated weatherproof structure ready for interior work. Turnkey additionally includes finished interiors, flooring, doors, electrical work, and specified plumbing connections." },
+        { question: "Which foundation is suitable for a modular house?", answer: "The choice depends on soil, relief, access, house dimensions, and utility routes. Screw piles, driven piles, or a strip foundation may be used after assessing the site." },
+        { question: "How long does manufacturing and installation take?", answer: "The schedule depends on project complexity, production workload, materials, foundation readiness, delivery conditions, and season. We confirm the actual timeline for your specification before signing the contract." },
+        { question: "Do you build modular baths?", answer: "Yes. The catalog includes ready modular bath projects with a steam room, washing area, rest space, and finishing options. The layout and equipment can be discussed individually." },
+        { question: "What must be prepared on the plot before delivery?", answer: "The plot normally needs a completed foundation, suitable vehicle and crane access, cleared installation space, and planned utility connection points. We clarify the requirements during consultation." }
+      ]
+    },
     completed: {
       eyebrow: "Completed houses",
       title: "Built modular projects",
@@ -713,6 +735,22 @@ export const content: Record<Lang, Content> = {
       "Укладка плитки вместо ламината",
       "Полная укладка плитки в ванной комнате"
     ],
+    faq: {
+      eyebrow: "Вопросы и ответы",
+      title: "О модульных домах, ценах и строительстве",
+      text: "Основная информация, которая поможет выбрать проект модульного дома и подготовиться к консультации.",
+      items: [
+        { question: "Сколько стоит модульный дом под ключ?", answer: "Цена модульного дома зависит от площади, планировки, комплектации, террасы, фундамента, инженерных систем и дополнительных опций. Актуальные ориентировочные цены указаны в каталоге проектов, а итоговую смету подготовим после обсуждения участка и комплектации." },
+        { question: "Подходит ли модульный дом для постоянного проживания?", answer: "Да. В проектах используется утеплённый деревянный каркас, защитные мембраны, двухкамерные стеклопакеты и инженерные решения. Отопление и окончательная комплектация подбираются с учётом режима проживания и условий участка." },
+        { question: "Есть ли доставка и монтаж модульных домов по Беларуси?", answer: "Мы производим модули в Бресте и организуем доставку и монтаж по всей Беларуси. До заключения договора уточняем подъезд для транспорта, место установки крана, расстояние и готовность участка." },
+        { question: "Можно ли изменить готовую планировку дома?", answer: "Да. Если конструкция позволяет, можно изменить расположение помещений, остекление, террасу, отделку и инженерные опции. Также мы разрабатываем индивидуальные проекты домов." },
+        { question: "Чем отличается «Тёплый контур» от комплектации «Под ключ»?", answer: "«Тёплый контур» — утеплённая и защищённая от непогоды конструкция, готовая к внутренним работам. В комплектацию «Под ключ» дополнительно входят чистовая отделка, полы, двери, электрика и предусмотренные сантехнические подключения." },
+        { question: "Какой фундамент нужен для модульного дома?", answer: "Выбор зависит от грунта, рельефа, подъезда, размеров дома и расположения коммуникаций. После оценки участка могут использоваться винтовые или забивные сваи, а также ленточный фундамент." },
+        { question: "Сколько времени занимает производство и монтаж?", answer: "Срок зависит от сложности проекта, загрузки производства, наличия материалов, готовности фундамента, условий доставки и сезона. Точный график по выбранной комплектации фиксируется перед заключением договора." },
+        { question: "Строите ли вы модульные бани под ключ?", answer: "Да. В каталоге есть готовые проекты модульных бань с парной, моечной, зоной отдыха и вариантами отделки. Планировку и оборудование можно обсудить индивидуально." },
+        { question: "Что подготовить на участке до доставки дома?", answer: "Обычно требуются готовый фундамент, подъезд для грузового транспорта и крана, свободная зона монтажа и предусмотренные точки подключения коммуникаций. Все требования уточняем на консультации." }
+      ]
+    },
     completed: {
       eyebrow: "Построенные дома",
       title: "Реализованные модульные проекты",
