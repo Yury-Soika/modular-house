@@ -62,6 +62,12 @@ export type Content = {
     lead: string;
   };
   benefits: string[];
+  seoIntro: {
+    eyebrow: string;
+    title: string;
+    paragraphs: string[];
+    items: string[];
+  };
   about: {
     eyebrow: string;
     title: string;
@@ -416,6 +422,15 @@ export const content: Record<Lang, Content> = {
       lead: "Design, manufacturing, delivery, and installation of high-quality modular houses and baths across Belarus."
     },
     benefits: ["Own Manufacturing Facility", "Delivery Across Belarus", "Turnkey Construction", "Custom House Designs"],
+    seoIntro: {
+      eyebrow: "Modular construction in Belarus",
+      title: "Turnkey modular houses and baths from our Brest production facility",
+      paragraphs: [
+        "Modul S designs and manufactures timber-frame modular houses for permanent living, country plots, guest accommodation, and commercial use. We help you choose a ready-made project or develop an individual layout for your plot and budget.",
+        "The catalog includes compact mini-houses, family houses with terraces, and modular baths. Prices, layouts, warm-shell and turnkey packages are shown on the website, with delivery and installation available throughout Belarus."
+      ],
+      items: ["Permanent-living houses", "Country and guest houses", "Turnkey modular baths", "Custom house projects"]
+    },
     about: {
       eyebrow: "About company",
       title: "",
@@ -605,6 +620,15 @@ export const content: Record<Lang, Content> = {
       lead: "Проектирование, производство, доставка и монтаж качественных модульных домов и бань по всей Беларуси."
     },
     benefits: ["Собственное производство", "Доставка по Беларуси", "Строительство под ключ", "Индивидуальные проекты домов"],
+    seoIntro: {
+      eyebrow: "Модульное строительство в Беларуси",
+      title: "Модульные дома и бани под ключ от производителя в Бресте",
+      paragraphs: [
+        "Modul S проектирует и производит каркасно-модульные дома для постоянного проживания, дачи, гостевого размещения и коммерческих задач. Поможем выбрать и купить готовый модульный дом или разработаем индивидуальную планировку под ваш участок и бюджет.",
+        "В каталоге представлены компактные мини-дома, семейные дома с террасой и модульные бани под ключ. На сайте указаны проекты, планировки и цены на комплектации «тёплый контур» и «под ключ». Выполняем доставку и монтаж модульных домов по всей Беларуси."
+      ],
+      items: ["Дома для постоянного проживания", "Дачные и гостевые дома", "Модульные бани под ключ", "Индивидуальные проекты домов"]
+    },
     about: {
       eyebrow: "О компании",
       title: "",

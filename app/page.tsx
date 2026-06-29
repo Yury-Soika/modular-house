@@ -505,6 +505,25 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="bg-white py-16">
+        <div className="section-shell grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+          <SectionHeading eyebrow={copy.seoIntro.eyebrow} title={copy.seoIntro.title} />
+          <div>
+            <div className="space-y-4 text-sm leading-7 text-charcoal/72 sm:text-base">
+              {copy.seoIntro.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            </div>
+            <ul className="mt-7 grid gap-3 sm:grid-cols-2">
+              {copy.seoIntro.items.map((item) => (
+                <li className="flex items-center gap-2 rounded-md bg-linen px-4 py-3 text-sm font-semibold text-forest-950" key={item}>
+                  <Check className="shrink-0 text-forest-700" size={16} />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
       <section className="bg-linen py-20" id="packages">
         <div className="section-shell">
           <SectionHeading eyebrow={copy.packagesSection.eyebrow} title={copy.packagesSection.title} text={copy.packagesSection.text} />
