@@ -15,10 +15,14 @@ const nextConfig: NextConfig = demoBasePath
       // Expose the base path to the client so public assets (images, PDF) can be
       // prefixed too — next/image and plain <a href> do not add basePath for files in /public.
       env: { NEXT_PUBLIC_BASE_PATH: demoBasePath },
+      experimental: { cpus: 1, workerThreads: false },
       images: { unoptimized: true, formats: ["image/avif", "image/webp"] }
     }
   : {
       env: { NEXT_PUBLIC_BASE_PATH: "" },
+      // Shared hosting accounts commonly enforce a low process limit. Keeping
+      // the build on one worker prevents Next.js from failing with spawn EAGAIN.
+      experimental: { cpus: 1, workerThreads: false },
       images: {
         formats: ["image/avif", "image/webp"]
       }
