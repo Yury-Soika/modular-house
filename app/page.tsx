@@ -303,6 +303,68 @@ function ContactForm({ forms, common }: { forms: Content["forms"]; common: Conte
   );
 }
 
+type ConsentChoice = "all" | "necessary";
+
+function CookieNotice({ lang }: { lang: Lang }) {
+  const [visible, setVisible] = useState<boolean | null>(null);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
+  const ru = lang === "ru";
+
+  useEffect(() => setVisible(!window.localStorage.getItem("modul-s-cookie-consent")), []);
+
+  const choose = (choice: ConsentChoice) => {
+    window.localStorage.setItem("modul-s-cookie-consent", choice);
+    setVisible(false);
+  };
+
+  if (visible === null) return null;
+
+  if (!visible && !privacyOpen) {
+    return (
+      <button className="focus-ring fixed bottom-3 right-3 z-40 rounded-md bg-white/90 px-3 py-2 text-[11px] font-semibold text-forest-700 shadow-md backdrop-blur" onClick={() => setPrivacyOpen(true)} type="button">
+        {ru ? "Конфиденциальность" : "Privacy"}
+      </button>
+    );
+  }
+
+  return (
+    <>
+      {visible && (
+        <aside className="fixed inset-x-4 bottom-4 z-[90] mx-auto max-w-4xl rounded-xl border border-forest-900/15 bg-white p-5 shadow-2xl sm:p-6" role="dialog" aria-live="polite" aria-label={ru ? "Настройки конфиденциальности" : "Privacy settings"}>
+          <div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-center">
+            <div>
+              <h2 className="text-lg font-semibold text-forest-950">{ru ? "Конфиденциальность и cookies" : "Privacy and cookies"}</h2>
+              <p className="mt-2 text-sm leading-6 text-charcoal/70">
+                {ru ? "Мы используем необходимые технологии для работы сайта. С вашего согласия также могут использоваться аналитические cookies для улучшения сервиса." : "We use necessary technologies to operate the site. With your consent, analytics cookies may also be used to improve the service."}{" "}
+                <button className="font-semibold text-forest-700 underline underline-offset-2" onClick={() => setPrivacyOpen(true)} type="button">{ru ? "Политика конфиденциальности" : "Privacy policy"}</button>
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2 md:justify-end">
+              <button className="focus-ring h-11 rounded-md border border-forest-900/15 px-4 text-sm font-semibold text-forest-950" onClick={() => choose("necessary")} type="button">{ru ? "Только необходимые" : "Necessary only"}</button>
+              <button className="focus-ring h-11 rounded-md bg-forest-700 px-4 text-sm font-semibold text-white hover:bg-forest-900" onClick={() => choose("all")} type="button">{ru ? "Принять все" : "Accept all"}</button>
+            </div>
+          </div>
+        </aside>
+      )}
+      {privacyOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-forest-950/80 p-4" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
+          <button className="absolute inset-0" onClick={() => setPrivacyOpen(false)} type="button" aria-label={ru ? "Закрыть" : "Close"} />
+          <article className="relative max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white p-6 shadow-2xl sm:p-8">
+            <button className="focus-ring absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-md border border-forest-900/10" onClick={() => setPrivacyOpen(false)} type="button" aria-label={ru ? "Закрыть" : "Close"}><X size={20} /></button>
+            <h2 className="pr-12 text-2xl font-semibold text-forest-950" id="privacy-title">{ru ? "Политика конфиденциальности" : "Privacy policy"}</h2>
+            <div className="mt-6 space-y-4 text-sm leading-6 text-charcoal/72">
+              <p>{ru ? "Modul S обрабатывает данные, которые вы добровольно указываете в форме: имя, телефон и текст сообщения — только для ответа на обращение и подготовки предложения." : "Modul S processes data you voluntarily submit in the form—name, phone number, and message—only to answer your enquiry and prepare an offer."}</p>
+              <p>{ru ? "Необходимые локальные данные сохраняют решение о cookies. Аналитика и рекламные технологии не должны включаться до вашего согласия." : "Necessary local data stores your cookie choice. Analytics and advertising technologies must not be enabled before your consent."}</p>
+              <p>{ru ? "Данные не продаются третьим лицам. Технические подрядчики могут получать доступ только в объёме, необходимом для работы сайта и обработки заявки." : "Data is not sold to third parties. Technical providers may access it only as required to operate the site and handle your request."}</p>
+              <p>{ru ? "Чтобы запросить доступ, исправление или удаление данных, свяжитесь с нами по телефону +375 44 570 27 27. Политика действует с 29 июня 2026 года." : "To request access, correction, or deletion of your data, contact us at +375 44 570 27 27. Effective 29 June 2026."}</p>
+            </div>
+          </article>
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function HomePage() {
   const [lang, setLang] = useState<Lang>("ru");
   const [gallery, setGallery] = useState<Gallery | null>(null);
@@ -374,6 +436,10 @@ export default function HomePage() {
     }
     el.scrollBy({ left: direction * Math.min(el.clientWidth * 0.9, 680), behavior: "smooth" });
   };
+
+  useEffect(() => {
+    document.documentElement.lang = copy.meta.htmlLang;
+  }, [copy.meta.htmlLang]);
 
   useEffect(() => {
     if (!gallery) {
@@ -902,6 +968,7 @@ export default function HomePage() {
           )}
         </div>
       )}
+      <CookieNotice lang={lang} />
     </main>
   );
 }
