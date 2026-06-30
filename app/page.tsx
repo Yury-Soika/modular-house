@@ -13,6 +13,7 @@ import {
   Factory,
   Globe,
   Hammer,
+  Heart,
   Home,
   ImageOff,
   Layers,
@@ -915,6 +916,19 @@ export default function HomePage() {
         <div className="section-shell mt-10 border-t border-white/12 pt-8">
           <h3 className="text-sm font-semibold text-sand">{copy.footer.legalTitle}</h3>
           <p className="mt-3 max-w-6xl text-xs leading-6 text-white/55">{copy.footer.legalText}</p>
+          <p className="mt-6 flex items-center gap-1.5 text-xs text-white/45">
+            {copy.footer.madeWith}
+            <Heart className="text-sand/70" size={12} aria-hidden />
+            {copy.footer.madeWithBy}
+            <a
+              className="focus-ring font-semibold text-white/70 underline-offset-2 transition hover:text-sand hover:underline"
+              href="https://plex.ee/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Plex
+            </a>
+          </p>
         </div>
       </footer>
 

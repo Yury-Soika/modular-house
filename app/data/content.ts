@@ -148,6 +148,8 @@ export type Content = {
     address: string;
     legalTitle: string;
     legalText: string;
+    madeWith: string;
+    madeWithBy: string;
   };
 };
 
@@ -592,7 +594,9 @@ export const content: Record<Lang, Content> = {
       contacts: "Contacts",
       address: "Address",
       legalTitle: "Company details",
-      legalText: "CampingDom LLC, 90D Syabrovskaya Street, Brest, Brest District, Brest Region, 224000, Belarus. Tax ID 291924206. Opening hours: Mon–Fri 09:00–18:00; Sat–Sun closed. Registered by the Brest Regional Executive Committee. This website is not an online store, and the listed prices are not invoices for payment. All information is provided for informational purposes only."
+      legalText: "CampingDom LLC, 90D Syabrovskaya Street, Brest, Brest District, Brest Region, 224000, Belarus. Tax ID 291924206. Opening hours: Mon–Fri 09:00–18:00; Sat–Sun closed. Registered by the Brest Regional Executive Committee. This website is not an online store, and the listed prices are not invoices for payment. All information is provided for informational purposes only.",
+      madeWith: "Made with",
+      madeWithBy: "by"
     }
   },
   ru: {
@@ -806,7 +810,9 @@ export const content: Record<Lang, Content> = {
       contacts: "Контакты",
       address: "Адрес",
       legalTitle: "Реквизиты компании",
-      legalText: "ООО «КемпингДом», 224000, Брестская область, Брестский район, г. Брест, ул. Сябровская, д. 90Д. УНП 291924206. Режим работы: пн–пт 09:00–18:00; сб, вс — выходной. Зарегистрировано Брестским областным исполнительным комитетом. Данный сайт не является интернет-магазином, а указанные цены не являются счётом для оплаты. Представленная информация носит исключительно информационный характер."
+      legalText: "ООО «КемпингДом», 224000, Брестская область, Брестский район, г. Брест, ул. Сябровская, д. 90Д. УНП 291924206. Режим работы: пн–пт 09:00–18:00; сб, вс — выходной. Зарегистрировано Брестским областным исполнительным комитетом. Данный сайт не является интернет-магазином, а указанные цены не являются счётом для оплаты. Представленная информация носит исключительно информационный характер.",
+      madeWith: "Сделано с",
+      madeWithBy: "в"
     }
   }
 };
