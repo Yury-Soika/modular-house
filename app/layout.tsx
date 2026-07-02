@@ -30,8 +30,18 @@ export const metadata: Metadata = {
     "дачный дом", "гостевой дом", "мини-дом", "дом с террасой",
     "модульные дома с доставкой", "модульные дома с монтажом",
     "модульные бани", "модульные бани Беларусь", "модульная баня под ключ",
-    "баня под ключ", "проекты бань", "Modul S", "КемпингДом",
-    "modular houses Belarus"
+    "баня под ключ", "проекты бань", "Modul S", "КемпингДом", "КемпингДом Брест",
+    // Региональные и низкочастотные запросы (Брест, Беларусь)
+    "модульные дома в Бресте", "модульные дома Брест цена", "модульные дома Брест под ключ",
+    "модульный дом купить Брест", "каркасный дом Брест", "каркасные дома Брест",
+    "модульные дома от производителя Беларусь", "модульные дома цена Беларусь",
+    "модульные дома под ключ цена Беларусь", "модульные дома Минск", "модульные дома Гродно",
+    "модульные дома Барановичи", "модульные дома Пинск", "дом из модулей",
+    "домокомплект Беларусь", "готовый дом с доставкой Беларусь", "барнхаус Беларусь",
+    "барнхаус Брест", "дом barnhouse", "модульная баня Брест", "баня бочка Беларусь",
+    "дом-баня под ключ", "садовый домик под ключ", "модульный офис", "модульная бытовка",
+    "маленький дом под ключ Беларусь", "одноэтажный модульный дом", "модульный дом с террасой Беларусь",
+    "modular houses Belarus", "modular homes Brest"
   ],
   robots: {
     index: true,
@@ -44,13 +54,23 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-    shortcut: "/icon.svg",
-    apple: "/apple-icon.png"
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+      { url: "/icon.svg", type: "image/svg+xml" }
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png"
   },
   other: {
     "theme-color": "#1f3024",
-    "format-detection": "telephone=yes"
+    "format-detection": "telephone=yes",
+    // Regional signals for Yandex/Google — Brest, Belarus
+    "geo.region": "BY-BR",
+    "geo.placename": "Брест",
+    "geo.position": "52.097622;23.734051",
+    ICBM: "52.097622, 23.734051"
   },
   alternates: {
     canonical: "/"
@@ -92,18 +112,42 @@ export default function RootLayout({
     "@type": ["HomeAndConstructionBusiness", "Organization"],
     "@id": "https://modulsdom-brest.by/#organization",
     name: "Modul S",
+    legalName: "ООО «КемпингДом»",
     url: "https://modulsdom-brest.by",
     logo: "https://modulsdom-brest.by/icon.svg",
     image: "https://modulsdom-brest.by/site-preview-ru.jpg",
     telephone: "+375445702727",
-    description: "Производство модульных каркасных домов и бань под ключ в Беларуси.",
+    priceRange: "$$",
+    description: "Производство модульных каркасных домов и бань под ключ в Бресте с доставкой и монтажом по всей Беларуси.",
     address: {
       "@type": "PostalAddress",
       streetAddress: "ул. Сябровская, 90Д",
       addressLocality: "Брест",
+      addressRegion: "Брестская область",
+      postalCode: "224000",
       addressCountry: "BY"
     },
-    areaServed: { "@type": "Country", name: "Беларусь" },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 52.097622,
+      longitude: 23.734051
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "09:00",
+        closes: "18:00"
+      }
+    ],
+    areaServed: [
+      { "@type": "Country", name: "Беларусь" },
+      { "@type": "City", name: "Брест" },
+      { "@type": "City", name: "Минск" },
+      { "@type": "City", name: "Гродно" },
+      { "@type": "City", name: "Барановичи" },
+      { "@type": "City", name: "Пинск" }
+    ],
     knowsLanguage: ["ru", "en"]
   };
   const faqStructuredData = {
