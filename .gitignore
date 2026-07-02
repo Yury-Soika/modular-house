@@ -15,3 +15,4 @@ pnpm-debug.log*
 
 # Server login secret — never commit
 .hoster-credentials
+secrets.txt

@@ -117,3 +117,23 @@ pm2 describe modulsdom-brest
 | PM2 app name     | `modulsdom-brest`                                |
 | GitHub repo      | `Yury-Soika/modular-house` (deploys from `main`) |
 | Live URL         | https://modulsdom-brest.by                       |
+
+---
+
+## Hoster REST API (DNS / cloud — not the deploy)
+
+Separate from SSH: Hoster's HTTP API manages **DNS records and cloud VMs**, not the
+shared-hosting site or its deploy. Credentials (`ACCESS_KEY` / `SECRET_KEY`) live in
+the git-ignored `.hoster-credentials`; [hoster-api.sh](hoster-api.sh) uses them:
+
+```bash
+./hoster-api.sh token              # verify auth (prints userId + access token)
+./hoster-api.sh get /dns/orders    # list DNS orders
+./hoster-api.sh get /cloud/orders  # list cloud orders
+```
+
+It exchanges the key pair for a short-lived Access-Token, then sends the
+`X-User-Id` + `Access-Token` headers each endpoint needs. The Hoster API is
+IP-filtered — run it from your machine (it may time out elsewhere). Override the base
+with `HOSTER_API_BASE=…` if `https://api.hoster.by` isn't the right host for your
+account.
