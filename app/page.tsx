@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
@@ -514,10 +515,12 @@ export default function HomePage() {
               {copy.seoIntro.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
             </div>
             <ul className="mt-7 grid gap-3 sm:grid-cols-2">
-              {copy.seoIntro.items.map((item) => (
-                <li className="flex items-center gap-2 rounded-md bg-linen px-4 py-3 text-sm font-semibold text-forest-950" key={item}>
+              {copy.seoIntro.items.map((item, index) => (
+                <li className="rounded-md bg-linen text-sm font-semibold text-forest-950" key={item}>
+                  <Link className="focus-ring flex items-center gap-2 px-4 py-3" href={index === 2 ? "/modulnye-bani" : "/modulnye-doma"}>
                   <Check className="shrink-0 text-forest-700" size={16} />
                   {item}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -666,14 +669,17 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  <button
+                  <Link
                     className="focus-ring mt-auto inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-forest-700 px-4 text-sm font-semibold text-white transition hover:bg-forest-900"
-                    onClick={() => setActiveProject(project)}
-                    type="button"
+                    href={`/projects/${project.id}`}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setActiveProject(project);
+                    }}
                   >
                     {copy.common.viewProject}
                     <ArrowRight size={16} />
-                  </button>
+                  </Link>
                 </div>
               </article>
             ))}

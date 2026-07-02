@@ -69,8 +69,8 @@ export const metadata: Metadata = {
     // Regional signals for Yandex/Google — Brest, Belarus
     "geo.region": "BY-BR",
     "geo.placename": "Брест",
-    "geo.position": "52.097622;23.734051",
-    ICBM: "52.097622, 23.734051"
+    "geo.position": "52.064675;23.716577",
+    ICBM: "52.064675, 23.716577"
   },
   alternates: {
     canonical: "/"
@@ -129,8 +129,8 @@ export default function RootLayout({
     },
     geo: {
       "@type": "GeoCoordinates",
-      latitude: 52.097622,
-      longitude: 23.734051
+      latitude: 52.064675,
+      longitude: 23.716577
     },
     openingHoursSpecification: [
       {
@@ -159,6 +159,28 @@ export default function RootLayout({
       acceptedAnswer: { "@type": "Answer", text: item.answer }
     }))
   };
+  const websiteStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": "https://modulsdom-brest.by/#website",
+    url: "https://modulsdom-brest.by/",
+    name: "Modul S",
+    inLanguage: "ru-BY",
+    publisher: { "@id": "https://modulsdom-brest.by/#organization" }
+  };
+  const catalogStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "@id": "https://modulsdom-brest.by/#projects",
+    name: "Проекты модульных домов и бань Modul S",
+    numberOfItems: content.ru.projects.length,
+    itemListElement: content.ru.projects.map((project, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: project.title,
+      url: `https://modulsdom-brest.by/projects/${project.id}`
+    }))
+  };
 
   return (
     <html lang="ru">
@@ -171,6 +193,14 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData).replace(/</g, "\\u003c") }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteStructuredData).replace(/</g, "\\u003c") }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(catalogStructuredData).replace(/</g, "\\u003c") }}
         />
       </body>
     </html>
