@@ -12,3 +12,6 @@ pnpm-debug.log*
 
 # static export output
 /out
+
+# Server login secret — never commit
+.hoster-credentials
