@@ -22,6 +22,7 @@ export function infoPageMetadata(copy: InfoPageCopy): Metadata {
   return {
     title: copy.title,
     description: copy.description,
+    keywords: [copy.eyebrow, `${copy.eyebrow} Modul S`, "модульные дома Беларусь"],
     alternates: { canonical: copy.path },
     openGraph: { title: copy.title, description: copy.description, url: copy.path, type: "website", images: ["/site-preview-ru.jpg"] },
     twitter: { card: "summary_large_image", title: copy.title, description: copy.description, images: ["/site-preview-ru.jpg"] }
@@ -106,7 +107,7 @@ export function InfoPage({ copy }: { copy: InfoPageCopy }) {
 
       <nav aria-label="Разделы о компании" className="bg-white py-10">
         <div className="section-shell flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-forest-700">
-          <Link href="/kontakty">Контакты</Link><Link href="/o-proizvodstve">О производстве</Link><Link href="/garantiya-i-servis">Гарантия и сервис</Link><Link href="/dostavka-i-montazh">Доставка и монтаж</Link><Link href="/individualnoe-proektirovanie">Индивидуальное проектирование</Link>
+          <Link href="/modulnye-doma">Проекты модульных домов</Link><Link href="/modulnye-bani">Проекты модульных бань</Link><Link href="/kontakty">Контакты</Link><Link href="/o-proizvodstve">О производстве</Link><Link href="/garantiya-i-servis">Гарантия и сервис</Link><Link href="/dostavka-i-montazh">Доставка и монтаж</Link><Link href="/individualnoe-proektirovanie">Индивидуальное проектирование</Link>
         </div>
       </nav>
 

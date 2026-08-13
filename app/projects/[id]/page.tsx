@@ -32,6 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   return {
     title,
     description,
+    keywords: [project.title, `${project.kind === "bath" ? "модульная баня" : "модульный дом"} ${project.area}`, `проект ${project.projectNo}`, `${project.kind === "bath" ? "баня" : "дом"} под ключ Беларусь`, "Modul S"],
     alternates: { canonical: url },
     openGraph: {
       title,
@@ -39,6 +40,12 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       url,
       type: "website",
       images: project.image ? [{ url: project.image, alt: project.title }] : undefined
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: project.image ? [project.image] : undefined
     }
   };
 }
@@ -52,8 +59,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const url = `${SITE_URL}/projects/${project.id}`;
   const categoryPath = project.kind === "bath" ? "/modulnye-bani" : "/modulnye-doma";
   const categoryName = project.kind === "bath" ? "Модульные бани" : "Модульные дома";
-  const relatedProjects = content.ru.projects
-    .filter((candidate) => candidate.kind === project.kind && candidate.id !== project.id)
+  const categoryProjects = content.ru.projects.filter((candidate) => candidate.kind === project.kind);
+  const projectIndex = categoryProjects.findIndex((candidate) => candidate.id === project.id);
+  const previousProject = categoryProjects[(projectIndex - 1 + categoryProjects.length) % categoryProjects.length];
+  const nextProject = categoryProjects[(projectIndex + 1) % categoryProjects.length];
+  const relatedProjects = categoryProjects
+    .filter((candidate) => candidate.id !== project.id)
     .sort((a, b) => Math.abs(Number.parseFloat(a.area.replace(",", ".")) - Number.parseFloat(project.area.replace(",", "."))) - Math.abs(Number.parseFloat(b.area.replace(",", ".")) - Number.parseFloat(project.area.replace(",", "."))))
     .slice(0, 3);
   const productStructuredData = {
@@ -64,10 +75,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     name: project.title,
     sku: project.projectNo,
     mpn: project.projectNo,
+    mainEntityOfPage: url,
     material: "Деревянный каркас, минеральная вата",
     description: project.seoDescription,
     category: project.kind === "bath" ? "Модульные бани" : "Модульные дома",
-    image: project.image ? `${SITE_URL}${project.image}` : undefined,
+    image: [project.image, project.plan]
+      .filter((image): image is string => Boolean(image))
+      .map((image) => `${SITE_URL}${image}`),
     brand: { "@type": "Brand", name: "Modul S" },
     additionalProperty: [
       { "@type": "PropertyValue", name: "Площадь", value: project.area },
@@ -196,6 +210,21 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             ))}
           </div>
         </section>
+
+        <nav aria-label="Навигация между проектами" className="mt-10 grid gap-4 border-t border-forest-900/10 pt-8 sm:grid-cols-2">
+          <Link className="focus-ring rounded-xl bg-white p-5 shadow-soft transition hover:-translate-y-0.5 hover:shadow-lg" href={`/projects/${previousProject.id}`} rel="prev">
+            <span className="text-xs font-semibold uppercase tracking-wider text-forest-700">Предыдущий проект</span>
+            <strong className="mt-2 block leading-6 text-forest-950">{previousProject.title}</strong>
+          </Link>
+          <Link className="focus-ring rounded-xl bg-white p-5 text-right shadow-soft transition hover:-translate-y-0.5 hover:shadow-lg" href={`/projects/${nextProject.id}`} rel="next">
+            <span className="text-xs font-semibold uppercase tracking-wider text-forest-700">Следующий проект</span>
+            <strong className="mt-2 block leading-6 text-forest-950">{nextProject.title}</strong>
+          </Link>
+        </nav>
+
+        <nav aria-label="Полезные разделы" className="mt-10 flex flex-wrap gap-x-6 gap-y-3 border-t border-forest-900/10 pt-8 text-sm font-semibold text-forest-700">
+          <Link href={categoryPath}>Все проекты категории «{categoryName}»</Link><Link href="/o-proizvodstve">О производстве</Link><Link href="/garantiya-i-servis">Гарантия и сервис</Link><Link href="/dostavka-i-montazh">Доставка и монтаж</Link><Link href="/individualnoe-proektirovanie">Изменить проект под себя</Link><Link href="/kontakty">Контакты</Link>
+        </nav>
       </article>
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productStructuredData).replace(/</g, "\\u003c") }} />

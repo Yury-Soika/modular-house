@@ -28,7 +28,7 @@ import {
   Truck,
   X
 } from "lucide-react";
-import { content, type Content, type Lang, type Project } from "./data/content";
+import { content, type Lang } from "./data/content";
 
 // Public assets (files in /public) are not prefixed with basePath by next/image or
 // plain anchors, so we prefix them ourselves for the sub-path demo deployment.
@@ -104,127 +104,6 @@ function SectionHeading({ eyebrow, title, text }: { eyebrow: string; title: stri
   );
 }
 
-function ProjectModal({
-  project,
-  copy,
-  onClose,
-  onOpenImage
-}: {
-  project: Project;
-  copy: Content["common"];
-  onClose: () => void;
-  onOpenImage: (images: string[], index: number) => void;
-}) {
-  const projectImages = [project.image, project.plan].filter(Boolean) as string[];
-  const imageBlocks: { src?: string; label: string }[] = [
-    { src: project.image, label: copy.render },
-    { src: project.plan, label: copy.plan }
-  ];
-
-  return (
-    <div className="fixed inset-0 z-[70] flex items-start justify-center overflow-y-auto bg-forest-950/80 p-4 sm:p-8" role="dialog" aria-modal="true">
-      <button className="absolute inset-0 cursor-default" onClick={onClose} type="button" aria-label={copy.close} />
-      <div className="relative z-10 my-4 w-full max-w-4xl rounded-lg bg-white shadow-soft">
-        <div className="flex items-start justify-between gap-4 border-b border-forest-900/10 p-6">
-          <div>
-            <h3 className="text-2xl font-semibold text-forest-950">{project.title}</h3>
-            <p className="mt-1 text-xs font-medium uppercase tracking-[0.1em] text-charcoal/45">{project.projectNo}</p>
-          </div>
-          <button
-            className="focus-ring flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-forest-900/10 text-forest-950 transition hover:bg-linen"
-            onClick={onClose}
-            type="button"
-            aria-label={copy.close}
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        <div className="p-6">
-          <div className="grid gap-4 sm:grid-cols-2">
-            {imageBlocks.map((block, index) =>
-              block.src ? (
-                <button
-                  key={block.label}
-                  className="group focus-ring relative h-52 overflow-hidden rounded-md bg-forest-950"
-                  onClick={() => onOpenImage(projectImages, projectImages.indexOf(block.src as string))}
-                  type="button"
-                  aria-label={block.label}
-                >
-                  <Image src={asset(block.src)} alt={`${project.title} — ${block.label}`} fill sizes="(min-width: 640px) 50vw, 100vw" className="object-cover transition duration-500 group-hover:scale-105" />
-                  <span className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-md bg-forest-950/75 text-white opacity-0 transition group-hover:opacity-100">
-                    <Expand size={17} />
-                  </span>
-                  <span className="absolute bottom-2 left-2 rounded bg-forest-950/75 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">{block.label}</span>
-                </button>
-              ) : (
-                <PhotoPlaceholder key={index} label={`${block.label} · ${copy.noPhoto}`} className="h-52 rounded-md" />
-              )
-            )}
-          </div>
-
-          <dl className="mt-6 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-md border border-forest-900/10 bg-linen px-4 py-3">
-              <dt className="text-[11px] font-semibold uppercase tracking-[0.1em] text-charcoal/55">{copy.dimensions}</dt>
-              <dd className="mt-1 text-sm font-medium text-forest-950">{project.size}</dd>
-            </div>
-            {project.terrace && (
-              <div className="rounded-md border border-forest-900/10 bg-linen px-4 py-3">
-                <dt className="text-[11px] font-semibold uppercase tracking-[0.1em] text-charcoal/55">{copy.terrace}</dt>
-                <dd className="mt-1 text-sm font-medium text-forest-950">{project.terrace}</dd>
-              </div>
-            )}
-          </dl>
-
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            {project.priceWarm && (
-              <div className="rounded-md border border-forest-900/10 bg-white px-4 py-3">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-charcoal/55">{copy.priceWarm}</p>
-                <strong className="mt-1 block text-lg text-forest-950">{project.priceWarm}</strong>
-              </div>
-            )}
-            <div className="rounded-md border border-forest-700 bg-forest-50 px-4 py-3">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-forest-700">{project.singleColumn ? copy.priceFinished : copy.priceTurnkey}</p>
-              <strong className="mt-1 block text-lg text-forest-950">{project.priceTurnkey}</strong>
-              {project.priceNote && <span className="mt-1 block text-xs text-charcoal/60">{project.priceNote}</span>}
-            </div>
-          </div>
-
-          <h4 className="mt-8 text-sm font-semibold uppercase tracking-[0.12em] text-forest-700">{copy.specsTitle}</h4>
-          <div className="mt-3 overflow-hidden rounded-md border border-forest-900/10">
-            {!project.singleColumn && (
-              <div className="grid grid-cols-[1.1fr_1fr_1fr] bg-forest-950 text-[11px] font-semibold uppercase tracking-[0.06em] text-white">
-                <span className="px-3 py-2" />
-                <span className="px-3 py-2">{copy.priceWarm}</span>
-                <span className="px-3 py-2">{copy.priceTurnkey}</span>
-              </div>
-            )}
-            {project.specs.map((row, index) => (
-              <div
-                key={`${row.label}-${index}`}
-                className={`grid ${project.singleColumn ? "grid-cols-[1fr_1.6fr]" : "grid-cols-[1.1fr_1fr_1fr]"} border-t border-forest-900/10 text-sm ${index % 2 === 0 ? "bg-white" : "bg-linen"}`}
-              >
-                <span className="px-3 py-2 font-semibold text-forest-950">{row.label}</span>
-                {!project.singleColumn && <span className="px-3 py-2 text-charcoal/72">{row.warm}</span>}
-                <span className="px-3 py-2 text-charcoal/72">{row.turnkey}</span>
-              </div>
-            ))}
-          </div>
-
-          <a
-            className="focus-ring mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-forest-700 px-5 text-sm font-semibold text-white transition hover:bg-forest-900"
-            href="#consultation"
-            onClick={onClose}
-          >
-            {copy.requestConsultation}
-            <ArrowRight size={17} />
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 type ConsentChoice = "all" | "necessary";
 
 function CookieNotice({ lang }: { lang: Lang }) {
@@ -291,7 +170,6 @@ function CookieNotice({ lang }: { lang: Lang }) {
 export default function HomePage() {
   const [lang, setLang] = useState<Lang>("ru");
   const [gallery, setGallery] = useState<Gallery | null>(null);
-  const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [activeCompleted, setActiveCompleted] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
   const copy = content[lang];
@@ -417,28 +295,6 @@ export default function HomePage() {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [gallery]);
-
-  useEffect(() => {
-    if (!activeProject) {
-      return;
-    }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !gallery) {
-        setActiveProject(null);
-      }
-    };
-
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      if (!gallery) {
-        document.body.style.overflow = "";
-      }
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [activeProject, gallery]);
 
   return (
     <main id="home" className="overflow-hidden" lang={copy.meta.htmlLang}>
@@ -601,7 +457,13 @@ export default function HomePage() {
         <div className="section-shell">
           <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
             <SectionHeading eyebrow={copy.projectsSection.eyebrow} title={copy.projectsSection.title} text={copy.projectsSection.text} />
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <Link className="focus-ring inline-flex h-12 items-center justify-center rounded-md border border-forest-900/10 px-4 text-sm font-semibold text-forest-950 transition hover:border-forest-700/30 hover:bg-linen" href="/modulnye-doma">
+                Модульные дома
+              </Link>
+              <Link className="focus-ring inline-flex h-12 items-center justify-center rounded-md border border-forest-900/10 px-4 text-sm font-semibold text-forest-950 transition hover:border-forest-700/30 hover:bg-linen" href="/modulnye-bani">
+                Модульные бани
+              </Link>
               <a
                 data-ym-goal="catalog_download"
                 className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-md bg-forest-700 px-5 text-sm font-semibold text-white transition hover:bg-forest-900"
@@ -645,26 +507,24 @@ export default function HomePage() {
               >
                 <div className="relative">
                   {project.image ? (
-                    <button
-                      className="group focus-ring relative block h-44 w-full cursor-zoom-in overflow-hidden bg-forest-950"
-                      onClick={() => openGallery([project.image, project.plan].filter(Boolean) as string[], 0)}
-                      type="button"
+                    <Link
+                      className="group focus-ring relative block h-44 w-full overflow-hidden bg-forest-950"
+                      href={`/projects/${project.id}`}
                       aria-label={`${project.title} — ${copy.common.render}`}
                     >
                       <Image src={asset(project.image)} alt={`${project.title} — ${copy.common.render}`} fill sizes="320px" className="object-cover transition duration-500 group-hover:scale-105" />
-                    </button>
+                    </Link>
                   ) : (
                     <PhotoPlaceholder label={`${copy.common.render} · ${copy.common.noPhoto}`} className="h-44 w-full" />
                   )}
                   {project.plan ? (
-                    <button
-                      className="group focus-ring relative block h-28 w-full cursor-zoom-in overflow-hidden border-t border-forest-900/10 bg-white"
-                      onClick={() => openGallery([project.image, project.plan].filter(Boolean) as string[], project.image ? 1 : 0)}
-                      type="button"
+                    <Link
+                      className="group focus-ring relative block h-28 w-full overflow-hidden border-t border-forest-900/10 bg-white"
+                      href={`/projects/${project.id}`}
                       aria-label={`${project.title} — ${copy.common.plan}`}
                     >
                       <Image src={asset(project.plan)} alt={`${project.title} — ${copy.common.plan}`} fill sizes="320px" className="object-contain" />
-                    </button>
+                    </Link>
                   ) : (
                     <PhotoPlaceholder label={`${copy.common.plan} · ${copy.common.noPhoto}`} className="h-28 w-full border-t border-forest-900/10" />
                   )}
@@ -673,7 +533,9 @@ export default function HomePage() {
                 <div className="flex flex-1 flex-col p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h3 className="text-lg font-semibold text-forest-950">{project.title}</h3>
+                      <h3 className="text-lg font-semibold text-forest-950">
+                        <Link className="focus-ring rounded-sm transition hover:text-forest-700" href={`/projects/${project.id}`}>{project.title}</Link>
+                      </h3>
                       <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.1em] text-charcoal/45">{project.projectNo}</p>
                     </div>
                     <span className="shrink-0 rounded-md bg-forest-50 px-3 py-2 text-sm font-semibold text-forest-700">{project.area}</span>
@@ -698,10 +560,6 @@ export default function HomePage() {
                     data-project-id={project.id}
                     className="focus-ring mt-auto inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-forest-700 px-4 text-sm font-semibold text-white transition hover:bg-forest-900"
                     href={`/projects/${project.id}`}
-                    onClick={(event) => {
-                      event.preventDefault();
-                      setActiveProject(project);
-                    }}
                   >
                     {copy.common.viewProject}
                     <ArrowRight size={16} />
@@ -948,6 +806,8 @@ export default function HomePage() {
             <h3 className="font-semibold text-sand">{lang === "ru" ? "Покупателям" : "For customers"}</h3>
             <ul className="mt-4 space-y-3 text-sm text-white/75">
               {[
+                ["/modulnye-doma", lang === "ru" ? "Проекты модульных домов" : "Modular house projects"],
+                ["/modulnye-bani", lang === "ru" ? "Проекты модульных бань" : "Modular sauna projects"],
                 ["/kontakty", lang === "ru" ? "Контакты" : "Contacts"],
                 ["/o-proizvodstve", lang === "ru" ? "О производстве" : "About production"],
                 ["/garantiya-i-servis", lang === "ru" ? "Гарантия и сервис" : "Warranty and service"],
@@ -975,15 +835,6 @@ export default function HomePage() {
           </p>
         </div>
       </footer>
-
-      {activeProject && (
-        <ProjectModal
-          project={activeProject}
-          copy={copy.common}
-          onClose={() => setActiveProject(null)}
-          onOpenImage={(images, index) => openGallery(images, index)}
-        />
-      )}
 
       {activeImage && (
         <div className="fixed inset-0 z-[80] bg-forest-950/95 text-white" role="dialog" aria-modal="true">
