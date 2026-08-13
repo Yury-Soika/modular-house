@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
-import { content } from "./data/content";
+import { YandexMetrika } from "./_components/YandexMetrika";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -114,9 +114,10 @@ export default function RootLayout({
     name: "Modul S",
     legalName: "ООО «КемпингДом»",
     url: "https://modulsdom-brest.by",
-    logo: "https://modulsdom-brest.by/icon.svg",
+    logo: "https://modulsdom-brest.by/icon-512.png",
     image: "https://modulsdom-brest.by/site-preview-ru.jpg",
     telephone: "+375445702727",
+    email: "Modulsdom@mail.ru",
     priceRange: "$$",
     description: "Производство модульных каркасных домов и бань под ключ в Бресте с доставкой и монтажом по всей Беларуси.",
     address: {
@@ -140,6 +141,14 @@ export default function RootLayout({
         closes: "18:00"
       }
     ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+375445702727",
+      email: "Modulsdom@mail.ru",
+      contactType: "customer service",
+      areaServed: "BY",
+      availableLanguage: ["Russian"]
+    },
     areaServed: [
       { "@type": "Country", name: "Беларусь" },
       { "@type": "City", name: "Брест" },
@@ -150,15 +159,6 @@ export default function RootLayout({
     ],
     knowsLanguage: ["ru", "en"]
   };
-  const faqStructuredData = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: content.ru.faq.items.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: { "@type": "Answer", text: item.answer }
-    }))
-  };
   const websiteStructuredData = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -168,39 +168,18 @@ export default function RootLayout({
     inLanguage: "ru-BY",
     publisher: { "@id": "https://modulsdom-brest.by/#organization" }
   };
-  const catalogStructuredData = {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "@id": "https://modulsdom-brest.by/#projects",
-    name: "Проекты модульных домов и бань Modul S",
-    numberOfItems: content.ru.projects.length,
-    itemListElement: content.ru.projects.map((project, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      name: project.title,
-      url: `https://modulsdom-brest.by/projects/${project.id}`
-    }))
-  };
-
   return (
     <html lang="ru">
       <body className={`${montserrat.variable} bg-linen text-charcoal antialiased`}>
         {children}
+        <YandexMetrika />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData).replace(/</g, "\\u003c") }}
-        />
-        <script
-          type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteStructuredData).replace(/</g, "\\u003c") }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(catalogStructuredData).replace(/</g, "\\u003c") }}
         />
       </body>
     </html>

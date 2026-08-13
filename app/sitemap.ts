@@ -2,7 +2,14 @@ import type { MetadataRoute } from "next";
 import { content } from "./data/content";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date("2026-07-02");
+  const lastModified = new Date("2026-08-13");
+  const informationPages = [
+    "/kontakty",
+    "/o-proizvodstve",
+    "/garantiya-i-servis",
+    "/dostavka-i-montazh",
+    "/individualnoe-proektirovanie"
+  ];
 
   return [
     {
@@ -19,6 +26,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     { url: "https://modulsdom-brest.by/modulnye-doma", lastModified, changeFrequency: "weekly", priority: 0.9 },
     { url: "https://modulsdom-brest.by/modulnye-bani", lastModified, changeFrequency: "weekly", priority: 0.9 },
+    ...informationPages.map((path) => ({
+      url: `https://modulsdom-brest.by${path}`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.7
+    })),
     ...content.ru.projects.map((project) => ({
       url: `https://modulsdom-brest.by/projects/${project.id}`,
       lastModified,

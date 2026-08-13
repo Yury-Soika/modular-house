@@ -236,6 +236,7 @@ function CookieNotice({ lang }: { lang: Lang }) {
 
   const choose = (choice: ConsentChoice) => {
     window.localStorage.setItem("modul-s-cookie-consent", choice);
+    window.dispatchEvent(new Event("modul-s-consent-change"));
     setVisible(false);
   };
 
@@ -341,6 +342,28 @@ export default function HomePage() {
     { label: copy.common.telegram, detail: copy.common.phone, href: TELEGRAM_URL, icon: MessageCircle },
     { label: copy.common.viber, detail: copy.common.phone, href: VIBER_URL, icon: MessageCircle }
   ];
+  const faqStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: copy.faq.items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer }
+    }))
+  };
+  const catalogStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "@id": "https://modulsdom-brest.by/#projects",
+    name: "Проекты модульных домов и бань Modul S",
+    numberOfItems: copy.projects.length,
+    itemListElement: copy.projects.map((project, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: project.title,
+      url: `https://modulsdom-brest.by/projects/${project.id}`
+    }))
+  };
 
   const openGallery = (images: string[], index = 0) => {
     if (!images.length) {
@@ -438,7 +461,7 @@ export default function HomePage() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <a className="hidden items-center gap-2 text-sm font-semibold text-forest-950 md:flex" href="tel:+375445702727">
+          <a className="hidden items-center gap-2 text-sm font-semibold text-forest-950 md:flex" href="tel:+375445702727">
               <Phone size={16} />
               {copy.common.phone}
             </a>
@@ -580,6 +603,7 @@ export default function HomePage() {
             <SectionHeading eyebrow={copy.projectsSection.eyebrow} title={copy.projectsSection.title} text={copy.projectsSection.text} />
             <div className="flex items-center gap-2">
               <a
+                data-ym-goal="catalog_download"
                 className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-md bg-forest-700 px-5 text-sm font-semibold text-white transition hover:bg-forest-900"
                 href={asset("/catalog.pdf")}
                 target="_blank"
@@ -670,6 +694,8 @@ export default function HomePage() {
                   </div>
 
                   <Link
+                    data-ym-goal="project_open"
+                    data-project-id={project.id}
                     className="focus-ring mt-auto inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-forest-700 px-4 text-sm font-semibold text-white transition hover:bg-forest-900"
                     href={`/projects/${project.id}`}
                     onClick={(event) => {
@@ -862,7 +888,7 @@ export default function HomePage() {
       </section>
 
       <footer className="bg-forest-950 py-12 text-white" id="contacts">
-        <div className="section-shell grid gap-8 md:grid-cols-[1fr_1fr_1fr]">
+        <div className="section-shell grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="flex items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-md border border-sand/60 text-sand">
@@ -918,6 +944,18 @@ export default function HomePage() {
               </a>
             </div>
           </div>
+          <nav aria-label={lang === "ru" ? "Информация о компании" : "Company information"}>
+            <h3 className="font-semibold text-sand">{lang === "ru" ? "Покупателям" : "For customers"}</h3>
+            <ul className="mt-4 space-y-3 text-sm text-white/75">
+              {[
+                ["/kontakty", lang === "ru" ? "Контакты" : "Contacts"],
+                ["/o-proizvodstve", lang === "ru" ? "О производстве" : "About production"],
+                ["/garantiya-i-servis", lang === "ru" ? "Гарантия и сервис" : "Warranty and service"],
+                ["/dostavka-i-montazh", lang === "ru" ? "Доставка и монтаж" : "Delivery and installation"],
+                ["/individualnoe-proektirovanie", lang === "ru" ? "Индивидуальное проектирование" : "Custom design"]
+              ].map(([href, label]) => <li key={href}><Link className="transition hover:text-white" href={href}>{label}</Link></li>)}
+            </ul>
+          </nav>
         </div>
         <div className="section-shell mt-10 border-t border-white/12 pt-8">
           <h3 className="text-sm font-semibold text-sand">{copy.footer.legalTitle}</h3>
@@ -1000,6 +1038,8 @@ export default function HomePage() {
           )}
         </div>
       )}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData).replace(/</g, "\\u003c") }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(catalogStructuredData).replace(/</g, "\\u003c") }} />
       <CookieNotice lang={lang} />
     </main>
   );

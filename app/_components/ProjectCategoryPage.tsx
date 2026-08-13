@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Check, Mail, Phone } from "lucide-react";
+import { ArrowRight, Check, ChevronRight, Mail, Phone } from "lucide-react";
 import { content, type Project } from "../data/content";
 
 const SITE_URL = "https://modulsdom-brest.by";
@@ -54,13 +54,19 @@ export function ProjectCategoryPage({ copy, path }: { copy: CategoryCopy; path: 
     <main className="min-h-screen bg-linen text-charcoal">
       <section className="bg-forest-950 py-20 text-white">
         <div className="section-shell">
-          <Link className="text-sm font-semibold text-sand hover:text-white" href="/">Modul S · Брест</Link>
+          <nav aria-label="Хлебные крошки">
+            <ol className="flex items-center gap-2 text-sm text-white/65">
+              <li><Link className="hover:text-white" href="/">Главная</Link></li>
+              <li aria-hidden="true"><ChevronRight size={14} /></li>
+              <li className="font-semibold text-sand" aria-current="page">{copy.title}</li>
+            </ol>
+          </nav>
           <p className="eyebrow mt-10 text-sand">{copy.eyebrow}</p>
           <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-tight sm:text-6xl">{copy.title}</h1>
           <p className="mt-6 max-w-3xl text-lg leading-8 text-white/75">{copy.lead}</p>
           <div className="mt-9 flex flex-wrap gap-3">
-            <a className="focus-ring inline-flex h-12 items-center gap-2 rounded-md bg-sand px-5 text-sm font-semibold text-forest-950" href="tel:+375445702727"><Phone size={17} /> +375 44 570-27-27</a>
-            <a className="focus-ring inline-flex h-12 items-center gap-2 rounded-md border border-white/25 px-5 text-sm font-semibold text-white" href="mailto:Modulsdom@mail.ru"><Mail size={17} /> Получить расчёт</a>
+            <a data-ym-goal="phone_click" className="focus-ring inline-flex h-12 items-center gap-2 rounded-md bg-sand px-5 text-sm font-semibold text-forest-950" href="tel:+375445702727"><Phone size={17} /> +375 44 570-27-27</a>
+            <a data-ym-goal="email_click" className="focus-ring inline-flex h-12 items-center gap-2 rounded-md border border-white/25 px-5 text-sm font-semibold text-white" href="mailto:Modulsdom@mail.ru"><Mail size={17} /> Получить расчёт</a>
           </div>
         </div>
       </section>
@@ -87,7 +93,7 @@ export function ProjectCategoryPage({ copy, path }: { copy: CategoryCopy; path: 
                   <h3 className="text-xl font-semibold text-forest-950">{project.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-charcoal/68">{project.summary}</p>
                   <div className="mt-5 flex items-center justify-between rounded-md bg-forest-50 p-3"><span className="text-xs font-semibold uppercase text-forest-700">Под ключ</span><strong>{project.priceTurnkey}</strong></div>
-                  <Link className="focus-ring mt-5 inline-flex h-11 items-center justify-center gap-2 rounded-md bg-forest-700 px-4 text-sm font-semibold text-white hover:bg-forest-900" href={`/projects/${project.id}`}>Проект и комплектация <ArrowRight size={16} /></Link>
+                  <Link data-ym-goal="project_open" data-project-id={project.id} className="focus-ring mt-5 inline-flex h-11 items-center justify-center gap-2 rounded-md bg-forest-700 px-4 text-sm font-semibold text-white hover:bg-forest-900" href={`/projects/${project.id}`}>Проект и комплектация <ArrowRight size={16} /></Link>
                 </div>
               </article>
             ))}
@@ -96,7 +102,7 @@ export function ProjectCategoryPage({ copy, path }: { copy: CategoryCopy; path: 
       </section>
 
       <section className="bg-white py-16">
-        <div className="section-shell"><h2 className="text-3xl font-semibold text-forest-950">Как получить точную стоимость</h2><p className="mt-4 max-w-3xl leading-7 text-charcoal/72">Цена зависит от проекта, отделки, инженерных систем, фундамента и расстояния доставки. Расскажите о вашем участке и задачах — подготовим понятную комплектацию и расчёт без скрытых работ.</p><Link className="mt-7 inline-flex items-center gap-2 font-semibold text-forest-700" href="/#consultation">Связаться с производителем <ArrowRight size={17} /></Link></div>
+        <div className="section-shell"><h2 className="text-3xl font-semibold text-forest-950">Как получить точную стоимость</h2><p className="mt-4 max-w-3xl leading-7 text-charcoal/72">Цена зависит от проекта, отделки, инженерных систем, фундамента и расстояния доставки. Расскажите о вашем участке и задачах — подготовим понятную комплектацию и расчёт без скрытых работ.</p><Link data-ym-goal="consultation_click" className="mt-7 inline-flex items-center gap-2 font-semibold text-forest-700" href="/#consultation">Связаться с производителем <ArrowRight size={17} /></Link></div>
       </section>
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList).replace(/</g, "\\u003c") }} />
