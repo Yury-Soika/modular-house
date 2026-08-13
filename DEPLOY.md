@@ -7,6 +7,22 @@ install (Hoster terminal).
 
 Full mechanics live in [deploy-hoster.sh](deploy-hoster.sh).
 
+## Complete release checklist
+
+Every production release must follow the complete sequence below:
+
+1. Review and test the local changes.
+2. Commit the intended files and push `main` to GitHub.
+3. Run `./deploy-hoster.sh publish` locally and note the generated build tag.
+4. Open a new SSH connection to Hoster.by.
+5. In `~/www/modulsdom-brest.by`, pull `main` and install that exact build tag.
+6. Confirm PM2 reports `modulsdom-brest` as `online` and save its process list.
+7. Verify the application socket and important public URLs return HTTP 200.
+8. **Close the SSH connection immediately after verification and confirm it closed.**
+
+Do not leave an interactive SSH shell, log stream, or automated SSH/Expect session
+running after a deployment. Each later deployment must use a fresh connection.
+
 ---
 
 ## Step 1 — Publish a build (on your Mac)
@@ -73,6 +89,27 @@ favicon now serves:
 curl -sI https://modulsdom-brest.by/favicon.ico | head -1   # expect: HTTP/… 200
 ```
 
+Also confirm the app is healthy before disconnecting:
+
+```bash
+export PATH="/var/www/h211034/data/.nvm/versions/node/v26.4.0/bin:/usr/lib/ispnodejs/bin:$PATH"
+pm2 status modulsdom-brest                      # expect: online
+curl -sI https://modulsdom-brest.by/ | head -1 # expect: HTTP/… 200
+```
+
+### 2d. Close the SSH connection — required
+
+After deployment and verification, explicitly leave the remote shell:
+
+```bash
+exit
+```
+
+The terminal should return to your local Mac prompt. If using an automated SSH or
+Expect command, wait for SSH to reach EOF and verify the local process exited. Never
+leave a deployment connection or `pm2 logs` session open. In the deployment report,
+state that the SSH connection was closed.
+
 ---
 
 ## Restart only (no new build)
@@ -83,6 +120,7 @@ If the app is misbehaving and you just want to bounce it, from the Hoster termin
 export PATH="/var/www/h211034/data/.nvm/versions/node/v26.4.0/bin:/usr/lib/ispnodejs/bin:$PATH"
 pm2 restart modulsdom-brest --update-env
 pm2 status modulsdom-brest
+exit
 ```
 
 > The `export PATH` line is needed because Hoster doesn't expose Node in plain SSH
