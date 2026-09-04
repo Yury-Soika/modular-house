@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withPayload } from "@payloadcms/next/withPayload";
 
 // When DEMO_BASE_PATH is set (by the plex-demo hub's build-landings script), build
 // a static export mounted under that sub-path. The hub provides /api/leads, and the
@@ -15,7 +16,6 @@ const nextConfig: NextConfig = demoBasePath
       // Expose the base path to the client so public assets (images, PDF) can be
       // prefixed too — next/image and plain <a href> do not add basePath for files in /public.
       env: { NEXT_PUBLIC_BASE_PATH: demoBasePath },
-      eslint: { ignoreDuringBuilds: true },
       typescript: { ignoreBuildErrors: true },
       experimental: { cpus: 1, workerThreads: false, webpackBuildWorker: false },
       images: { unoptimized: true, formats: ["image/avif", "image/webp"] }
@@ -24,7 +24,6 @@ const nextConfig: NextConfig = demoBasePath
       env: { NEXT_PUBLIC_BASE_PATH: "" },
       // Validation runs before deployment; skip its child workers on the
       // process-constrained production host.
-      eslint: { ignoreDuringBuilds: true },
       typescript: { ignoreBuildErrors: true },
       // Shared hosting accounts commonly enforce a low process limit. Keeping
       // the build on one worker prevents Next.js from failing with spawn EAGAIN.
@@ -34,4 +33,4 @@ const nextConfig: NextConfig = demoBasePath
       }
     };
 
-export default nextConfig;
+export default demoBasePath ? nextConfig : withPayload(nextConfig);

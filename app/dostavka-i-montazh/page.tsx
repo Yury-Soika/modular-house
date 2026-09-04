@@ -1,4 +1,5 @@
 import { InfoPage, infoPageMetadata, type InfoPageCopy } from "../_components/InfoPage";
+import { getInfoPage, getSiteSettings } from "@/cms/content";
 
 const copy: InfoPageCopy = {
   path: "/dostavka-i-montazh",
@@ -20,5 +21,9 @@ const copy: InfoPageCopy = {
   ctaText: "Отправьте населённый пункт, точку на карте и фотографии подъезда — оценим исходные условия.",
 };
 
-export const metadata = infoPageMetadata(copy);
-export default function DeliveryPage() { return <InfoPage copy={copy} />; }
+export const dynamic = "force-dynamic";
+export async function generateMetadata() { return infoPageMetadata(await getInfoPage("delivery-page", copy)); }
+export default async function DeliveryPage() {
+  const [page, settings] = await Promise.all([getInfoPage("delivery-page", copy), getSiteSettings()]);
+  return <InfoPage copy={page} settings={settings} />;
+}

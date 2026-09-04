@@ -88,6 +88,23 @@ install_release() {
   archive="${TMPDIR:-$HOME/tmp}/${asset}"
   url="https://github.com/${REPOSITORY}/releases/download/${tag}/${asset}"
 
+  test -f .env.production || { echo ".env.production is required." >&2; exit 1; }
+  grep -Eq '^DATABASE_URI=.+' .env.production || { echo "DATABASE_URI is missing in .env.production." >&2; exit 1; }
+  grep -Eq '^PAYLOAD_SECRET=.+' .env.production || { echo "PAYLOAD_SECRET is missing in .env.production." >&2; exit 1; }
+
+  echo "Installing production dependencies..."
+  npm ci --omit=dev --no-audit --no-fund
+
+  echo "Applying PostgreSQL migrations..."
+  PAYLOAD_LOAD_PRODUCTION_ENV=1 npm run cms:migrate
+
+  if [[ -n "${CMS_ADMIN_EMAIL:-}" && -n "${CMS_ADMIN_PASSWORD:-}" ]]; then
+    echo "Seeding CMS content and administrator..."
+    PAYLOAD_LOAD_PRODUCTION_ENV=1 npm run cms:seed
+  fi
+
+  mkdir -p media
+
   mkdir -p "$(dirname "$archive")"
   echo "Downloading $tag..."
   curl -fL "$url" -o "$archive"

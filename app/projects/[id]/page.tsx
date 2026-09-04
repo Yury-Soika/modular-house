@@ -3,12 +3,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, Check, ChevronRight, Mail, Phone } from "lucide-react";
-import { content, type Project } from "../../data/content";
+import type { Project } from "../../data/content";
+import { getProjects, getSiteSettings } from "@/cms/content";
 
 const SITE_URL = "https://modulsdom-brest.by";
 
-function findProject(id: string) {
-  return content.ru.projects.find((project) => project.id === id);
+async function findProject(id: string) {
+  return (await getProjects()).find((project) => project.id === id);
 }
 
 function priceValue(value: string) {
@@ -16,13 +17,11 @@ function priceValue(value: string) {
   return digits ? Number(digits) : undefined;
 }
 
-export function generateStaticParams() {
-  return content.ru.projects.map((project) => ({ id: project.id }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const project = findProject(id);
+  const project = await findProject(id);
   if (!project) return {};
 
   const title = project.seoTitle;
@@ -52,14 +51,15 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const project = findProject(id);
+  const [projects, settings] = await Promise.all([getProjects(), getSiteSettings()]);
+  const project = projects.find((candidate) => candidate.id === id);
   if (!project) notFound();
 
   const amount = priceValue(project.priceTurnkey);
   const url = `${SITE_URL}/projects/${project.id}`;
   const categoryPath = project.kind === "bath" ? "/modulnye-bani" : "/modulnye-doma";
   const categoryName = project.kind === "bath" ? "Модульные бани" : "Модульные дома";
-  const categoryProjects = content.ru.projects.filter((candidate) => candidate.kind === project.kind);
+  const categoryProjects = projects.filter((candidate) => candidate.kind === project.kind);
   const projectIndex = categoryProjects.findIndex((candidate) => candidate.id === project.id);
   const previousProject = categoryProjects[(projectIndex - 1 + categoryProjects.length) % categoryProjects.length];
   const nextProject = categoryProjects[(projectIndex + 1) % categoryProjects.length];
@@ -156,8 +156,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             </div>
 
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
-              <a data-ym-goal="phone_click" className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-md bg-forest-700 px-5 text-sm font-semibold text-white hover:bg-forest-900" href="tel:+375445702727"><Phone size={17} /> Позвонить</a>
-              <a data-ym-goal="email_click" className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-md border border-forest-700 px-5 text-sm font-semibold text-forest-700 hover:bg-forest-50" href="mailto:Modulsdom@mail.ru"><Mail size={17} /> Запросить расчёт</a>
+              <a data-ym-goal="phone_click" className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-md bg-forest-700 px-5 text-sm font-semibold text-white hover:bg-forest-900" href={`tel:${settings.phone}`}><Phone size={17} /> Позвонить</a>
+              <a data-ym-goal="email_click" className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-md border border-forest-700 px-5 text-sm font-semibold text-forest-700 hover:bg-forest-50" href={`mailto:${settings.email}`}><Mail size={17} /> Запросить расчёт</a>
             </div>
           </div>
         </div>

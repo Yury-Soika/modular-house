@@ -1,4 +1,5 @@
 import { InfoPage, infoPageMetadata, type InfoPageCopy } from "../_components/InfoPage";
+import { getInfoPage, getSiteSettings } from "@/cms/content";
 
 const copy: InfoPageCopy = {
   path: "/kontakty",
@@ -21,5 +22,9 @@ const copy: InfoPageCopy = {
   showContacts: true
 };
 
-export const metadata = infoPageMetadata(copy);
-export default function ContactsPage() { return <InfoPage copy={copy} />; }
+export const dynamic = "force-dynamic";
+export async function generateMetadata() { return infoPageMetadata(await getInfoPage("contacts-page", copy)); }
+export default async function ContactsPage() {
+  const [page, settings] = await Promise.all([getInfoPage("contacts-page", copy), getSiteSettings()]);
+  return <InfoPage copy={page} settings={settings} />;
+}

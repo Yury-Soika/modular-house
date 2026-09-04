@@ -1,13 +1,16 @@
 # Modular House Landing Page
 
-Next.js, TypeScript, and Tailwind CSS landing page for modular timber-frame houses in Belarus.
+Next.js, TypeScript, Tailwind CSS, and Payload CMS landing page for modular timber-frame houses in Belarus. Payload uses PostgreSQL only.
 
 ## Scripts
 
 ```bash
 npm run dev
 npm run build
+npm run cms:migrate
 ```
+
+CMS setup, environment variables, content model, seed, and SEO behavior are documented in [CMS_SETUP.md](CMS_SETUP.md).
 
 ## Notes
 

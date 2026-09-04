@@ -17,7 +17,7 @@ type CategoryCopy = {
   catalogTitle: string;
 };
 
-export function categoryMetadata(title: string, description: string, path: string): Metadata {
+export function categoryMetadata(title: string, description: string, path: string, image = "/site-preview-ru.jpg"): Metadata {
   const isBaths = path === "/modulnye-bani";
   return {
     title,
@@ -26,13 +26,13 @@ export function categoryMetadata(title: string, description: string, path: strin
       ? ["модульные бани Беларусь", "модульная баня под ключ", "проекты модульных бань", "модульные бани Брест", "Modul S"]
       : ["модульные дома Беларусь", "модульные дома под ключ", "проекты модульных домов", "модульные дома Брест", "Modul S"],
     alternates: { canonical: path },
-    openGraph: { title, description, url: path, type: "website", images: ["/site-preview-ru.jpg"] },
-    twitter: { card: "summary_large_image", title, description, images: ["/site-preview-ru.jpg"] }
+    openGraph: { title, description, url: path, type: "website", images: [image] },
+    twitter: { card: "summary_large_image", title, description, images: [image] }
   };
 }
 
-export function ProjectCategoryPage({ copy, path }: { copy: CategoryCopy; path: string }) {
-  const projects = content.ru.projects.filter((project) => project.kind === copy.kind);
+export function ProjectCategoryPage({ copy, path, allProjects = content.ru.projects, settings = { phone: "+375445702727", email: "Modulsdom@mail.ru" } }: { copy: CategoryCopy; path: string; allProjects?: Project[]; settings?: { phone: string; email: string } }) {
+  const projects = allProjects.filter((project) => project.kind === copy.kind);
   const itemList = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -69,8 +69,8 @@ export function ProjectCategoryPage({ copy, path }: { copy: CategoryCopy; path: 
           <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-tight sm:text-6xl">{copy.title}</h1>
           <p className="mt-6 max-w-3xl text-lg leading-8 text-white/75">{copy.lead}</p>
           <div className="mt-9 flex flex-wrap gap-3">
-            <a data-ym-goal="phone_click" className="focus-ring inline-flex h-12 items-center gap-2 rounded-md bg-sand px-5 text-sm font-semibold text-forest-950" href="tel:+375445702727"><Phone size={17} /> +375 44 570-27-27</a>
-            <a data-ym-goal="email_click" className="focus-ring inline-flex h-12 items-center gap-2 rounded-md border border-white/25 px-5 text-sm font-semibold text-white" href="mailto:Modulsdom@mail.ru"><Mail size={17} /> Получить расчёт</a>
+            <a data-ym-goal="phone_click" className="focus-ring inline-flex h-12 items-center gap-2 rounded-md bg-sand px-5 text-sm font-semibold text-forest-950" href={`tel:${settings.phone}`}><Phone size={17} /> {settings.phone}</a>
+            <a data-ym-goal="email_click" className="focus-ring inline-flex h-12 items-center gap-2 rounded-md border border-white/25 px-5 text-sm font-semibold text-white" href={`mailto:${settings.email}`}><Mail size={17} /> Получить расчёт</a>
           </div>
         </div>
       </section>

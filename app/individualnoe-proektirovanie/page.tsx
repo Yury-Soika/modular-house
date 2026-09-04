@@ -1,4 +1,5 @@
 import { InfoPage, infoPageMetadata, type InfoPageCopy } from "../_components/InfoPage";
+import { getInfoPage, getSiteSettings } from "@/cms/content";
 
 const copy: InfoPageCopy = {
   path: "/individualnoe-proektirovanie",
@@ -20,5 +21,9 @@ const copy: InfoPageCopy = {
   ctaText: "Пришлите эскиз, референсы или просто список пожеланий — начнём с проверки исходных данных.",
 };
 
-export const metadata = infoPageMetadata(copy);
-export default function CustomDesignPage() { return <InfoPage copy={copy} />; }
+export const dynamic = "force-dynamic";
+export async function generateMetadata() { return infoPageMetadata(await getInfoPage("custom-design-page", copy)); }
+export default async function CustomDesignPage() {
+  const [page, settings] = await Promise.all([getInfoPage("custom-design-page", copy), getSiteSettings()]);
+  return <InfoPage copy={page} settings={settings} />;
+}

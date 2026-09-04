@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import { YandexMetrika } from "./_components/YandexMetrika";
+import { getSiteSettings } from "@/cms/content";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -9,7 +10,7 @@ const montserrat = Montserrat({
   display: "swap"
 });
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   metadataBase: new URL("https://modulsdom-brest.by"),
   title: "Модульные дома и бани под ключ в Беларуси | Modul S",
   description:
@@ -88,27 +89,51 @@ export const metadata: Metadata = {
   }
 };
 
-export default function RootLayout({
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  return {
+    ...baseMetadata,
+    title: settings.defaultMetaTitle,
+    description: settings.defaultMetaDescription,
+    applicationName: settings.siteName,
+    openGraph: {
+      ...baseMetadata.openGraph,
+      title: settings.defaultMetaTitle,
+      description: settings.defaultMetaDescription,
+      siteName: settings.siteName,
+      images: [settings.socialImage]
+    },
+    twitter: {
+      ...baseMetadata.twitter,
+      title: settings.defaultMetaTitle,
+      description: settings.defaultMetaDescription,
+      images: [settings.socialImage]
+    }
+  };
+}
+
+export default async function RootLayout({
   children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getSiteSettings();
   const structuredData = {
     "@context": "https://schema.org",
     "@type": ["HomeAndConstructionBusiness", "Organization"],
     "@id": "https://modulsdom-brest.by/#organization",
-    name: "Modul S",
+    name: settings.siteName,
     legalName: "ООО «КемпингДом»",
     url: "https://modulsdom-brest.by",
     logo: "https://modulsdom-brest.by/icon-512.png",
     image: "https://modulsdom-brest.by/site-preview-ru.jpg",
-    telephone: "+375445702727",
-    email: "Modulsdom@mail.ru",
+    telephone: settings.phone,
+    email: settings.email,
     priceRange: "$$",
     description: "Производство модульных каркасных домов и бань под ключ в Бресте с доставкой и монтажом по всей Беларуси.",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "ул. Сябровская, 90Д",
+      streetAddress: settings.address,
       addressLocality: "Брест",
       addressRegion: "Брестская область",
       postalCode: "224000",
@@ -129,8 +154,8 @@ export default function RootLayout({
     ],
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+375445702727",
-      email: "Modulsdom@mail.ru",
+      telephone: settings.phone,
+      email: settings.email,
       contactType: "customer service",
       areaServed: "BY",
       availableLanguage: ["Russian"]
@@ -150,7 +175,7 @@ export default function RootLayout({
     "@type": "WebSite",
     "@id": "https://modulsdom-brest.by/#website",
     url: "https://modulsdom-brest.by/",
-    name: "Modul S",
+    name: settings.siteName,
     inLanguage: "ru-BY",
     publisher: { "@id": "https://modulsdom-brest.by/#organization" }
   };

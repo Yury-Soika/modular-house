@@ -8,6 +8,7 @@ export type InfoPageCopy = {
   path: string;
   title: string;
   description: string;
+  seoImage?: string;
   eyebrow: string;
   lead: string;
   introTitle: string;
@@ -24,12 +25,12 @@ export function infoPageMetadata(copy: InfoPageCopy): Metadata {
     description: copy.description,
     keywords: [copy.eyebrow, `${copy.eyebrow} Modul S`, "модульные дома Беларусь"],
     alternates: { canonical: copy.path },
-    openGraph: { title: copy.title, description: copy.description, url: copy.path, type: "website", images: ["/site-preview-ru.jpg"] },
-    twitter: { card: "summary_large_image", title: copy.title, description: copy.description, images: ["/site-preview-ru.jpg"] }
+    openGraph: { title: copy.title, description: copy.description, url: copy.path, type: "website", images: [copy.seoImage || "/site-preview-ru.jpg"] },
+    twitter: { card: "summary_large_image", title: copy.title, description: copy.description, images: [copy.seoImage || "/site-preview-ru.jpg"] }
   };
 }
 
-export function InfoPage({ copy }: { copy: InfoPageCopy }) {
+export function InfoPage({ copy, settings = { phone: "+375445702727", email: "Modulsdom@mail.ru" } }: { copy: InfoPageCopy; settings?: { phone: string; email: string } }) {
   const url = `${SITE_URL}${copy.path}`;
   const webPageStructuredData = {
     "@context": "https://schema.org",
@@ -78,10 +79,10 @@ export function InfoPage({ copy }: { copy: InfoPageCopy }) {
       {copy.showContacts && (
         <section className="py-16">
           <div className="section-shell grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <a data-ym-goal="phone_click" className="rounded-xl bg-white p-6 shadow-soft" href="tel:+375445702727"><Phone className="text-forest-700" /><strong className="mt-5 block text-forest-950">Позвонить</strong><span className="mt-2 block text-sm text-charcoal/65">+375 44 570-27-27</span></a>
-            <a data-ym-goal="email_click" className="rounded-xl bg-white p-6 shadow-soft" href="mailto:Modulsdom@mail.ru"><Mail className="text-forest-700" /><strong className="mt-5 block text-forest-950">Email</strong><span className="mt-2 block break-all text-sm text-charcoal/65">Modulsdom@mail.ru</span></a>
-            <a data-ym-goal="telegram_click" className="rounded-xl bg-white p-6 shadow-soft" href="https://t.me/+375445702727" target="_blank" rel="noopener noreferrer"><MessageCircle className="text-forest-700" /><strong className="mt-5 block text-forest-950">Telegram</strong><span className="mt-2 block text-sm text-charcoal/65">Написать сообщение</span></a>
-            <a data-ym-goal="viber_click" className="rounded-xl bg-white p-6 shadow-soft" href="viber://chat?number=%2B375445702727"><MessageCircle className="text-forest-700" /><strong className="mt-5 block text-forest-950">Viber</strong><span className="mt-2 block text-sm text-charcoal/65">Открыть чат</span></a>
+            <a data-ym-goal="phone_click" className="rounded-xl bg-white p-6 shadow-soft" href={`tel:${settings.phone}`}><Phone className="text-forest-700" /><strong className="mt-5 block text-forest-950">Позвонить</strong><span className="mt-2 block text-sm text-charcoal/65">{settings.phone}</span></a>
+            <a data-ym-goal="email_click" className="rounded-xl bg-white p-6 shadow-soft" href={`mailto:${settings.email}`}><Mail className="text-forest-700" /><strong className="mt-5 block text-forest-950">Email</strong><span className="mt-2 block break-all text-sm text-charcoal/65">{settings.email}</span></a>
+            <a data-ym-goal="telegram_click" className="rounded-xl bg-white p-6 shadow-soft" href={`https://t.me/${settings.phone}`} target="_blank" rel="noopener noreferrer"><MessageCircle className="text-forest-700" /><strong className="mt-5 block text-forest-950">Telegram</strong><span className="mt-2 block text-sm text-charcoal/65">Написать сообщение</span></a>
+            <a data-ym-goal="viber_click" className="rounded-xl bg-white p-6 shadow-soft" href={`viber://chat?number=${encodeURIComponent(settings.phone)}`}><MessageCircle className="text-forest-700" /><strong className="mt-5 block text-forest-950">Viber</strong><span className="mt-2 block text-sm text-charcoal/65">Открыть чат</span></a>
           </div>
         </section>
       )}

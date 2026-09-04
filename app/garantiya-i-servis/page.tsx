@@ -1,4 +1,5 @@
 import { InfoPage, infoPageMetadata, type InfoPageCopy } from "../_components/InfoPage";
+import { getInfoPage, getSiteSettings } from "@/cms/content";
 
 const copy: InfoPageCopy = {
   path: "/garantiya-i-servis",
@@ -20,5 +21,9 @@ const copy: InfoPageCopy = {
   ctaText: "Сообщите номер проекта и опишите вопрос — специалист подскажет дальнейший порядок.",
 };
 
-export const metadata = infoPageMetadata(copy);
-export default function WarrantyPage() { return <InfoPage copy={copy} />; }
+export const dynamic = "force-dynamic";
+export async function generateMetadata() { return infoPageMetadata(await getInfoPage("warranty-page", copy)); }
+export default async function WarrantyPage() {
+  const [page, settings] = await Promise.all([getInfoPage("warranty-page", copy), getSiteSettings()]);
+  return <InfoPage copy={page} settings={settings} />;
+}

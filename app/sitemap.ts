@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
-import { content } from "./data/content";
+import { getProjects } from "@/cms/content";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date("2026-08-13");
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const projects = await getProjects();
+  const lastModified = new Date();
   const informationPages = [
     "/kontakty",
     "/o-proizvodstve",
@@ -32,7 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.7
     })),
-    ...content.ru.projects.map((project) => ({
+    ...projects.map((project) => ({
       url: `https://modulsdom-brest.by/projects/${project.id}`,
       lastModified,
       changeFrequency: "monthly" as const,

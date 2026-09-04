@@ -20,6 +20,13 @@ Every production release must follow the complete sequence below:
 7. Verify the application socket and important public URLs return HTTP 200.
 8. **Close the SSH connection immediately after verification and confirm it closed.**
 
+Payload deployments additionally require `DATABASE_URI`, `PAYLOAD_SECRET`, and
+`NEXT_PUBLIC_SERVER_URL` in the server-only `.env.production`. The install command
+runs `npm ci` and PostgreSQL migrations before replacing the running build. For the
+first CMS deployment only, pass `CMS_ADMIN_EMAIL` and `CMS_ADMIN_PASSWORD` to the
+install command so it can run the idempotent content/media seed. See
+[CMS_SETUP.md](CMS_SETUP.md).
+
 Do not leave an interactive SSH shell, log stream, or automated SSH/Expect session
 running after a deployment. Each later deployment must use a fresh connection.
 

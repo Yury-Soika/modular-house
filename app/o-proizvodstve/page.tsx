@@ -1,4 +1,5 @@
 import { InfoPage, infoPageMetadata, type InfoPageCopy } from "../_components/InfoPage";
+import { getInfoPage, getSiteSettings } from "@/cms/content";
 
 const copy: InfoPageCopy = {
   path: "/o-proizvodstve",
@@ -20,5 +21,9 @@ const copy: InfoPageCopy = {
   ctaText: "Расскажем о составе комплектаций и согласуем формат знакомства с производством.",
 };
 
-export const metadata = infoPageMetadata(copy);
-export default function ProductionPage() { return <InfoPage copy={copy} />; }
+export const dynamic = "force-dynamic";
+export async function generateMetadata() { return infoPageMetadata(await getInfoPage("production-page", copy)); }
+export default async function ProductionPage() {
+  const [page, settings] = await Promise.all([getInfoPage("production-page", copy), getSiteSettings()]);
+  return <InfoPage copy={page} settings={settings} />;
+}
