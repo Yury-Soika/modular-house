@@ -88,19 +88,19 @@ install_release() {
   archive="${TMPDIR:-$HOME/tmp}/${asset}"
   url="https://github.com/${REPOSITORY}/releases/download/${tag}/${asset}"
 
-  test -f .env.production || { echo ".env.production is required." >&2; exit 1; }
-  grep -Eq '^DATABASE_URI=.+' .env.production || { echo "DATABASE_URI is missing in .env.production." >&2; exit 1; }
-  grep -Eq '^PAYLOAD_SECRET=.+' .env.production || { echo "PAYLOAD_SECRET is missing in .env.production." >&2; exit 1; }
-
   echo "Installing production dependencies..."
   npm ci --omit=dev --no-audit --no-fund
 
-  echo "Applying PostgreSQL migrations..."
-  PAYLOAD_LOAD_PRODUCTION_ENV=1 npm run cms:migrate
+  if test -f .env.production && grep -Eq '^DATABASE_URI=.+' .env.production && grep -Eq '^PAYLOAD_SECRET=.+' .env.production; then
+    echo "Applying PostgreSQL migrations..."
+    PAYLOAD_LOAD_PRODUCTION_ENV=1 npm run cms:migrate
 
-  if [[ -n "${CMS_ADMIN_EMAIL:-}" && -n "${CMS_ADMIN_PASSWORD:-}" ]]; then
-    echo "Seeding CMS content and administrator..."
-    PAYLOAD_LOAD_PRODUCTION_ENV=1 npm run cms:seed
+    if [[ -n "${CMS_ADMIN_EMAIL:-}" && -n "${CMS_ADMIN_PASSWORD:-}" ]]; then
+      echo "Seeding CMS content and administrator..."
+      PAYLOAD_LOAD_PRODUCTION_ENV=1 npm run cms:seed
+    fi
+  else
+    echo "Payload is inactive: DATABASE_URI and PAYLOAD_SECRET are not configured. Skipping CMS migrations."
   fi
 
   mkdir -p media
@@ -116,13 +116,14 @@ install_release() {
   test -f .next/BUILD_ID || { echo "Deployment archive has no BUILD_ID." >&2; exit 1; }
 
   echo "Restarting $APP_NAME..."
-  if "$PM2_PATH" describe "$APP_NAME" >/dev/null 2>&1; then
-    SOCKET="$SOCKET_PATH" NODE_ENV=production "$PM2_PATH" restart "$APP_NAME" --update-env
-  else
-    SOCKET="$SOCKET_PATH" NODE_ENV=production "$PM2_PATH" start server.cjs \
-      --name "$APP_NAME" \
-      --interpreter "$NODE_PATH"
+  if "$PM2_PATH" describe "modulsdom-brest.by" >/dev/null 2>&1; then
+    "$PM2_PATH" delete "modulsdom-brest.by"
   fi
+  if "$PM2_PATH" describe "$APP_NAME" >/dev/null 2>&1; then
+    # Recreate the entry so legacy npm wrappers/cluster settings cannot survive.
+    "$PM2_PATH" delete "$APP_NAME"
+  fi
+  HOSTER_NODE_PATH="$NODE_PATH" "$PM2_PATH" start ecosystem.config.cjs --only "$APP_NAME"
 
   "$PM2_PATH" save
   "$PM2_PATH" status "$APP_NAME"

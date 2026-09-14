@@ -86,7 +86,12 @@ export default buildConfig({
   collections: [Users, Media, Projects],
   globals: [homePage, ...categoryDefaults.map(categoryPageGlobal), ...pageDefaults.map(infoPageGlobal), siteSettings],
   editor: lexicalEditor(),
-  db: postgresAdapter({ pool: { connectionString: process.env.DATABASE_URI || "postgresql://payload:payload@127.0.0.1:5432/modulsdom" } }),
+  db: postgresAdapter({ pool: {
+    connectionString: process.env.DATABASE_URI || "postgresql://payload:payload@127.0.0.1:5432/modulsdom",
+    max: 2,
+    connectionTimeoutMillis: 5000,
+    idleTimeoutMillis: 10000
+  } }),
   secret: process.env.PAYLOAD_SECRET || "build-time-placeholder-change-in-production",
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || "https://modulsdom-brest.by",
   cors: ["https://modulsdom-brest.by"],

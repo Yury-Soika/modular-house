@@ -7,6 +7,30 @@ install (Hoster terminal).
 
 Full mechanics live in [deploy-hoster.sh](deploy-hoster.sh).
 
+## Runtime process limits
+
+Use [ecosystem.config.cjs](ecosystem.config.cjs) to launch one Node process
+directly under PM2. Do not start the app through `npm start` in the hosting panel:
+that adds an npm process with its own threads. The ecosystem file bounds Tokio,
+Rayon, V8 and libuv pools; `server.cjs` also limits Sharp image-processing threads.
+Build-worker settings in `next.config.ts` alone do not limit runtime threads.
+
+On 14 September 2026 the live account had 59 app threads (including 48 Tokio
+workers), 11 npm-wrapper threads and 11 PM2 threads. A runtime-only patch replaced
+the legacy `modulsdom-brest.by` PM2 entry with `modulsdom-brest` and retained the
+existing pre-CMS build. The original server and PM2 dump were backed up outside
+the web root in `~/runtime-backup-20260914-132117/`.
+After page and image-resizing checks, the app used 10 threads and PM2 used 11
+(21 combined, down from 81). All six checked public URLs and image resizing
+returned HTTP 200, PM2 showed zero restarts, and the verification SSH session
+closed. These are point-in-time measurements; confirm subsequent NPROC fault
+graphs with the hosting administrator under normal traffic.
+
+The server now has a patched `server.cjs` and new `ecosystem.config.cjs` ahead of
+its source checkout. Before a future pull, preserve these files and reconcile
+them with the committed runtime fix; do not discard the live fix accidentally.
+Payload still requires the database setup described in [CMS_SETUP.md](CMS_SETUP.md).
+
 ## Complete release checklist
 
 Every production release must follow the complete sequence below:

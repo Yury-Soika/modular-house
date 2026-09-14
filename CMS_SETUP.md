@@ -2,6 +2,25 @@
 
 The site uses Payload 3 embedded in Next.js and the official PostgreSQL adapter.
 
+## Production status (14 September 2026)
+
+Payload is integrated in this checkout but is not deployed on the live host.
+The live environment has neither `DATABASE_URI` nor `PAYLOAD_SECRET`; public
+pages currently run the earlier, pre-CMS build. Do not install the CMS release
+until a PostgreSQL database has been provisioned and its credentials configured.
+
+Ask Hoster.by whether this plan provides PostgreSQL, or permits outbound
+connections to a managed PostgreSQL service. If neither is supported, the CMS
+needs another hosting plan or a VPS. MySQL credentials cannot be used with this
+project's PostgreSQL adapter. Payload itself runs inside the same Next.js process;
+it does not need a second Node server.
+
+Once the database is available: configure the variables below, validate/build the
+CMS release locally, run migrations, seed the content and initial administrator,
+then verify admin login, publishing, media uploads and public content before
+considering the CMS launch complete. Back up the database and persistent media.
+The connection pool is capped at two connections per application instance.
+
 ## Admin
 
 - URL: `https://modulsdom-brest.by/admin`

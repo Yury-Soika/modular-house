@@ -1,5 +1,7 @@
 const fs = require("node:fs");
 const http = require("node:http");
+// Bound native image-processing threads for both Next.js and Payload uploads.
+require("sharp").concurrency(1);
 const next = require("next");
 
 const dev = process.env.NODE_ENV !== "production";
