@@ -1,3 +1,5 @@
+import { applyCatalogUpdates } from "./catalog-updates";
+
 export type Lang = "en" | "ru";
 
 export type SpecRow = { label: string; warm: string; turnkey: string };
@@ -24,6 +26,7 @@ export type Project = {
   summary: string;
   image?: string;
   plan?: string;
+  gallery?: string[];
   singleColumn?: boolean;
   specs: SpecRow[];
 };
@@ -695,7 +698,7 @@ export const content: Record<Lang, Content> = {
       title: "Modular houses and baths",
       text: "Swipe through the lineup — from compact 22 m² houses to spacious 84 m² family homes and turnkey baths. Open any project to see the full layout. Layout changes are possible for every project, and we also build custom designs."
     },
-    projects: buildProjects("en"),
+    projects: applyCatalogUpdates(buildProjects("en"), "en"),
     optionsSection: {
       eyebrow: "Customize your house",
       title: "Additional house options",
@@ -911,7 +914,7 @@ export const content: Record<Lang, Content> = {
       title: "Модульные дома и бани",
       text: "Листайте каталог — от компактных домов 22 м² до просторных семейных домов 84 м² и бань под ключ. Откройте любой проект, чтобы увидеть полную планировку. В каждом проекте возможна перепланировка. Строим по индивидуальным проектам."
     },
-    projects: buildProjects("ru"),
+    projects: applyCatalogUpdates(buildProjects("ru")),
     optionsSection: {
       eyebrow: "Индивидуальная комплектация",
       title: "Дополнительные опции к дому",

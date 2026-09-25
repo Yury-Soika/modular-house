@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight, Check, ChevronRight, Mail, Phone } from "lucide-react";
 import type { Project } from "../../data/content";
 import { getProjects, getSiteSettings } from "@/cms/content";
+import ProjectGallery from "@/app/_components/ProjectGallery";
 
 const SITE_URL = "https://modulsdom-brest.by";
 
@@ -122,20 +123,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
       <article className="section-shell">
         <div className="grid gap-8 rounded-xl bg-white p-6 shadow-soft lg:grid-cols-[1.05fr_0.95fr] lg:p-10">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-            {project.image ? (
-              <div className="relative h-80 overflow-hidden rounded-lg bg-forest-50 lg:h-[460px]">
-                <Image src={project.image} alt={`${project.title} — внешний вид`} fill priority sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
-              </div>
-            ) : (
-              <div className="flex h-80 items-center justify-center rounded-lg bg-forest-50 text-sm font-semibold text-forest-700 lg:h-[460px]">Визуализация проекта готовится</div>
-            )}
-            {project.plan && (
-              <div className="relative h-64 overflow-hidden rounded-lg border border-forest-900/10 bg-white">
-                <Image src={project.plan} alt={`${project.title} — планировка`} fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-contain" />
-              </div>
-            )}
-          </div>
+          <ProjectGallery project={project} />
 
           <div>
             <p className="eyebrow">Проект №{project.projectNo}</p>
@@ -151,7 +139,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
             <div className="mt-6 space-y-3">
               {project.priceWarm && <div className="flex items-center justify-between rounded-md border border-forest-900/10 p-4"><span className="text-sm font-semibold">Тёплый контур</span><strong className="text-lg text-forest-950">{project.priceWarm}</strong></div>}
-              <div className="flex items-center justify-between rounded-md border border-forest-700 bg-forest-50 p-4"><span className="text-sm font-semibold text-forest-700">{project.singleColumn ? "Чистовая отделка" : "Под ключ"}</span><strong className="text-lg text-forest-950">{project.priceTurnkey}</strong></div>
+              <div className="flex items-center justify-between rounded-md border border-forest-700 bg-forest-50 p-4"><span className="text-sm font-semibold text-forest-700">Под ключ</span><strong className="text-lg text-forest-950">{project.priceTurnkey}</strong></div>
               {project.priceNote && <p className="text-xs leading-5 text-charcoal/60">{project.priceNote}</p>}
             </div>
 
@@ -203,7 +191,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             {relatedProjects.map((related) => (
               <article className="overflow-hidden rounded-xl bg-white shadow-soft" key={related.id}>
                 <Link data-ym-goal="project_open" data-project-id={related.id} className="group block" href={`/projects/${related.id}`}>
-                  <div className="relative h-48 bg-forest-50"><Image src={related.image!} alt={`${related.title} — визуализация`} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover transition duration-300 group-hover:scale-105" /></div>
+                  <div className="relative h-48 bg-forest-50">{related.image ? <Image src={related.image} alt={`${related.title} — визуализация`} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover transition duration-300 group-hover:scale-105" /> : <span className="flex h-full items-center justify-center text-sm text-forest-700">Визуализация готовится</span>}</div>
                   <div className="p-5"><p className="text-xs font-semibold uppercase tracking-wider text-forest-700">Проект №{related.projectNo}</p><h3 className="mt-2 text-lg font-semibold leading-6 text-forest-950">{related.title}</h3><p className="mt-3 text-sm leading-6 text-charcoal/65">{related.summary}</p></div>
                 </Link>
               </article>

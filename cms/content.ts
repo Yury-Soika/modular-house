@@ -2,6 +2,7 @@ import { cache } from "react";
 import { getPayload } from "payload";
 import config from "@payload-config";
 import { content, type Content, type Lang, type Project } from "@/app/data/content";
+import { applyCatalogUpdates } from "@/app/data/catalog-updates";
 import type { CompletedProjectContent } from "@/app/_components/HomePageClient";
 import type { InfoPageCopy } from "@/app/_components/InfoPage";
 
@@ -147,7 +148,7 @@ export const getProjects = cache(async (): Promise<Project[]> => {
   if (!payload) return content.ru.projects;
   try {
     const result = await payload.find({ collection: "projects", depth: 1, limit: 200, pagination: false, sort: "projectNo" });
-    return result.docs.length ? result.docs.map((doc) => mapProject(doc as UnknownRecord)) : content.ru.projects;
+    return result.docs.length ? applyCatalogUpdates(result.docs.map((doc) => mapProject(doc as UnknownRecord))) : content.ru.projects;
   } catch (error) {
     console.error("Unable to read CMS projects; serving bundled projects.", error);
     return content.ru.projects;

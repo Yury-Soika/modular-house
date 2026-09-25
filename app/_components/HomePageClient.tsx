@@ -9,7 +9,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Check,
-  Download,
   Expand,
   Factory,
   Globe,
@@ -491,7 +490,7 @@ export default function HomePageClient({
       <section className="bg-white py-20" id="projects">
         <div className="section-shell">
           <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-            <SectionHeading eyebrow={copy.projectsSection.eyebrow} title={copy.projectsSection.title} text={copy.projectsSection.text} />
+            <SectionHeading eyebrow={copy.projectsSection.eyebrow} title={lang === "ru" ? "Каталог модульных домов" : "Modular house catalog"} text={copy.projectsSection.text} />
             <div className="flex flex-wrap items-center gap-2">
               <Link className="focus-ring inline-flex h-12 items-center justify-center rounded-md border border-forest-900/10 px-4 text-sm font-semibold text-forest-950 transition hover:border-forest-700/30 hover:bg-linen" href="/modulnye-doma">
                 Модульные дома
@@ -499,16 +498,6 @@ export default function HomePageClient({
               <Link className="focus-ring inline-flex h-12 items-center justify-center rounded-md border border-forest-900/10 px-4 text-sm font-semibold text-forest-950 transition hover:border-forest-700/30 hover:bg-linen" href="/modulnye-bani">
                 Модульные бани
               </Link>
-              <a
-                data-ym-goal="catalog_download"
-                className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-md bg-forest-700 px-5 text-sm font-semibold text-white transition hover:bg-forest-900"
-                href={asset(settings?.catalog || "/catalog.pdf")}
-                target="_blank"
-                rel="noopener"
-              >
-                <Download size={17} />
-                {copy.common.getCatalog}
-              </a>
               <button
                 className="focus-ring flex h-12 w-12 items-center justify-center rounded-md border border-forest-900/10 text-forest-950 transition hover:bg-linen"
                 onClick={() => scrollTrack(-1)}
@@ -535,31 +524,36 @@ export default function HomePageClient({
               ref={trackRef}
               className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto px-1 pb-2"
             >
-            {copy.projects.map((project) => (
+            {copy.projects.filter((project) => project.kind === "house").map((project) => (
               <article
                 className="flex w-[290px] shrink-0 snap-start flex-col overflow-hidden rounded-xl border border-forest-900/10 bg-white shadow-soft transition duration-300 hover:-translate-y-1 hover:border-forest-700/30 hover:shadow-lg sm:w-[320px]"
                 key={project.id}
               >
                 <div className="relative">
                   {project.image ? (
-                    <Link
+                    <button
                       className="group focus-ring relative block h-44 w-full overflow-hidden bg-forest-950"
-                      href={`/projects/${project.id}`}
-                      aria-label={`${project.title} — ${copy.common.render}`}
+                      type="button"
+                      onClick={() => openGallery(project.gallery?.length ? project.gallery : [project.image!, project.plan].filter((value): value is string => Boolean(value)), 0)}
+                      aria-label={`${project.title} — открыть фото на весь экран`}
                     >
                       <Image src={asset(project.image)} alt={`${project.title} — ${copy.common.render}`} fill sizes="320px" className="object-cover transition duration-500 group-hover:scale-105" />
-                    </Link>
+                    </button>
                   ) : (
                     <PhotoPlaceholder label={`${copy.common.render} · ${copy.common.noPhoto}`} className="h-44 w-full" />
                   )}
                   {project.plan ? (
-                    <Link
+                    <button
                       className="group focus-ring relative block h-28 w-full overflow-hidden border-t border-forest-900/10 bg-white"
-                      href={`/projects/${project.id}`}
-                      aria-label={`${project.title} — ${copy.common.plan}`}
+                      type="button"
+                      onClick={() => {
+                        const images = project.gallery?.length ? project.gallery : [project.image, project.plan].filter((value): value is string => Boolean(value));
+                        openGallery(images, images.indexOf(project.plan!));
+                      }}
+                      aria-label={`${project.title} — открыть планировку на весь экран`}
                     >
                       <Image src={asset(project.plan)} alt={`${project.title} — ${copy.common.plan}`} fill sizes="320px" className="object-contain" />
-                    </Link>
+                    </button>
                   ) : (
                     <PhotoPlaceholder label={`${copy.common.plan} · ${copy.common.noPhoto}`} className="h-28 w-full border-t border-forest-900/10" />
                   )}
@@ -585,7 +579,7 @@ export default function HomePageClient({
                       </div>
                     )}
                     <div className="flex items-center justify-between rounded-md border border-forest-700 bg-forest-50 px-3 py-2">
-                      <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-forest-700">{project.singleColumn ? copy.common.priceFinished : copy.common.priceTurnkey}</span>
+                      <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-forest-700">{copy.common.priceTurnkey}</span>
                       <strong className="text-sm text-forest-950">{project.priceTurnkey}</strong>
                     </div>
                   </div>
@@ -604,6 +598,19 @@ export default function HomePageClient({
             ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="bg-linen py-20" id="baths">
+        <div className="section-shell">
+          <SectionHeading eyebrow={lang === "ru" ? "Проекты бань" : "Sauna projects"} title={lang === "ru" ? "Каталог модульных бань" : "Modular sauna catalog"} text={lang === "ru" ? "Все проекты бань в порядке от компактных до просторных. Варианты планировки одного размера собраны в одной карточке." : "Sauna projects from compact to spacious, with layout variants grouped in one card."} />
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {copy.projects.filter((project) => project.kind === "bath").map((project) => <article className="flex flex-col overflow-hidden rounded-xl bg-white shadow-soft" key={project.id}>
+              {project.image || project.plan ? <button type="button" className="focus-ring relative block h-52 w-full bg-white" onClick={() => openGallery(project.gallery?.length ? project.gallery : [project.image, project.plan].filter((value): value is string => Boolean(value)), 0)} aria-label={`${project.title} — открыть изображение на весь экран`}><Image src={asset(project.image || project.plan!)} alt={project.title} fill sizes="(min-width: 1024px) 33vw, 50vw" className="object-contain" /><span className="absolute bottom-3 right-3 rounded-md bg-forest-950/80 p-2 text-white"><Expand size={16} /></span></button> : <PhotoPlaceholder label={copy.common.noPhoto} className="h-52" />}
+              <div className="flex flex-1 flex-col p-5"><p className="text-xs font-semibold text-forest-700">№ {project.projectNo}</p><h3 className="mt-2 text-xl font-semibold text-forest-950">{project.title}</h3><p className="mt-2 text-sm text-charcoal/70">{project.size}</p><p className="mt-4 font-semibold text-forest-950">{lang === "ru" ? "Под ключ" : "Turnkey"}: {project.priceTurnkey}</p><Link className="focus-ring mt-5 inline-flex h-11 items-center justify-center gap-2 rounded-md bg-forest-700 px-4 text-sm font-semibold text-white" href={`/projects/${project.id}`}>{copy.common.viewProject}<ArrowRight size={16} /></Link></div>
+            </article>)}
+          </div>
+          <Link className="focus-ring mt-8 inline-flex items-center gap-2 font-semibold text-forest-700" href="/modulnye-bani">{lang === "ru" ? "Все проекты бань" : "All sauna projects"}<ArrowRight size={17} /></Link>
         </div>
       </section>
 
