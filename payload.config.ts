@@ -1,6 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import nextEnv from "@next/env";
+import { loadEnvConfig } from "@next/env";
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { buildConfig, type GlobalConfig } from "payload";
@@ -12,7 +12,7 @@ import { categoryDefaults, categoryPageGlobal, infoPageGlobal, pageDefaults } fr
 import { authenticated, anyone } from "./cms/access";
 import { content } from "./app/data/content";
 
-nextEnv.loadEnvConfig(
+loadEnvConfig(
   process.cwd(),
   process.env.PAYLOAD_LOAD_PRODUCTION_ENV === "1" ? false : process.env.NODE_ENV !== "production"
 );

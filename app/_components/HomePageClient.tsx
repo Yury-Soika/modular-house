@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   Building2,
@@ -14,7 +14,6 @@ import {
   Globe,
   Hammer,
   Heart,
-  Home,
   ImageOff,
   Layers,
   MapPin,
@@ -28,6 +27,7 @@ import {
   X
 } from "lucide-react";
 import { content, type Content, type Lang } from "../data/content";
+import BathPackageSection from "./BathPackageSection";
 
 // Public assets (files in /public) are not prefixed with basePath by next/image or
 // plain anchors, so we prefix them ourselves for the sub-path demo deployment.
@@ -177,7 +177,7 @@ export type CompletedProjectContent = {
 
 export default function HomePageClient({
   initialContent = content,
-  heroImage = "/family-house/IMG_0640.JPG",
+  heroImage = "/home-hero.webp",
   completedContent,
   settings
 }: {
@@ -189,7 +189,7 @@ export default function HomePageClient({
   const [lang, setLang] = useState<Lang>("ru");
   const [gallery, setGallery] = useState<Gallery | null>(null);
   const [activeCompleted, setActiveCompleted] = useState(0);
-  const trackRef = useRef<HTMLDivElement>(null);
+  const [visibleHouseCount, setVisibleHouseCount] = useState(9);
   const copy = initialContent[lang];
   const contactPhone = settings?.phone || CONTACT_PHONE;
   const contactEmail = settings?.email || CONTACT_EMAIL;
@@ -245,6 +245,7 @@ export default function HomePageClient({
       }))
     : fallbackCompletedProjects;
   const selectedCompleted = completedProjects[activeCompleted] ?? completedProjects[0];
+  const houseProjects = copy.projects.filter((project) => project.kind === "house");
   const contactActions = [
     { label: lang === "ru" ? "Позвонить" : "Call us", detail: copy.common.phone, href: `tel:${contactPhone}`, icon: Phone },
     { label: "Email", detail: contactEmail, href: `mailto:${contactEmail}`, icon: Mail },
@@ -281,24 +282,11 @@ export default function HomePageClient({
     setGallery({ images, index: Math.max(0, index) });
   };
 
-  const openCompleted = (src: string) => {
-    const heroGallery = completedProjects[0]?.images?.length ? completedProjects[0].images : familyHouseImages;
-    openGallery(heroGallery, Math.max(0, heroGallery.indexOf(src)));
-  };
-
   const showPreviousImage = () =>
     setGallery((current) => (current === null ? current : { ...current, index: (current.index - 1 + current.images.length) % current.images.length }));
 
   const showNextImage = () =>
     setGallery((current) => (current === null ? current : { ...current, index: (current.index + 1) % current.images.length }));
-
-  const scrollTrack = (direction: 1 | -1) => {
-    const el = trackRef.current;
-    if (!el) {
-      return;
-    }
-    el.scrollBy({ left: direction * Math.min(el.clientWidth * 0.9, 680), behavior: "smooth" });
-  };
 
   useEffect(() => {
     document.documentElement.lang = copy.meta.htmlLang;
@@ -332,18 +320,13 @@ export default function HomePageClient({
 
   return (
     <main id="home" className="overflow-hidden" lang={copy.meta.htmlLang}>
-      <header className="fixed left-0 right-0 top-0 z-50 border-b border-forest-900/10 bg-white/95 shadow-sm backdrop-blur">
+      <header className="fixed left-0 right-0 top-0 z-50 border-b border-forest-900/10 bg-white/95 font-sans shadow-sm backdrop-blur">
         <div className="section-shell flex h-20 items-center justify-between gap-5 text-forest-950">
           <a className="focus-ring flex items-center gap-3 rounded-md" href="#home" aria-label={`${copy.brand.name} home`}>
-            <span className="flex h-10 w-10 items-center justify-center rounded-md border border-forest-900/15 text-forest-700">
-              <Home size={21} />
-            </span>
-            <span className="leading-none">
-              <span className="block text-lg font-semibold uppercase tracking-[0.22em]">{copy.brand.name}</span>
-              <span className="mt-1 block text-[10px] uppercase tracking-[0.25em] text-charcoal/55">{copy.brand.location}</span>
-            </span>
+            <Image src={asset("/modul-s-logo.png")} alt={copy.brand.name} width={72} height={57} priority className="h-[57px] w-[72px] object-contain" />
+            <span className="hidden text-[10px] font-semibold uppercase tracking-[0.16em] text-charcoal/65 sm:block">{copy.brand.location}</span>
           </a>
-          <nav className="hidden items-center gap-7 text-sm font-medium text-charcoal/70 lg:flex" aria-label="Primary">
+          <nav className="hidden items-center gap-6 text-[13px] font-semibold tracking-tight text-charcoal/75 lg:flex" aria-label="Primary">
             {copy.nav.map((item) => (
               <a className="transition hover:text-forest-950" href={item.href} key={item.href}>
                 {item.label}
@@ -377,7 +360,7 @@ export default function HomePageClient({
       <section className="relative min-h-[760px] bg-forest-950 pt-20 text-white">
         <button
           className="focus-ring absolute inset-0 block cursor-zoom-in"
-          onClick={() => openCompleted(heroImage)}
+          onClick={() => openGallery([heroImage])}
           type="button"
           aria-label="Open hero photo preview"
         >
@@ -498,35 +481,13 @@ export default function HomePageClient({
               <Link className="focus-ring inline-flex h-12 items-center justify-center rounded-md border border-forest-900/10 px-4 text-sm font-semibold text-forest-950 transition hover:border-forest-700/30 hover:bg-linen" href="/modulnye-bani">
                 Модульные бани
               </Link>
-              <button
-                className="focus-ring flex h-12 w-12 items-center justify-center rounded-md border border-forest-900/10 text-forest-950 transition hover:bg-linen"
-                onClick={() => scrollTrack(-1)}
-                type="button"
-                aria-label={copy.common.prev}
-              >
-                <ChevronLeft size={22} />
-              </button>
-              <button
-                className="focus-ring flex h-12 w-12 items-center justify-center rounded-md border border-forest-900/10 text-forest-950 transition hover:bg-linen"
-                onClick={() => scrollTrack(1)}
-                type="button"
-                aria-label={copy.common.next}
-              >
-                <ChevronRight size={22} />
-              </button>
             </div>
           </div>
 
-          <div className="relative mt-10">
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-12 bg-gradient-to-r from-white to-transparent sm:block" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 hidden w-12 bg-gradient-to-l from-white to-transparent sm:block" />
-            <div
-              ref={trackRef}
-              className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto px-1 pb-2"
-            >
-            {copy.projects.filter((project) => project.kind === "house").map((project) => (
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {houseProjects.slice(0, visibleHouseCount).map((project) => (
               <article
-                className="flex w-[290px] shrink-0 snap-start flex-col overflow-hidden rounded-xl border border-forest-900/10 bg-white shadow-soft transition duration-300 hover:-translate-y-1 hover:border-forest-700/30 hover:shadow-lg sm:w-[320px]"
+                className="flex flex-col overflow-hidden rounded-xl border border-forest-900/10 bg-white shadow-soft transition duration-300 hover:-translate-y-1 hover:border-forest-700/30 hover:shadow-lg"
                 key={project.id}
               >
                 <div className="relative">
@@ -596,8 +557,16 @@ export default function HomePageClient({
                 </div>
               </article>
             ))}
-            </div>
           </div>
+          {visibleHouseCount < houseProjects.length && (
+            <button
+              className="focus-ring mx-auto mt-8 flex h-12 items-center justify-center rounded-md border border-forest-700 px-6 text-sm font-semibold text-forest-700 transition hover:bg-forest-50"
+              onClick={() => setVisibleHouseCount((count) => count + 9)}
+              type="button"
+            >
+              {lang === "ru" ? "Загрузить больше" : "Load more"}
+            </button>
+          )}
         </div>
       </section>
 
@@ -613,6 +582,8 @@ export default function HomePageClient({
           <Link className="focus-ring mt-8 inline-flex items-center gap-2 font-semibold text-forest-700" href="/modulnye-bani">{lang === "ru" ? "Все проекты бань" : "All sauna projects"}<ArrowRight size={17} /></Link>
         </div>
       </section>
+
+      <BathPackageSection />
 
       <section className="bg-linen py-20" id="options">
         <div className="section-shell">
@@ -791,10 +762,7 @@ export default function HomePageClient({
         <div className="section-shell grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-md border border-sand/60 text-sand">
-                <Home size={21} />
-              </span>
-              <span className="text-lg font-semibold uppercase tracking-[0.22em]">{copy.brand.name}</span>
+              <Image src={asset("/modul-s-logo-white.png")} alt={copy.brand.name} width={108} height={86} className="h-[86px] w-[108px] object-contain" />
             </div>
             <p className="mt-4 text-sm leading-6 text-white/62">{copy.brand.tagline}</p>
           </div>

@@ -38,13 +38,13 @@ const changes: Record<string, Change> = {
   "6970893": { numbers: "6970893 и 7422347", plans: ["img-2704"] },
   "7066580": { image: "img-3504" },
   "7718259": { area: "54,6 м²", size: "7 × 7,8 м", warm: 80535, turnkey: 102375, image: "img-3507", plans: ["photo-2026-09-25-16.02.35"] },
-  "7055054": { area: "60 м²", size: "6 × 10 м", terrace: "Терраса 2 × 10 м", warm: 101000, turnkey: 125000, image: "photo-2026-09-25-16.02.55" },
+  "7055054": { area: "60 м²", size: "6 × 10 м", terrace: "Терраса 2 × 10 м", warm: 101000, turnkey: 125000, image: "7055054-render", plans: ["7055054-plan"] },
   "6964526": { numbers: "6964526 и 7718263", area: "63 м²", size: "7 × 9 м", warm: 92925, turnkey: 118125, image: "img-0640", plans: ["photo-2026-09-25-16.03.49", "photo-2026-09-25-16.04.07"] },
   "7068240": { image: "img-3511" },
   "6985270": { image: "img-3512" },
-  "6915271": { area: "63,6 м²", size: "6 × 10,6 м", warm: 107060, turnkey: 132500, image: "photo-2026-09-25-16.04.58" },
-  "7042179": { area: "72 м²", size: "8 × 9 м", warm: 117200, turnkey: 146000, image: "photo-2026-09-25-16.05.24" },
-  "6964606": { area: "84 м²", size: "7 × 12 м", warm: 143400, turnkey: 177000, image: "photo-2026-09-25-16.05.47" },
+  "6915271": { area: "63,6 м²", size: "6 × 10,6 м", warm: 107060, turnkey: 132500, image: "6915271-render", plans: ["6915271-plan"] },
+  "7042179": { area: "72 м²", size: "8 × 9 м", warm: 117200, turnkey: 146000, image: "7042179-render", plans: ["7042179-plan"] },
+  "6964606": { area: "84 м²", size: "7 × 12 м", warm: 143400, turnkey: 177000, image: "6964606-render", plans: ["6964606-plan"] },
   "7068511": { numbers: "7068511 и 7718287", area: "15,6 м²", size: "6 × 2,6 м", turnkey: 31200, image: "img-1301", plans: ["img-1296", "photo-2026-09-25-16.06.56"] },
   "7724257": { area: "24 м²", size: "3 × 8 м", turnkey: 38500, image: "img-3527", plans: ["photo-2026-09-25-16.07.15"] },
   "6909223": { numbers: "6909223 и 6909183", area: "21 м²", size: "7 × 3 м", turnkey: 42000, image: "img-1302", plans: ["img-1294", "img-1297"] },
@@ -53,9 +53,9 @@ const changes: Record<string, Change> = {
   "7353288": { area: "31,2 м²", size: "5,2 × 6 м", turnkey: 58600, image: "img-2874", plans: ["photo-2026-09-25-16.08.56"] },
   "6920434": { numbers: "6920434, 6892350 и 7353209", area: "36,4 м²", size: "5,2 × 7 м", turnkey: 67700, image: "img-2879", plans: ["img-0440", "img-0467", "plan-image-3.0-7353209-2026-09-25-00.05"] },
   "7518651": { area: "42 м²", size: "6 × 7 м", turnkey: 77500, image: "img-2882", plans: ["photo-2026-09-25-16.10.06"] },
-  "7291485": { area: "48 м²", size: "6 × 8 м", turnkey: 88000, image: null, plans: ["photo-2026-09-25-16.10.31"] },
-  "7721941": { area: "70 м²", size: "7 × 10 м", turnkey: 126500, image: null, plans: ["photo-2026-09-25-16.10.50"] },
-  "7278116": { area: "63 + 17,5 м²", size: "7 × 9 м", turnkey: 131750, image: null, plans: ["photo-2026-09-25-16.11.15"] }
+  "7291485": { area: "48 м²", size: "6 × 8 м", turnkey: 88000, image: "7291485-render", plans: ["photo-2026-09-25-16.10.31"] },
+  "7721941": { area: "70 м²", size: "7 × 10 м", turnkey: 126500, image: "7721941-render", plans: ["photo-2026-09-25-16.10.50"] },
+  "7278116": { area: "63 + 17,5 м²", size: "7 × 9 м", turnkey: 131750, image: "7278116-render", plans: ["photo-2026-09-25-16.11.15"] }
 };
 
 export function applyCatalogUpdates(projects: Project[], lang: "ru" | "en" = "ru"): Project[] {
@@ -71,7 +71,7 @@ export function applyCatalogUpdates(projects: Project[], lang: "ru" | "en" = "ru
     const numbers = change.numbers ?? id;
     const plan = change.plans?.[0] ? asset(change.plans[0]) : base.plan;
     const image = change.image === null ? undefined : change.image ? asset(change.image) : base.image;
-    const gallery = [...new Set([image, ...(change.photos ?? []).map(asset), ...(change.plans ?? []).map(asset), ...(base.plan && !isNew ? [base.plan] : [])].filter((value): value is string => Boolean(value)))];
+    const gallery = [...new Set([image, ...(change.photos ?? []).map(asset), ...(change.plans ?? []).map(asset), ...(change.plans ? [] : base.plan && !isNew ? [base.plan] : [])].filter((value): value is string => Boolean(value)))];
     const bath = kind === "bath";
     return {
       ...base,

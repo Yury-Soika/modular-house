@@ -50,7 +50,7 @@ publish() {
   npx tsc --noEmit
 
   echo "Building Next.js locally..."
-  NEXT_TELEMETRY_DISABLED=1 npm run build
+  NEXT_TELEMETRY_DISABLED=1 npm run build -- --webpack
 
   echo "Packaging .next without the build cache..."
   tar -czf "$archive" --exclude='.next/cache' .next

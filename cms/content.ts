@@ -204,7 +204,7 @@ export const getHomeContent = cache(async (): Promise<{
       })
     }
   };
-  if (!payload) return { content: fallback, heroImage: "/family-house/IMG_0640.JPG" };
+  if (!payload) return { content: fallback, heroImage: "/home-hero.webp" };
   try {
     const page = await payload.findGlobal({ slug: "home-page", depth: 1 }) as UnknownRecord;
     const cmsContent = {
@@ -225,11 +225,11 @@ export const getHomeContent = cache(async (): Promise<{
       : undefined;
     return {
       content: cmsContent,
-      heroImage: mediaUrl(page.aboutKitchenImage, completedContent?.[0]?.images[0] || "/family-house/IMG_0640.JPG")!,
+      heroImage: "/home-hero.webp",
       completedContent
     };
   } catch (error) {
     console.error("Unable to read CMS home page; serving bundled content.", error);
-    return { content: fallback, heroImage: "/family-house/IMG_0640.JPG" };
+    return { content: fallback, heroImage: "/home-hero.webp" };
   }
 });

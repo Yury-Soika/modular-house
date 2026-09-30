@@ -1,14 +1,7 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
 import { YandexMetrika } from "./_components/YandexMetrika";
 import { getSiteSettings } from "@/cms/content";
 import "./globals.css";
-
-const montserrat = Montserrat({
-  subsets: ["latin", "cyrillic"],
-  variable: "--font-montserrat",
-  display: "swap"
-});
 
 const baseMetadata: Metadata = {
   metadataBase: new URL("https://modulsdom-brest.by"),
@@ -45,7 +38,6 @@ const baseMetadata: Metadata = {
       { url: "/favicon.ico", sizes: "any" },
       { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
       { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
-      { url: "/icon.svg", type: "image/svg+xml" }
     ],
     shortcut: "/favicon.ico",
     apple: "/apple-touch-icon.png"
@@ -181,7 +173,7 @@ export default async function RootLayout({
   };
   return (
     <html lang="ru">
-      <body className={`${montserrat.variable} bg-linen text-charcoal antialiased`}>
+      <body className="bg-linen text-charcoal antialiased">
         {children}
         <YandexMetrika />
         <script

@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Check, ChevronRight, Mail, Phone } from "lucide-react";
 import { content, type Project } from "../data/content";
+import BathPackageSection from "./BathPackageSection";
 
 const SITE_URL = "https://modulsdom-brest.by";
 
@@ -104,6 +105,8 @@ export function ProjectCategoryPage({ copy, path, allProjects = content.ru.proje
           </div>
         </div>
       </section>
+
+      {copy.kind === "bath" && <BathPackageSection />}
 
       <section className="bg-white py-16">
         <div className="section-shell"><h2 className="text-3xl font-semibold text-forest-950">Как получить точную стоимость</h2><p className="mt-4 max-w-3xl leading-7 text-charcoal/72">Цена зависит от проекта, отделки, инженерных систем, фундамента и расстояния доставки. Расскажите о вашем участке и задачах — подготовим понятную комплектацию и расчёт без скрытых работ.</p><Link data-ym-goal="consultation_click" className="mt-7 inline-flex items-center gap-2 font-semibold text-forest-700" href="/#consultation">Связаться с производителем <ArrowRight size={17} /></Link></div>
