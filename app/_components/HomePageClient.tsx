@@ -35,6 +35,7 @@ const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const asset = (path: string) => `${BASE_PATH}${path}`;
 const CONTACT_PHONE = "+375445702727";
 const CONTACT_EMAIL = "Modulsdom@mail.ru";
+const CATALOG_BATCH_SIZE = 9;
 const YANDEX_MAPS_URL = "https://yandex.by/maps/?ll=23.716577%2C52.064675&mode=whatshere&whatshere%5Bpoint%5D=23.716577%2C52.064675&whatshere%5Bzoom%5D=17&z=17";
 const YANDEX_MAP_WIDGET_URL = "https://yandex.by/map-widget/v1/?ll=23.716577%2C52.064675&mode=whatshere&whatshere%5Bpoint%5D=23.716577%2C52.064675&whatshere%5Bzoom%5D=17&z=17";
 
@@ -97,6 +98,32 @@ function SectionHeading({ eyebrow, title, text }: { eyebrow: string; title: stri
       <p className="eyebrow">{eyebrow}</p>
       {title && <h2 className="mt-3 text-3xl font-semibold leading-tight text-forest-950 sm:text-4xl">{title}</h2>}
       {text && <p className="mt-4 text-base leading-7 text-charcoal/70">{text}</p>}
+    </div>
+  );
+}
+
+function CatalogControls({ visibleCount, totalCount, onLoadMore, href, label, lang }: {
+  visibleCount: number;
+  totalCount: number;
+  onLoadMore: () => void;
+  href: string;
+  label: string;
+  lang: Lang;
+}) {
+  return (
+    <div className="mt-8 flex flex-col items-center gap-4">
+      {visibleCount < totalCount && (
+        <button
+          className="focus-ring flex h-12 items-center justify-center rounded-md border border-forest-700 px-6 text-sm font-semibold text-forest-700 transition hover:bg-forest-50"
+          onClick={onLoadMore}
+          type="button"
+        >
+          {lang === "ru" ? "Загрузить больше" : "Load more"}
+        </button>
+      )}
+      <Link className="focus-ring inline-flex items-center gap-2 font-semibold text-forest-700 hover:text-forest-950" href={href}>
+        {label}<ArrowRight size={17} />
+      </Link>
     </div>
   );
 }
@@ -189,7 +216,8 @@ export default function HomePageClient({
   const [lang, setLang] = useState<Lang>("ru");
   const [gallery, setGallery] = useState<Gallery | null>(null);
   const [activeCompleted, setActiveCompleted] = useState(0);
-  const [visibleHouseCount, setVisibleHouseCount] = useState(9);
+  const [visibleHouseCount, setVisibleHouseCount] = useState(CATALOG_BATCH_SIZE);
+  const [visibleBathCount, setVisibleBathCount] = useState(CATALOG_BATCH_SIZE);
   const copy = initialContent[lang];
   const contactPhone = settings?.phone || CONTACT_PHONE;
   const contactEmail = settings?.email || CONTACT_EMAIL;
@@ -246,6 +274,7 @@ export default function HomePageClient({
     : fallbackCompletedProjects;
   const selectedCompleted = completedProjects[activeCompleted] ?? completedProjects[0];
   const houseProjects = copy.projects.filter((project) => project.kind === "house");
+  const bathProjects = copy.projects.filter((project) => project.kind === "bath");
   const contactActions = [
     { label: lang === "ru" ? "Позвонить" : "Call us", detail: copy.common.phone, href: `tel:${contactPhone}`, icon: Phone },
     { label: "Email", detail: contactEmail, href: `mailto:${contactEmail}`, icon: Mail },
@@ -472,17 +501,7 @@ export default function HomePageClient({
 
       <section className="bg-white py-20" id="projects">
         <div className="section-shell">
-          <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-            <SectionHeading eyebrow={copy.projectsSection.eyebrow} title={lang === "ru" ? "Каталог модульных домов" : "Modular house catalog"} text={copy.projectsSection.text} />
-            <div className="flex flex-wrap items-center gap-2">
-              <Link className="focus-ring inline-flex h-12 items-center justify-center rounded-md border border-forest-900/10 px-4 text-sm font-semibold text-forest-950 transition hover:border-forest-700/30 hover:bg-linen" href="/modulnye-doma">
-                Модульные дома
-              </Link>
-              <Link className="focus-ring inline-flex h-12 items-center justify-center rounded-md border border-forest-900/10 px-4 text-sm font-semibold text-forest-950 transition hover:border-forest-700/30 hover:bg-linen" href="/modulnye-bani">
-                Модульные бани
-              </Link>
-            </div>
-          </div>
+          <SectionHeading eyebrow={copy.projectsSection.eyebrow} title={lang === "ru" ? "Каталог модульных домов" : "Modular house catalog"} text={copy.projectsSection.text} />
 
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {houseProjects.slice(0, visibleHouseCount).map((project) => (
@@ -558,15 +577,7 @@ export default function HomePageClient({
               </article>
             ))}
           </div>
-          {visibleHouseCount < houseProjects.length && (
-            <button
-              className="focus-ring mx-auto mt-8 flex h-12 items-center justify-center rounded-md border border-forest-700 px-6 text-sm font-semibold text-forest-700 transition hover:bg-forest-50"
-              onClick={() => setVisibleHouseCount((count) => count + 9)}
-              type="button"
-            >
-              {lang === "ru" ? "Загрузить больше" : "Load more"}
-            </button>
-          )}
+          <CatalogControls visibleCount={visibleHouseCount} totalCount={houseProjects.length} onLoadMore={() => setVisibleHouseCount((count) => count + CATALOG_BATCH_SIZE)} href="/modulnye-doma" label={lang === "ru" ? "Все проекты домов" : "All house projects"} lang={lang} />
         </div>
       </section>
 
@@ -574,12 +585,12 @@ export default function HomePageClient({
         <div className="section-shell">
           <SectionHeading eyebrow={lang === "ru" ? "Проекты бань" : "Sauna projects"} title={lang === "ru" ? "Каталог модульных бань" : "Modular sauna catalog"} text={lang === "ru" ? "Все проекты бань в порядке от компактных до просторных. Варианты планировки одного размера собраны в одной карточке." : "Sauna projects from compact to spacious, with layout variants grouped in one card."} />
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {copy.projects.filter((project) => project.kind === "bath").map((project) => <article className="flex flex-col overflow-hidden rounded-xl bg-white shadow-soft" key={project.id}>
+            {bathProjects.slice(0, visibleBathCount).map((project) => <article className="flex flex-col overflow-hidden rounded-xl bg-white shadow-soft" key={project.id}>
               {project.image || project.plan ? <button type="button" className="focus-ring relative block h-52 w-full bg-white" onClick={() => openGallery(project.gallery?.length ? project.gallery : [project.image, project.plan].filter((value): value is string => Boolean(value)), 0)} aria-label={`${project.title} — открыть изображение на весь экран`}><Image src={asset(project.image || project.plan!)} alt={project.title} fill sizes="(min-width: 1024px) 33vw, 50vw" className="object-contain" /><span className="absolute bottom-3 right-3 rounded-md bg-forest-950/80 p-2 text-white"><Expand size={16} /></span></button> : <PhotoPlaceholder label={copy.common.noPhoto} className="h-52" />}
               <div className="flex flex-1 flex-col p-5"><p className="text-xs font-semibold text-forest-700">№ {project.projectNo}</p><h3 className="mt-2 text-xl font-semibold text-forest-950">{project.title}</h3><p className="mt-2 text-sm text-charcoal/70">{project.size}</p><p className="mt-4 font-semibold text-forest-950">{lang === "ru" ? "Под ключ" : "Turnkey"}: {project.priceTurnkey}</p><Link className="focus-ring mt-5 inline-flex h-11 items-center justify-center gap-2 rounded-md bg-forest-700 px-4 text-sm font-semibold text-white" href={`/projects/${project.id}`}>{copy.common.viewProject}<ArrowRight size={16} /></Link></div>
             </article>)}
           </div>
-          <Link className="focus-ring mt-8 inline-flex items-center gap-2 font-semibold text-forest-700" href="/modulnye-bani">{lang === "ru" ? "Все проекты бань" : "All sauna projects"}<ArrowRight size={17} /></Link>
+          <CatalogControls visibleCount={visibleBathCount} totalCount={bathProjects.length} onLoadMore={() => setVisibleBathCount((count) => count + CATALOG_BATCH_SIZE)} href="/modulnye-bani" label={lang === "ru" ? "Все проекты бань" : "All sauna projects"} lang={lang} />
         </div>
       </section>
 

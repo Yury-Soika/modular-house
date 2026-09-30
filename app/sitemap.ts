@@ -19,6 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 1,
       images: [
+        "https://modulsdom-brest.by/home-hero.webp",
         "https://modulsdom-brest.by/site-preview-ru.jpg",
         "https://modulsdom-brest.by/family-house/IMG_0640.JPG",
         "https://modulsdom-brest.by/one-room-house/IMG_8366.JPG",
