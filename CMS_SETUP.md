@@ -60,7 +60,7 @@ The “Скачать каталоги” buttons on the home page, category pag
 
 Alternatively, set the server environment variable `CATALOG_URL` to an HTTPS file URL or a site-relative path and restart the app. This takes priority over the CMS file. With neither configured, the buttons use `public/catalog.pdf`; replacing that bundled file requires deploying the updated assets. External file servers control whether the browser downloads the file or opens its PDF viewer.
 
-The bundled PDF is the existing catalog; replace it with the new catalog before the next hosting deployment.
+The bundled `public/catalog.pdf` is the supplied “Проект 6970893.pdf”, used as the main catalog. Download buttons include a version query to avoid serving an older browser-cached file. When replacing the bundled PDF again, update the version in `app/data/catalog-file.ts`.
 
 ## SEO behavior
 

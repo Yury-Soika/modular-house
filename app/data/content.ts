@@ -27,7 +27,6 @@ export type Project = {
   image?: string;
   plan?: string;
   gallery?: string[];
-  document?: { url: string; sizeBytes: number };
   singleColumn?: boolean;
   specs: SpecRow[];
 };

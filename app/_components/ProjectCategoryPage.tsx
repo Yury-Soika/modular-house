@@ -6,6 +6,7 @@ import BathPackageSection from "./BathPackageSection";
 import ProjectCard from "./ProjectCard";
 import EstimateButton from "./EstimateButton";
 import CatalogDownload from "./CatalogDownload";
+import { DEFAULT_CATALOG_URL } from "../data/catalog-file";
 
 const SITE_URL = "https://modulsdom-brest.by";
 
@@ -74,7 +75,7 @@ export function ProjectCategoryPage({ copy, path, allProjects = content.ru.proje
           <div className="mt-9 flex flex-wrap gap-3">
             <a data-ym-goal="phone_click" className="focus-ring inline-flex h-12 items-center gap-2 rounded-md bg-sand px-5 text-sm font-semibold text-forest-950" href={`tel:${settings.phone}`}><Phone size={17} /> {settings.phone}</a>
             <EstimateButton phone={settings.phone} email={settings.email} className="focus-ring inline-flex h-12 items-center gap-2 rounded-md border border-white/25 px-5 text-sm font-semibold text-white" />
-            <CatalogDownload href={settings.catalog || "/catalog.pdf"} className="focus-ring inline-flex h-12 items-center gap-2 rounded-md border border-white/25 px-5 text-sm font-semibold text-white" />
+            <CatalogDownload href={settings.catalog || DEFAULT_CATALOG_URL} className="focus-ring inline-flex h-12 items-center gap-2 rounded-md border border-white/25 px-5 text-sm font-semibold text-white" />
           </div>
         </div>
       </section>

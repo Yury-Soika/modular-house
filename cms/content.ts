@@ -3,6 +3,7 @@ import { getPayload } from "payload";
 import config from "@payload-config";
 import { content, type Content, type Lang, type Project } from "@/app/data/content";
 import { applyCatalogUpdates } from "@/app/data/catalog-updates";
+import { DEFAULT_CATALOG_URL } from "@/app/data/catalog-file";
 import type { CompletedProjectContent } from "@/app/_components/HomePageClient";
 import type { InfoPageCopy } from "@/app/_components/InfoPage";
 
@@ -165,7 +166,7 @@ export const getSiteSettings = cache(async () => {
     defaultMetaTitle: "Модульные дома и бани под ключ в Беларуси | Modul S",
     defaultMetaDescription: "Проектируем и производим модульные каркасные дома и бани под ключ в Бресте с доставкой и монтажом по всей Беларуси.",
     socialImage: "/site-preview-ru.jpg",
-    catalog: process.env.CATALOG_URL || "/catalog.pdf"
+    catalog: process.env.CATALOG_URL || DEFAULT_CATALOG_URL
   };
   const payload = await payloadClient();
   if (!payload) return fallback;
@@ -201,7 +202,7 @@ export const getHomeContent = cache(async (): Promise<{
       ...content.en,
       projects: content.en.projects.map((project) => {
         const current = projects.find((candidate) => candidate.id === project.id);
-        return current ? { ...project, image: current.image, plan: current.plan, gallery: current.gallery, document: current.document, priceWarm: current.priceWarm, priceTurnkey: current.priceTurnkey } : project;
+        return current ? { ...project, image: current.image, plan: current.plan, gallery: current.gallery, priceWarm: current.priceWarm, priceTurnkey: current.priceTurnkey } : project;
       })
     }
   };

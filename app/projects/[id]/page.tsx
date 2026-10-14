@@ -8,7 +8,6 @@ import { getProjects, getSiteSettings } from "@/cms/content";
 import ProjectGallery from "@/app/_components/ProjectGallery";
 import EstimateButton from "@/app/_components/EstimateButton";
 import CatalogDownload from "@/app/_components/CatalogDownload";
-import ProjectDocumentDownload from "@/app/_components/ProjectDocumentDownload";
 
 const SITE_URL = "https://modulsdom-brest.by";
 
@@ -151,7 +150,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               <EstimateButton phone={settings.phone} email={settings.email} projectNo={project.projectNo} label="Запросить расчёт" className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-md border border-forest-700 px-5 text-sm font-semibold text-forest-700 hover:bg-forest-50" />
             </div>
             <div className="mt-4"><CatalogDownload href={settings.catalog} /></div>
-            <ProjectDocumentDownload project={project} />
           </div>
         </div>
 

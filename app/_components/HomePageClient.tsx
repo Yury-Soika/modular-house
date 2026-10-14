@@ -30,6 +30,7 @@ import { content, type Content, type Lang } from "../data/content";
 import BathPackageSection from "./BathPackageSection";
 import ProjectCard from "./ProjectCard";
 import CatalogDownload from "./CatalogDownload";
+import { DEFAULT_CATALOG_URL } from "../data/catalog-file";
 
 // Public assets (files in /public) are not prefixed with basePath by next/image or
 // plain anchors, so we prefix them ourselves for the sub-path demo deployment.
@@ -677,7 +678,7 @@ export default function HomePageClient({
       <section className="bg-white py-20" id="catalogs">
         <div className="section-shell flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
           <SectionHeading eyebrow={copy.catalog.eyebrow} title={lang === "ru" ? "Каталоги домов и бань" : "House and sauna catalogs"} text={lang === "ru" ? "Скачайте PDF с проектами, планировками и комплектациями." : "Download a PDF with projects, layouts, and packages."} />
-          <CatalogDownload href={settings?.catalog || "/catalog.pdf"} lang={lang} className="focus-ring inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-md bg-forest-700 px-6 py-3 text-sm font-semibold text-white transition hover:bg-forest-900" />
+          <CatalogDownload href={settings?.catalog || DEFAULT_CATALOG_URL} lang={lang} className="focus-ring inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-md bg-forest-700 px-6 py-3 text-sm font-semibold text-white transition hover:bg-forest-900" />
         </div>
       </section>
 
@@ -759,7 +760,7 @@ export default function HomePageClient({
             </div>
           </div>
           <nav aria-label={lang === "ru" ? "Информация о компании" : "Company information"}>
-            <CatalogDownload href={settings?.catalog || "/catalog.pdf"} lang={lang} className="focus-ring mb-4 inline-flex items-center gap-2 font-semibold text-sand hover:text-white" />
+            <CatalogDownload href={settings?.catalog || DEFAULT_CATALOG_URL} lang={lang} className="focus-ring mb-4 inline-flex items-center gap-2 font-semibold text-sand hover:text-white" />
             <h3 className="font-semibold text-sand">{lang === "ru" ? "Покупателям" : "For customers"}</h3>
             <ul className="mt-4 space-y-3 text-sm text-white/75">
               {[
