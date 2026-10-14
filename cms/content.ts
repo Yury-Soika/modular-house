@@ -201,7 +201,7 @@ export const getHomeContent = cache(async (): Promise<{
       ...content.en,
       projects: content.en.projects.map((project) => {
         const current = projects.find((candidate) => candidate.id === project.id);
-        return current ? { ...project, image: current.image, plan: current.plan, gallery: current.gallery, priceWarm: current.priceWarm, priceTurnkey: current.priceTurnkey } : project;
+        return current ? { ...project, image: current.image, plan: current.plan, gallery: current.gallery, document: current.document, priceWarm: current.priceWarm, priceTurnkey: current.priceTurnkey } : project;
       })
     }
   };

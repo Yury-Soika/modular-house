@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { content, type Lang, type Project } from "../data/content";
 import ProjectGallery from "./ProjectGallery";
+import ProjectDocumentDownload from "./ProjectDocumentDownload";
 
 export default function ProjectCard({ project, lang = "ru" }: { project: Project; lang?: Lang }) {
   const copy = content[lang].common;
@@ -23,6 +24,7 @@ export default function ProjectCard({ project, lang = "ru" }: { project: Project
           <div className="flex items-center justify-between gap-2 rounded-md border border-forest-700 bg-forest-50 px-3 py-2"><span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-forest-700">{copy.priceTurnkey}</span><strong className="shrink-0 text-sm text-forest-950">{project.priceTurnkey}</strong></div>
         </div>
         <Link data-ym-goal="project_open" data-project-id={project.id} className="focus-ring mt-auto inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-forest-700 px-4 text-sm font-semibold text-white transition hover:bg-forest-900" href={`/projects/${project.id}`}>{copy.viewProject}<ArrowRight size={16} /></Link>
+        <ProjectDocumentDownload project={project} lang={lang} />
       </div>
     </article>
   );

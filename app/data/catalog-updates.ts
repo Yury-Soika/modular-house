@@ -32,10 +32,11 @@ type Change = {
   image?: string | null;
   plans?: string[];
   photos?: string[];
+  document?: Project["document"];
 };
 
 const changes: Record<string, Change> = {
-  "6970893": { numbers: "6970893 и 7422347", plans: ["img-2704", "img-1914"] },
+  "6970893": { numbers: "6970893 и 7422347", plans: ["img-2704", "img-1914"], document: { url: "/project-files/6970893.pdf", sizeBytes: 98814483 } },
   "7066580": { image: "img-3504" },
   "7718259": { area: "54,6 м²", size: "7 × 7,8 м", warm: 80535, turnkey: 102375, image: "img-3507", plans: ["photo-2026-09-25-16.02.35"] },
   "7055054": { area: "60 м²", size: "6 × 10 м", terrace: "Терраса 2 × 10 м", warm: 101000, turnkey: 125000, image: "7055054-render", plans: ["7055054-plan"] },
@@ -89,6 +90,7 @@ export function applyCatalogUpdates(projects: Project[], lang: "ru" | "en" = "ru
       image,
       plan,
       gallery,
+      document: change.document ?? base.document,
       singleColumn: bath,
       specs: bath ? bathSpecs : change.terrace && !base.terrace ? [...base.specs, { label: "Терраса", warm: "2 × 10 м", turnkey: "2 × 10 м" }] : base.specs,
       rooms: isNew ? (lang === "ru" ? "Варианты планировки показаны на изображениях" : "Layout options are shown in the gallery") : base.rooms,
