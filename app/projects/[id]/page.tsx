@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Check, ChevronRight, Mail, Phone } from "lucide-react";
+import { ArrowRight, Check, ChevronRight, Phone } from "lucide-react";
 import type { Project } from "../../data/content";
 import { getProjects, getSiteSettings } from "@/cms/content";
 import ProjectGallery from "@/app/_components/ProjectGallery";
+import EstimateButton from "@/app/_components/EstimateButton";
+import CatalogDownload from "@/app/_components/CatalogDownload";
 
 const SITE_URL = "https://modulsdom-brest.by";
 
@@ -145,8 +147,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
               <a data-ym-goal="phone_click" className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-md bg-forest-700 px-5 text-sm font-semibold text-white hover:bg-forest-900" href={`tel:${settings.phone}`}><Phone size={17} /> Позвонить</a>
-              <a data-ym-goal="email_click" className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-md border border-forest-700 px-5 text-sm font-semibold text-forest-700 hover:bg-forest-50" href={`mailto:${settings.email}`}><Mail size={17} /> Запросить расчёт</a>
+              <EstimateButton phone={settings.phone} email={settings.email} projectNo={project.projectNo} label="Запросить расчёт" className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-md border border-forest-700 px-5 text-sm font-semibold text-forest-700 hover:bg-forest-50" />
             </div>
+            <div className="mt-4"><CatalogDownload href={settings.catalog} /></div>
           </div>
         </div>
 

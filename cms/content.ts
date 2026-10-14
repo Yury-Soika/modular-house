@@ -148,7 +148,8 @@ export const getProjects = cache(async (): Promise<Project[]> => {
   if (!payload) return content.ru.projects;
   try {
     const result = await payload.find({ collection: "projects", depth: 1, limit: 200, pagination: false, sort: "projectNo" });
-    return result.docs.length ? applyCatalogUpdates(result.docs.map((doc) => mapProject(doc as UnknownRecord))) : content.ru.projects;
+    // Keep both catalogs complete even when the CMS only contains some projects.
+    return result.docs.length ? applyCatalogUpdates([...content.ru.projects, ...result.docs.map((doc) => mapProject(doc as UnknownRecord))]) : content.ru.projects;
   } catch (error) {
     console.error("Unable to read CMS projects; serving bundled projects.", error);
     return content.ru.projects;
@@ -164,7 +165,7 @@ export const getSiteSettings = cache(async () => {
     defaultMetaTitle: "Модульные дома и бани под ключ в Беларуси | Modul S",
     defaultMetaDescription: "Проектируем и производим модульные каркасные дома и бани под ключ в Бресте с доставкой и монтажом по всей Беларуси.",
     socialImage: "/site-preview-ru.jpg",
-    catalog: "/catalog.pdf"
+    catalog: process.env.CATALOG_URL || "/catalog.pdf"
   };
   const payload = await payloadClient();
   if (!payload) return fallback;
@@ -179,7 +180,7 @@ export const getSiteSettings = cache(async () => {
       defaultMetaTitle: settings.defaultMetaTitle || fallback.defaultMetaTitle,
       defaultMetaDescription: settings.defaultMetaDescription || fallback.defaultMetaDescription,
       socialImage: mediaUrl(settings.socialImage, fallback.socialImage)!,
-      catalog: mediaUrl(settings.catalog, fallback.catalog)!
+      catalog: process.env.CATALOG_URL || mediaUrl(settings.catalog, fallback.catalog)!
     };
   } catch (error) {
     console.error("Unable to read CMS settings; serving bundled settings.", error);
@@ -200,7 +201,7 @@ export const getHomeContent = cache(async (): Promise<{
       ...content.en,
       projects: content.en.projects.map((project) => {
         const current = projects.find((candidate) => candidate.id === project.id);
-        return current ? { ...project, image: current.image, plan: current.plan, priceWarm: current.priceWarm, priceTurnkey: current.priceTurnkey } : project;
+        return current ? { ...project, image: current.image, plan: current.plan, gallery: current.gallery, priceWarm: current.priceWarm, priceTurnkey: current.priceTurnkey } : project;
       })
     }
   };

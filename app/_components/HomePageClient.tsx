@@ -28,6 +28,8 @@ import {
 } from "lucide-react";
 import { content, type Content, type Lang } from "../data/content";
 import BathPackageSection from "./BathPackageSection";
+import ProjectCard from "./ProjectCard";
+import CatalogDownload from "./CatalogDownload";
 
 // Public assets (files in /public) are not prefixed with basePath by next/image or
 // plain anchors, so we prefix them ourselves for the sub-path demo deployment.
@@ -504,78 +506,7 @@ export default function HomePageClient({
           <SectionHeading eyebrow={copy.projectsSection.eyebrow} title={lang === "ru" ? "Каталог модульных домов" : "Modular house catalog"} text={copy.projectsSection.text} />
 
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {houseProjects.slice(0, visibleHouseCount).map((project) => (
-              <article
-                className="flex flex-col overflow-hidden rounded-xl border border-forest-900/10 bg-white shadow-soft transition duration-300 hover:-translate-y-1 hover:border-forest-700/30 hover:shadow-lg"
-                key={project.id}
-              >
-                <div className="relative">
-                  {project.image ? (
-                    <button
-                      className="group focus-ring relative block h-44 w-full overflow-hidden bg-forest-950"
-                      type="button"
-                      onClick={() => openGallery(project.gallery?.length ? project.gallery : [project.image!, project.plan].filter((value): value is string => Boolean(value)), 0)}
-                      aria-label={`${project.title} — открыть фото на весь экран`}
-                    >
-                      <Image src={asset(project.image)} alt={`${project.title} — ${copy.common.render}`} fill sizes="320px" className="object-cover transition duration-500 group-hover:scale-105" />
-                    </button>
-                  ) : (
-                    <PhotoPlaceholder label={`${copy.common.render} · ${copy.common.noPhoto}`} className="h-44 w-full" />
-                  )}
-                  {project.plan ? (
-                    <button
-                      className="group focus-ring relative block h-28 w-full overflow-hidden border-t border-forest-900/10 bg-white"
-                      type="button"
-                      onClick={() => {
-                        const images = project.gallery?.length ? project.gallery : [project.image, project.plan].filter((value): value is string => Boolean(value));
-                        openGallery(images, images.indexOf(project.plan!));
-                      }}
-                      aria-label={`${project.title} — открыть планировку на весь экран`}
-                    >
-                      <Image src={asset(project.plan)} alt={`${project.title} — ${copy.common.plan}`} fill sizes="320px" className="object-contain" />
-                    </button>
-                  ) : (
-                    <PhotoPlaceholder label={`${copy.common.plan} · ${copy.common.noPhoto}`} className="h-28 w-full border-t border-forest-900/10" />
-                  )}
-                </div>
-
-                <div className="flex flex-1 flex-col p-5">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="text-lg font-semibold text-forest-950">
-                        <Link className="focus-ring rounded-sm transition hover:text-forest-700" href={`/projects/${project.id}`}>{project.title}</Link>
-                      </h3>
-                      <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.1em] text-charcoal/45">{project.projectNo}</p>
-                    </div>
-                    <span className="shrink-0 rounded-md bg-forest-50 px-3 py-2 text-sm font-semibold text-forest-700">{project.area}</span>
-                  </div>
-                  <p className="mt-3 text-sm leading-6 text-charcoal/68">{project.summary}</p>
-
-                  <div className="mt-5 mb-6 grid gap-2">
-                    {project.priceWarm && (
-                      <div className="flex items-center justify-between rounded-md border border-forest-900/10 bg-linen px-3 py-2">
-                        <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-charcoal/55">{copy.common.priceWarm}</span>
-                        <strong className="text-sm text-forest-950">{project.priceWarm}</strong>
-                      </div>
-                    )}
-                    <div className="flex items-center justify-between rounded-md border border-forest-700 bg-forest-50 px-3 py-2">
-                      <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-forest-700">{copy.common.priceTurnkey}</span>
-                      <strong className="text-sm text-forest-950">{project.priceTurnkey}</strong>
-                    </div>
-                  </div>
-
-                  <Link
-                    data-ym-goal="project_open"
-                    data-project-id={project.id}
-                    className="focus-ring mt-auto inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-forest-700 px-4 text-sm font-semibold text-white transition hover:bg-forest-900"
-                    href={`/projects/${project.id}`}
-                  >
-                    {copy.common.viewProject}
-                    <ArrowRight size={16} />
-                  </Link>
-                </div>
-              </article>
-            ))}
+            {houseProjects.slice(0, visibleHouseCount).map((project) => <ProjectCard project={project} lang={lang} key={project.id} />)}
           </div>
           <CatalogControls visibleCount={visibleHouseCount} totalCount={houseProjects.length} onLoadMore={() => setVisibleHouseCount((count) => count + CATALOG_BATCH_SIZE)} href="/modulnye-doma" label={lang === "ru" ? "Все проекты домов" : "All house projects"} lang={lang} />
         </div>
@@ -585,10 +516,7 @@ export default function HomePageClient({
         <div className="section-shell">
           <SectionHeading eyebrow={lang === "ru" ? "Проекты бань" : "Sauna projects"} title={lang === "ru" ? "Каталог модульных бань" : "Modular sauna catalog"} text={lang === "ru" ? "Все проекты бань в порядке от компактных до просторных. Варианты планировки одного размера собраны в одной карточке." : "Sauna projects from compact to spacious, with layout variants grouped in one card."} />
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {bathProjects.slice(0, visibleBathCount).map((project) => <article className="flex flex-col overflow-hidden rounded-xl bg-white shadow-soft" key={project.id}>
-              {project.image || project.plan ? <button type="button" className="focus-ring relative block h-52 w-full bg-white" onClick={() => openGallery(project.gallery?.length ? project.gallery : [project.image, project.plan].filter((value): value is string => Boolean(value)), 0)} aria-label={`${project.title} — открыть изображение на весь экран`}><Image src={asset(project.image || project.plan!)} alt={project.title} fill sizes="(min-width: 1024px) 33vw, 50vw" className="object-contain" /><span className="absolute bottom-3 right-3 rounded-md bg-forest-950/80 p-2 text-white"><Expand size={16} /></span></button> : <PhotoPlaceholder label={copy.common.noPhoto} className="h-52" />}
-              <div className="flex flex-1 flex-col p-5"><p className="text-xs font-semibold text-forest-700">№ {project.projectNo}</p><h3 className="mt-2 text-xl font-semibold text-forest-950">{project.title}</h3><p className="mt-2 text-sm text-charcoal/70">{project.size}</p><p className="mt-4 font-semibold text-forest-950">{lang === "ru" ? "Под ключ" : "Turnkey"}: {project.priceTurnkey}</p><Link className="focus-ring mt-5 inline-flex h-11 items-center justify-center gap-2 rounded-md bg-forest-700 px-4 text-sm font-semibold text-white" href={`/projects/${project.id}`}>{copy.common.viewProject}<ArrowRight size={16} /></Link></div>
-            </article>)}
+            {bathProjects.slice(0, visibleBathCount).map((project) => <ProjectCard project={project} lang={lang} key={project.id} />)}
           </div>
           <CatalogControls visibleCount={visibleBathCount} totalCount={bathProjects.length} onLoadMore={() => setVisibleBathCount((count) => count + CATALOG_BATCH_SIZE)} href="/modulnye-bani" label={lang === "ru" ? "Все проекты бань" : "All sauna projects"} lang={lang} />
         </div>
@@ -746,6 +674,13 @@ export default function HomePageClient({
         </div>
       </section>
 
+      <section className="bg-white py-20" id="catalogs">
+        <div className="section-shell flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
+          <SectionHeading eyebrow={copy.catalog.eyebrow} title={lang === "ru" ? "Каталоги домов и бань" : "House and sauna catalogs"} text={lang === "ru" ? "Скачайте PDF с проектами, планировками и комплектациями." : "Download a PDF with projects, layouts, and packages."} />
+          <CatalogDownload href={settings?.catalog || "/catalog.pdf"} lang={lang} className="focus-ring inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-md bg-forest-700 px-6 py-3 text-sm font-semibold text-white transition hover:bg-forest-900" />
+        </div>
+      </section>
+
       <section className="bg-linen py-20" id="consultation">
         <div className="section-shell grid gap-10 lg:grid-cols-[0.85fr_0.75fr] lg:items-start">
           <SectionHeading eyebrow={copy.consultation.eyebrow} title={copy.consultation.title} text={copy.consultation.text} />
@@ -824,6 +759,7 @@ export default function HomePageClient({
             </div>
           </div>
           <nav aria-label={lang === "ru" ? "Информация о компании" : "Company information"}>
+            <CatalogDownload href={settings?.catalog || "/catalog.pdf"} lang={lang} className="focus-ring mb-4 inline-flex items-center gap-2 font-semibold text-sand hover:text-white" />
             <h3 className="font-semibold text-sand">{lang === "ru" ? "Покупателям" : "For customers"}</h3>
             <ul className="mt-4 space-y-3 text-sm text-white/75">
               {[

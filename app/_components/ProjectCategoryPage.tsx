@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Check, ChevronRight, Mail, Phone } from "lucide-react";
+import { ArrowRight, Check, ChevronRight, Phone } from "lucide-react";
 import { content, type Project } from "../data/content";
 import BathPackageSection from "./BathPackageSection";
+import ProjectCard from "./ProjectCard";
+import EstimateButton from "./EstimateButton";
+import CatalogDownload from "./CatalogDownload";
 
 const SITE_URL = "https://modulsdom-brest.by";
 
@@ -32,7 +34,7 @@ export function categoryMetadata(title: string, description: string, path: strin
   };
 }
 
-export function ProjectCategoryPage({ copy, path, allProjects = content.ru.projects, settings = { phone: "+375445702727", email: "Modulsdom@mail.ru" } }: { copy: CategoryCopy; path: string; allProjects?: Project[]; settings?: { phone: string; email: string } }) {
+export function ProjectCategoryPage({ copy, path, allProjects = content.ru.projects, settings = { phone: "+375445702727", email: "Modulsdom@mail.ru" } }: { copy: CategoryCopy; path: string; allProjects?: Project[]; settings?: { phone: string; email: string; catalog?: string } }) {
   const projects = allProjects.filter((project) => project.kind === copy.kind);
   const itemList = {
     "@context": "https://schema.org",
@@ -71,7 +73,8 @@ export function ProjectCategoryPage({ copy, path, allProjects = content.ru.proje
           <p className="mt-6 max-w-3xl text-lg leading-8 text-white/75">{copy.lead}</p>
           <div className="mt-9 flex flex-wrap gap-3">
             <a data-ym-goal="phone_click" className="focus-ring inline-flex h-12 items-center gap-2 rounded-md bg-sand px-5 text-sm font-semibold text-forest-950" href={`tel:${settings.phone}`}><Phone size={17} /> {settings.phone}</a>
-            <a data-ym-goal="email_click" className="focus-ring inline-flex h-12 items-center gap-2 rounded-md border border-white/25 px-5 text-sm font-semibold text-white" href={`mailto:${settings.email}`}><Mail size={17} /> Получить расчёт</a>
+            <EstimateButton phone={settings.phone} email={settings.email} className="focus-ring inline-flex h-12 items-center gap-2 rounded-md border border-white/25 px-5 text-sm font-semibold text-white" />
+            <CatalogDownload href={settings.catalog || "/catalog.pdf"} className="focus-ring inline-flex h-12 items-center gap-2 rounded-md border border-white/25 px-5 text-sm font-semibold text-white" />
           </div>
         </div>
       </section>
@@ -91,17 +94,7 @@ export function ProjectCategoryPage({ copy, path, allProjects = content.ru.proje
           <h2 className="text-3xl font-semibold text-forest-950 sm:text-4xl">{copy.catalogTitle}</h2>
           <p className="mt-4 max-w-3xl leading-7 text-charcoal/70">Сравните площадь, размеры и ориентировочную стоимость. На странице каждого проекта опубликованы характеристики и состав комплектаций.</p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project) => (
-              <article className="flex flex-col overflow-hidden rounded-xl border border-forest-900/10 bg-white shadow-soft" key={project.id}>
-                {project.image || project.plan ? <Link className="focus-ring relative block h-52 overflow-hidden bg-forest-50" href={`/projects/${project.id}`} aria-label={`${project.title} — открыть проект`}><Image src={project.image || project.plan!} alt={`${project.title} — ${project.image ? "внешний вид" : "планировка"}`} fill sizes="(min-width: 1024px) 33vw, 50vw" className="object-contain transition duration-300 hover:scale-105" /></Link> : <div className="flex h-52 items-center justify-center bg-forest-50 text-xs font-semibold uppercase tracking-wider text-forest-700">Фото готовится</div>}
-                <div className="flex flex-1 flex-col p-5">
-                  <h3 className="text-xl font-semibold text-forest-950"><Link className="focus-ring rounded-sm transition hover:text-forest-700" href={`/projects/${project.id}`}>{project.title}</Link></h3>
-                  <p className="mt-2 text-sm leading-6 text-charcoal/68">{project.summary}</p>
-                  <div className="mt-5 flex items-center justify-between rounded-md bg-forest-50 p-3"><span className="text-xs font-semibold uppercase text-forest-700">Под ключ</span><strong>{project.priceTurnkey}</strong></div>
-                  <Link data-ym-goal="project_open" data-project-id={project.id} className="focus-ring mt-5 inline-flex h-11 items-center justify-center gap-2 rounded-md bg-forest-700 px-4 text-sm font-semibold text-white hover:bg-forest-900" href={`/projects/${project.id}`}>Проект и комплектация <ArrowRight size={16} /></Link>
-                </div>
-              </article>
-            ))}
+            {projects.map((project) => <ProjectCard project={project} key={project.id} />)}
           </div>
         </div>
       </section>

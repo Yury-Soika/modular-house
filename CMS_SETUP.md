@@ -54,6 +54,14 @@ CMS_ADMIN_EMAIL=admin@modulsdom.by CMS_ADMIN_PASSWORD='...' PAYLOAD_LOAD_PRODUCT
 
 The seed is idempotent: it imports 21 catalog projects, all current site images/PDF, four completed-object galleries, and creates the administrator only if it does not exist.
 
+## Catalog download
+
+The “Скачать каталоги” buttons on the home page, category pages, and project pages use the same file source. To replace the PDF without rebuilding or redeploying the site, upload it to **Медиатека**, then select it in **Настройки сайта и SEO → PDF-каталог** and save. Uploaded files are stored in the persistent `media/` directory.
+
+Alternatively, set the server environment variable `CATALOG_URL` to an HTTPS file URL or a site-relative path and restart the app. This takes priority over the CMS file. With neither configured, the buttons use `public/catalog.pdf`; replacing that bundled file requires deploying the updated assets. External file servers control whether the browser downloads the file or opens its PDF viewer.
+
+The bundled PDF is the existing catalog; replace it with the new catalog before the next hosting deployment.
+
 ## SEO behavior
 
 CMS content is read on the server and rendered into the initial HTML. Page titles, descriptions, social images, project structured data, and the dynamic sitemap continue to work after edits. Editors still need to keep each page's SEO title, description, image alt text, and project slug accurate; changing a slug requires a redirect from its old URL.
